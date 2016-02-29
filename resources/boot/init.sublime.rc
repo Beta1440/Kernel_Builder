@@ -24,6 +24,8 @@ on boot
 
     write /sys/block/DEV/queue/scheduler bfq
 
+    write /proc/sys/vm/swappiness 100
+
 # KSM options
     write /sys/kernel/mm/ksm/sleep_millisecs 1000
     write /sys/kernel/mm/ksm/pages_to_scan 256
