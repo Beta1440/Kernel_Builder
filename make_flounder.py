@@ -64,7 +64,27 @@ def get_valid_toolchains(toolchains):
     if not valid_toolchains:
         print(colored('No toolchains could be located in {}'.format(TOOLCHAIN_DIR)))
 
-    return valid_toolchains
+    return sorted(valid_toolchains)
+
+# Take an array of valid toolchain roots and select toolchains to use
+def select_toolchains(toolchains):
+    counter = 1
+    toolchain_tuples = []
+    for toolchain in toolchains:
+        toolchain_root = os.path.basename(toolchain)
+        print(colored('{}) {}'.format(counter, toolchain_root),
+                      INFORMATION_COLOR))
+        toolchain_tuples.append((counter, toolchain_root))
+        counter += 1
+
+    selected_toolchains = []
+    toolchain_numbers = input('Enter numbers separated by spaces: ')
+    toolchains_to_select = [int(tc) for tc in toolchain_numbers.split()]
+    for (index, toolchain) in toolchain_tuples:
+        if index in toolchains_to_select:
+            selected_toolchains.append(toolchain)
+
+    return selected_toolchains
 
 
 # Get the gcc version of the cross compiler
@@ -227,6 +247,7 @@ def get_time_since(start_time):
     date_end = get_current_time()
     return date_end - start_time
 
+
 # Print the amount of time that has passed
 def print_time(time):
     minutes = colored(str(time // 60), HIGHLIGHT_COLOR)
@@ -235,8 +256,9 @@ def print_time(time):
 
 
 def main():
-    toolchains = get_valid_toolchains(os.scandir(TOOLCHAIN_DIR))
+    valid_toolchains = get_valid_toolchains(os.scandir(TOOLCHAIN_DIR))
     make_defconfig(DEFCONFIG)
+    toolchains = select_toolchains(valid_toolchains)
     for toolchain in toolchains:
         start_time = get_current_time()
         toolchain_info = get_toolchain_info(toolchain)
