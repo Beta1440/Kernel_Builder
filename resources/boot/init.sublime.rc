@@ -5,8 +5,8 @@ write /sys/kernel/tegra_gpu/gpu_cap_rate 756000000
 write /sys/kernel/tegra_gpu/gpu_cap_state 1
 
 on boot
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 204000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 306000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 306000
     
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2295000
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2295000
