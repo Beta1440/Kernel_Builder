@@ -25,7 +25,7 @@ DEFCONFIG = 'sublime_defconfig'
 
 ARCH = 'arm64'
 
-SUBLIME_EXPORT_DIR = os.environ['SUBLIME_N9_EXPORT_DIR']
+SUBLIME_N9_EXPORT_DIR = os.getenv('SUBLIME_N9_EXPORT_DIR')
 
 # Directory for build logs
 BUILD_LOG_DIR = os.path.join(DEF_EXPORT_DIR, 'build_logs')
@@ -203,11 +203,10 @@ def make_zip(zip_id):
 # If SUBLIME_N9_EXPORT_DIR is not specified, then the output folder
 # will be set as the export directory
 def get_export_dir():
-    if os.path.isdir(SUBLIME_EXPORT_DIR):
-        return SUBLIME_EXPORT_DIR
+    if SUBLIME_N9_EXPORT_DIR:
+        return SUBLIME_N9_EXPORT_DIR
     else:
         return DEF_EXPORT_DIR
-
 
 # send a file to the export directory
 def export_file(file_export, kernel_info):
