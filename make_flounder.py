@@ -68,6 +68,9 @@ def get_valid_toolchains(toolchains):
 
 # Take an array of valid toolchain roots and select toolchains to use
 def select_toolchains(toolchains):
+    if len(toolchains) == 1:
+        return toolchains
+
     counter = 1
     toolchain_tuples = []
     for toolchain in toolchains:
