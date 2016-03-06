@@ -107,19 +107,16 @@ def get_cross_compile(toolchain):
 def get_toolchain_info(toolchain):
     cross_compiler_prefix = get_cross_compile(toolchain)
     gcc_version = get_gcc_version(cross_compiler_prefix)
-    gcc_type = 'ubertc'
 
     return {'cross_compiler_prefix': cross_compiler_prefix,
             'gcc_version': gcc_version,
-            'gcc_type' : gcc_type}
+            'name' : os.path.basename(toolchain)}
 
 # Get a set of variables which describe the kernel
 def get_kernel_info(defconfig, toolchain_info):
     defconfig_path = os.path.join(KERNEL_ROOT_DIR,'arch', ARCH, 'configs', defconfig)
     kernel_version = get_kernel_version(defconfig_path)
-    kernel_id = '{}-{}-{}'.format(kernel_version,
-                                      toolchain_info['gcc_type'],
-                                      toolchain_info['gcc_version'])
+    kernel_id = '{}-{}'.format(kernel_version, toolchain_info['name'])
     kernel_zip_id = kernel_id + '.zip'
     kernel_boot_img_id = kernel_id + '.img'
     kernel_build_log = os.path.join(BUILD_LOG_DIR,
@@ -154,10 +151,9 @@ def make_kernel(kernel_info, toolchain_info):
         print(colored('Recreating last defconfig', INFORMATION_COLOR))
         os.system('make oldconfig')
 
-    compile_info = 'compiling {} with {} {}'.format(
+    compile_info = 'compiling {} with {}'.format(
         kernel_info['version'],
-        toolchain_info['gcc_type'],
-        toolchain_info['gcc_version'])
+        toolchain_info['name'])
     print(colored(compile_info, INFORMATION_COLOR))
     # redirect the output to the build log file
     if not os.path.isdir(BUILD_LOG_DIR):
