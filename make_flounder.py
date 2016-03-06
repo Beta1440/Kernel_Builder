@@ -216,7 +216,7 @@ def export_file(file_export, kernel_info):
     final_export_dir = os.path.join(base_export_dir,
                                     kernel_info['version'][-5:], '')
     if not os.path.isdir(final_export_dir):
-        os.system('mkdir -v {}'.format(final_export_dir))
+        os.mkdir(final_export_dir)
 
     os.system('mv {} {}'.format(kernel_file, final_export_dir))
     exported_file = os.path.join(final_export_dir, file_export)
