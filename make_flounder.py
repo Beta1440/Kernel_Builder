@@ -266,13 +266,13 @@ def main():
         toolchain_info = get_toolchain_info(toolchain)
         os.environ['CROSS_COMPILE'] = toolchain_info['cross_compiler_prefix']
         kernel_info = get_kernel_info(DEFCONFIG, toolchain_info)
-        if os.path.isdir(DEF_EXPORT_DIR):
-            success('Ready to go')
-            make_kernel(kernel_info, toolchain_info)
-            make_zip(kernel_info['zip_id'])
-            export_file(kernel_info['zip_id'], kernel_info)
-        else:
-            print('invalid path: ' + DEF_EXPORT_DIR)
+        if not os.path.isdir(DEF_EXPORT_DIR):
+            os.mkdir(DEF_EXPORT_DIR)
+
+        success('Ready to go')
+        make_kernel(kernel_info, toolchain_info)
+        make_zip(kernel_info['zip_id'])
+        export_file(kernel_info['zip_id'], kernel_info)
 
         print_time(get_time_since(start_time))
 
