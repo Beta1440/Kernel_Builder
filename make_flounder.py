@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python3
 import os
 import re
 from subprocess import getoutput
@@ -145,6 +145,7 @@ def clean_build_enviornment():
 # build the kernel
 def make_kernel(kernel_info, toolchain_info):
     THREADS = os.cpu_count()
+    os.putenv('CROSS_COMPILE', toolchain_info['cross_compiler_prefix'])
     clean_build_enviornment()
     if not os.path.isfile('.config'):
         # Make sure the last defconfig is used
@@ -260,7 +261,6 @@ def main():
     for toolchain in toolchains:
         start_time = get_current_time()
         toolchain_info = get_toolchain_info(toolchain)
-        os.environ['CROSS_COMPILE'] = toolchain_info['cross_compiler_prefix']
         kernel_info = get_kernel_info(DEFCONFIG, toolchain_info)
         if not os.path.isdir(DEF_EXPORT_DIR):
             os.mkdir(DEF_EXPORT_DIR)
