@@ -19,7 +19,7 @@ import re
 from subprocess import getoutput
 
 from termcolor import colored
-from typing import List
+from typing import Dict, List
 
 from gcc import Toolchain
 
@@ -68,6 +68,13 @@ def get_kernel_version(kernel_defconfig):
 
 
 def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
+    """Get all the valid the toolchains in a directory.
+
+    A toolchain is valid if it has a gcc executable in its "bin/" directory
+
+    Keyword arguments:
+    toolchain_dir -- the directory to look for toolchains
+    """
     entries = os.scandir(toolchain_dir)
     toolchains = []
     serial_number = 1
@@ -83,6 +90,14 @@ def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
 
 
 def select_toolchains(toolchains : List[Toolchain]) -> List[Toolchain]:
+    """Select which toolchains to use in compiling the kernel.
+
+    The kernel will be compiled once with each toolchain selected.
+    If only one toolchain is available, then it will be automatically selected.
+
+    Keyword arguments:
+    toolchains -- the list of toolchains to select from
+    """
     if len(toolchains) <= 1:
         return toolchains
 
@@ -118,21 +133,31 @@ def get_kernel_info(defconfig, toolchain):
     return kernel_info
 
 
-# Make the default configuration file
-def make_defconfig(defconfig):
+def make_defconfig(defconfig : str) -> None:
+    """Create a default configuration file."""
     print(colored('making:', INFORMATION_COLOR),
           colored(defconfig, HIGHLIGHT_COLOR))
     os.system('make {}'.format(defconfig))
 
-# Remove old build files included the previous Z_IMAGE
-def clean_build_enviornment():
+def clean_build_enviornment() -> None:
+    """Remove old kernel files."""
     print(colored('cleaning the build enviornment', INFORMATION_COLOR))
     os.system('make clean')
     if os.path.isfile(Z_IMAGE):
         os.remove(Z_IMAGE)
 
-# build the kernel
-def make_kernel(kernel_info, toolchain):
+def make_kernel(kernel_info, toolchain) -> None:
+    """Compile the kernel.
+
+    Compile the kernel with a given toolchain. The amount of jobs to run "make"
+    is equal to the amount of CPU's available on the host computer. The output
+    of the "make" command will be redirected to a build log file
+
+    Keyword arguments:
+    kernel_info -- Dictionary containing information for compiling the kernel
+    toolchain -- the toolchain to compile the kernel with
+
+    """
     THREADS = os.cpu_count()
     clean_build_enviornment()
     if not os.path.isfile('.config'):
@@ -157,8 +182,14 @@ def make_kernel(kernel_info, toolchain):
             kernel_info['build_log']), INFORMATION_COLOR))
 
 
-# make a boot img that can be installed via fastboot
-def make_boot_img(name, z_image, ramdisk):
+def make_boot_img(name : str, z_image : str, ramdisk : str) -> None:
+    """Create a boot.img file that can be install via fastboot
+
+    Keyword arguments:
+    name -- the name of the output file
+    z_image -- the compressed kernel image to include in the boot.img file
+    ramdisk -- the ramdisk image to include in the boot.img file
+    """
     previous_directory = os.getcwd()
     os.chdir(RESOURSES_DIR)
     os.system('mkbootimg --output {} --kernel {} --ramdisk {}'.format(name,
@@ -167,8 +198,12 @@ def make_boot_img(name, z_image, ramdisk):
     os.chdir(previous_directory)
 
 
-# Create a ZIP package that can be installed via recovery
-def make_zip(zip_id):
+def make_zip(zip_id) -> None:
+    """Create a zip package that can be installed via recovery
+
+    Keyword arguments:
+    zip_id -- the name of the zip file to create
+    """
     if os.path.isfile(Z_IMAGE):
         previous_directory = os.getcwd()
         os.system('cp {} {}'.format(Z_IMAGE, RESOURSES_DIR + '/boot'))
@@ -193,8 +228,13 @@ def get_export_dir():
     else:
         return DEF_EXPORT_DIR
 
-# send a file to the export directory
-def export_file(file_export, kernel_info):
+def export_file(file_export : str, kernel_info : Dict[str, str]) -> None:
+    """Send a file to the export directory.
+
+    Keyword arguments:
+    file_export -- the file to export
+    kernel_info -- a dictionary containing the kernel's version
+    """
     kernel_file = os.path.join(RESOURSES_DIR, file_export)
     base_export_dir = get_export_dir()
     final_export_dir = os.path.join(base_export_dir,
@@ -235,8 +275,11 @@ def get_time_since(start_time):
     return date_end - start_time
 
 
-# Print the amount of time that has passed
-def print_time(time):
+def print_time(time) -> None:
+    """Print the duration of the given time.
+
+    Keyword arguments:
+    time -- the time to print out"""
     minutes = colored(str(time // 60), HIGHLIGHT_COLOR)
     seconds = colored(str(time % 60), HIGHLIGHT_COLOR)
     print('Time passed: {} minute(s) and {} seconds'.format(minutes, seconds))
