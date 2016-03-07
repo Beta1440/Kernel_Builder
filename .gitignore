@@ -1,3 +1,6 @@
 *.img
 *.gz-dtb
 *.zip
+*.
+TAGS
+__pycache__/
