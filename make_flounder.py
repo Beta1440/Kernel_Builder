@@ -143,12 +143,12 @@ def make_kernel(kernel_info, toolchain):
 
 
 # make a boot img that can be installed via fastboot
-def make_boot_img(name):
+def make_boot_img(name, z_image, ramdisk):
     previous_directory = os.getcwd()
     os.chdir(RESOURSES_DIR)
     os.system('mkbootimg --output {} --kernel {} --ramdisk {}'.format(name,
-                                                                      Z_IMAGE,
-                                                                      RAMDISK))
+                                                                      z_image,
+                                                                      ramdisk))
     os.chdir(previous_directory)
 
 
