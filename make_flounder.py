@@ -2,7 +2,11 @@
 import os
 import re
 from subprocess import getoutput
+
 from termcolor import colored
+from typing import List
+
+from gcc import Toolchain
 
 # Set colors
 WARNING_COLOR = 'orange'
@@ -48,75 +52,44 @@ def get_kernel_version(kernel_defconfig):
                 return line[len(local_version) + 2 : -2]
 
 
-# Take in a list of dir entries and return an array of valid toolchain roots
-def get_valid_toolchains(toolchains):
-    valid_toolchains = []
-    for toolchain in toolchains:
-        if os.path.isdir(toolchain.path):
-            cross_compiler_prefix = get_cross_compile(toolchain.name)
-            if cross_compiler_prefix:
-                possible_gcc = get_cross_compile(toolchain.name) + 'gcc'
-                if os.path.isfile(possible_gcc):
-                    valid_toolchains.append(toolchain.path)
-                    print(colored('Toolchain located:', SUCCESS_COLOR),
-                          colored(toolchain.name, HIGHLIGHT_COLOR))
+def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
+    entries = os.scandir(toolchain_dir)
+    toolchains = []
+    serial_number = 1
+    for entry in entries:
+        toolchain = Toolchain(entry.path, serial_number, ARCH)
+        if(toolchain.compiler_prefix):
+            toolchains.append(toolchain)
+            print(colored('Toolchain located:', SUCCESS_COLOR),
+                  colored(toolchain.name, HIGHLIGHT_COLOR))
+            serial_number += 1
 
-    if not valid_toolchains:
-        print(colored('No toolchains could be located in {}'.format(TOOLCHAIN_DIR)))
+    return toolchains
 
-    return sorted(valid_toolchains)
 
-# Take an array of valid toolchain roots and select toolchains to use
-def select_toolchains(toolchains):
-    if len(toolchains) == 1:
+def select_toolchains(toolchains : List[Toolchain]) -> List[Toolchain]:
+    if len(toolchains) <= 1:
         return toolchains
 
-    counter = 1
-    toolchain_tuples = []
     for toolchain in toolchains:
-        toolchain_root = os.path.basename(toolchain)
-        print(colored('{}) {}'.format(counter, toolchain_root),
+        print(colored('{}) {}'.format(toolchain.serial_number, toolchain.name),
                       INFORMATION_COLOR))
-        toolchain_tuples.append((counter, toolchain_root))
-        counter += 1
 
     selected_toolchains = []
     toolchain_numbers = input('Enter numbers separated by spaces: ')
     toolchains_to_select = [int(tc) for tc in toolchain_numbers.split()]
-    for (index, toolchain) in toolchain_tuples:
-        if index in toolchains_to_select:
+    for toolchain in toolchains:
+        if toolchain.serial_number in toolchains_to_select:
             selected_toolchains.append(toolchain)
 
     return selected_toolchains
 
 
-# Get the gcc version of the cross compiler
-def get_gcc_version(cross_compile):
-    GET_GCC = 'gcc -dumpversion'
-    return getoutput(cross_compile + GET_GCC)
-
-# Get the CROSS_COMPILE variable used by the make scripts to compile the kernel
-def get_cross_compile(toolchain):
-    toolchain_binaries_dir = os.path.join(TOOLCHAIN_DIR, toolchain, 'bin')
-    binaries = os.scandir(toolchain_binaries_dir)
-    for binary in binaries:
-        if binary.name.startswith('aarch64') and binary.name.endswith('gcc'):
-            return binary.path[:-3]
-
-# Get information from a toolchain
-def get_toolchain_info(toolchain):
-    cross_compiler_prefix = get_cross_compile(toolchain)
-    gcc_version = get_gcc_version(cross_compiler_prefix)
-
-    return {'cross_compiler_prefix': cross_compiler_prefix,
-            'gcc_version': gcc_version,
-            'name' : os.path.basename(toolchain)}
-
 # Get a set of variables which describe the kernel
-def get_kernel_info(defconfig, toolchain_info):
+def get_kernel_info(defconfig, toolchain):
     defconfig_path = os.path.join(KERNEL_ROOT_DIR,'arch', ARCH, 'configs', defconfig)
     kernel_version = get_kernel_version(defconfig_path)
-    kernel_id = '{}-{}'.format(kernel_version, toolchain_info['name'])
+    kernel_id = '{}-{}'.format(kernel_version, toolchain.name)
     kernel_zip_id = kernel_id + '.zip'
     kernel_boot_img_id = kernel_id + '.img'
     kernel_build_log = os.path.join(BUILD_LOG_DIR,
@@ -143,9 +116,9 @@ def clean_build_enviornment():
         os.remove(Z_IMAGE)
 
 # build the kernel
-def make_kernel(kernel_info, toolchain_info):
+def make_kernel(kernel_info, toolchain):
     THREADS = os.cpu_count()
-    os.putenv('CROSS_COMPILE', toolchain_info['cross_compiler_prefix'])
+    os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
     clean_build_enviornment()
     if not os.path.isfile('.config'):
         # Make sure the last defconfig is used
@@ -154,7 +127,7 @@ def make_kernel(kernel_info, toolchain_info):
 
     compile_info = 'compiling {} with {}'.format(
         kernel_info['version'],
-        toolchain_info['name'])
+        toolchain.name)
     print(colored(compile_info, INFORMATION_COLOR))
     # redirect the output to the build log file
     if not os.path.isdir(BUILD_LOG_DIR):
@@ -255,18 +228,17 @@ def print_time(time):
 
 
 def main():
-    valid_toolchains = get_valid_toolchains(os.scandir(TOOLCHAIN_DIR))
+    toolchains = get_toolchains(TOOLCHAIN_DIR)
+    toolchains = select_toolchains(toolchains)
     make_defconfig(DEFCONFIG)
-    toolchains = select_toolchains(valid_toolchains)
     for toolchain in toolchains:
         start_time = get_current_time()
-        toolchain_info = get_toolchain_info(toolchain)
-        kernel_info = get_kernel_info(DEFCONFIG, toolchain_info)
+        kernel_info = get_kernel_info(DEFCONFIG, toolchain)
         if not os.path.isdir(DEF_EXPORT_DIR):
             os.mkdir(DEF_EXPORT_DIR)
 
         success('Ready to go')
-        make_kernel(kernel_info, toolchain_info)
+        make_kernel(kernel_info, toolchain)
         make_zip(kernel_info['zip_id'])
         export_file(kernel_info['zip_id'], kernel_info)
 
