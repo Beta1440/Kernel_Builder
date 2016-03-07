@@ -98,7 +98,8 @@ def get_kernel_info(defconfig, toolchain):
                    'id' : kernel_id,
                    'zip_id' : kernel_zip_id,
                    'boot_img_id' : kernel_boot_img_id,
-                   'build_log' : kernel_build_log}
+                   'build_log' : kernel_build_log,
+                   'defconfig' : defconfig}
     return kernel_info
 
 
@@ -118,7 +119,6 @@ def clean_build_enviornment():
 # build the kernel
 def make_kernel(kernel_info, toolchain):
     THREADS = os.cpu_count()
-    os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
     clean_build_enviornment()
     if not os.path.isfile('.config'):
         # Make sure the last defconfig is used
@@ -230,10 +230,16 @@ def print_time(time):
 def main():
     toolchains = get_toolchains(TOOLCHAIN_DIR)
     toolchains = select_toolchains(toolchains)
-    make_defconfig(DEFCONFIG)
+    regenerate_defconfig = True
     for toolchain in toolchains:
-        start_time = get_current_time()
+        os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
         kernel_info = get_kernel_info(DEFCONFIG, toolchain)
+
+        if regenerate_defconfig:
+            make_defconfig(kernel_info['defconfig'])
+            regenerate_defconfig = False
+
+        start_time = get_current_time()
         if not os.path.isdir(DEF_EXPORT_DIR):
             os.mkdir(DEF_EXPORT_DIR)
 
