@@ -232,23 +232,29 @@ def main():
     toolchains = select_toolchains(toolchains)
     regenerate_defconfig = True
     for toolchain in toolchains:
-        os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
-        kernel_info = get_kernel_info(DEFCONFIG, toolchain)
+        try:
+            os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
+            kernel_info = get_kernel_info(DEFCONFIG, toolchain)
 
-        if regenerate_defconfig:
-            make_defconfig(kernel_info['defconfig'])
-            regenerate_defconfig = False
+            if regenerate_defconfig:
+                make_defconfig(kernel_info['defconfig'])
+                regenerate_defconfig = False
 
-        start_time = get_current_time()
-        if not os.path.isdir(DEF_EXPORT_DIR):
-            os.mkdir(DEF_EXPORT_DIR)
+            start_time = get_current_time()
+            if not os.path.isdir(DEF_EXPORT_DIR):
+                os.mkdir(DEF_EXPORT_DIR)
 
-        success('Ready to go')
-        make_kernel(kernel_info, toolchain)
-        make_zip(kernel_info['zip_id'])
-        export_file(kernel_info['zip_id'], kernel_info)
+            success('Ready to go')
+            make_kernel(kernel_info, toolchain)
+            make_zip(kernel_info['zip_id'])
+            export_file(kernel_info['zip_id'], kernel_info)
 
-        print_time(get_time_since(start_time))
+        except KeyboardInterrupt:
+            print_time(get_time_since(start_time))
+            exit()
+
+        finally:
+            print_time(get_time_since(start_time))
 
 if __name__ == '__main__':
     main()
