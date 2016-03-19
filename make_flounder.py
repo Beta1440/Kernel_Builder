@@ -23,12 +23,21 @@ from typing import Dict, List
 
 from gcc import Toolchain
 
-# Set colors
-WARNING_COLOR = 'orange'
-INFORMATION_COLOR = 'blue'
-HIGHLIGHT_COLOR = 'yellow'
-SUCCESS_COLOR = 'green'
-FAILURE_COLOR = 'red'
+def alert(message):
+    """Indicate when a process has failed"""
+    return colored(message, 'red')
+
+def highlight(message):
+    """Highlight useful information"""
+    return colored(message, 'yellow')
+
+def success(message):
+    """Notify user when a process is successful"""
+    return colored(message, 'green')
+
+def info(message):
+    """Print general information"""
+    return colored(message, 'blue')
 
 # The root of the kernel
 KERNEL_ROOT_DIR = os.getcwd()
@@ -76,8 +85,7 @@ def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
         toolchain = Toolchain(entry.path, serial_number, ARCH)
         if(toolchain.compiler_prefix):
             toolchains.append(toolchain)
-            print(colored('Toolchain located:', SUCCESS_COLOR),
-                  colored(toolchain.name, HIGHLIGHT_COLOR))
+            print(success('Toolchain located: '), highlight(toolchain.name))
             serial_number += 1
 
     return toolchains
@@ -96,8 +104,7 @@ def select_toolchains(toolchains : List[Toolchain]) -> List[Toolchain]:
         return toolchains
 
     for toolchain in toolchains:
-        print(colored('{}) {}'.format(toolchain.serial_number, toolchain.name),
-                      INFORMATION_COLOR))
+        print(info('{}) {}'.format(toolchain.serial_number, toolchain.name)))
 
     selected_toolchains = []
     toolchain_numbers = input('Enter numbers separated by spaces: ')
@@ -127,13 +134,12 @@ def get_kernel_info(toolchain):
 
 def make_defconfig(defconfig: str='defconfig') -> None:
     """Create a default configuration file."""
-    print(colored('making:', INFORMATION_COLOR),
-          colored(defconfig, HIGHLIGHT_COLOR))
+    print(info('making:'), highlight(defconfig))
     call('make ' + defconfig, shell=True)
 
 def clean_build_enviornment() -> None:
     """Remove old kernel files."""
-    print(colored('cleaning the build enviornment', INFORMATION_COLOR))
+    print(info('cleaning the build enviornment'))
     run('make archclean', shell = True)
 
 def make_kernel(kernel_info, toolchain) -> None:
@@ -152,13 +158,13 @@ def make_kernel(kernel_info, toolchain) -> None:
     clean_build_enviornment()
     if not os.path.isfile('.config'):
         # Make sure the last defconfig is used
-        print(colored('Recreating last defconfig', INFORMATION_COLOR))
+        print(info('Recreating last defconfig'))
         run('make oldconfig', shell=True)
 
     compile_info = 'compiling {} with {}'.format(
         kernel_info['version'],
         toolchain.name)
-    print(colored(compile_info, INFORMATION_COLOR))
+    print(info(compile_info))
     # redirect the output to the build log file
     if not os.path.isdir(BUILD_LOG_DIR):
         os.mkdir(BUILD_LOG_DIR)
@@ -166,11 +172,10 @@ def make_kernel(kernel_info, toolchain) -> None:
         shell=True)
 
     if os.path.isfile(Z_IMAGE):
-        success('{} compiled'.format(kernel_info['version']))
+        print(success(kernel_info['version'] + ' compiled'))
     else:
-        failure('{} failed to compile'.format(kernel_info['version']))
-        print(colored('the build log is located at {}'.format(
-            kernel_info['build_log']), INFORMATION_COLOR))
+        print(alert('{} failed to compile'.format(kernel_info['version'])))
+        print(info('the build log is located at ' + kernel_info['build_log']))
 
 
 def make_boot_img(name : str, z_image : str, ramdisk : str) -> None:
@@ -201,10 +206,10 @@ def zip_ota_package(name: str) -> str:
         os.chdir(RESOURSES_DIR)
         check_call('zip {0} META-INF {1} config {1} boot {1}'.format(name, '-r'),
                    shell=True)
-        success('ota package successfully created')
+        print(success('ota package successfully created'))
         return os.path.abspath(name)
     except:
-        failure('ota package could not be created')
+        print(alert('ota package could not be created'))
 
     finally:
         os.chdir(previous_directory)
@@ -236,23 +241,11 @@ def export_file(file_export : str, kernel_info : Dict[str, str]) -> None:
     run('mv {} {}'.format(kernel_file, final_export_dir), shell=True)
     exported_file = os.path.join(final_export_dir, file_export)
     if os.path.isfile(exported_file):
-        success('{} exported to {}'.format(file_export, final_export_dir))
+        print(success('{} exported to {}'.format(file_export,
+                                                 final_export_dir)))
     else:
-        failure('{} could not be exported to {}'.format(file_export,
-                                                        final_export_dir))
-
-
-# Indicate when a process is successful
-def success(success_text):
-    print('{0}\n{1}\n{0}'.format(colored('-' * len(success_text),
-                                         SUCCESS_COLOR),
-                            colored(success_text, SUCCESS_COLOR)))
-
-# Indicate when a process has failed
-def failure(failure_text):
-    length = len(failure_text)
-    print('{0}\n{1}\n{0}'.format(colored('-' * length, FAILURE_COLOR),
-                            colored(failure_text, FAILURE_COLOR)))
+        print(alert('{} could not be exported to {}'.format(file_export,
+                                                            final_export_dir)))
 
 
 # Get the current time
@@ -271,8 +264,8 @@ def print_time(time) -> None:
 
     Keyword arguments:
     time -- the time to print out"""
-    minutes = colored(str(time // 60), HIGHLIGHT_COLOR)
-    seconds = colored(str(time % 60), HIGHLIGHT_COLOR)
+    minutes = highlight(str(time // 60))
+    seconds = highlight(str(time % 60))
     print('Time passed: {} minute(s) and {} seconds'.format(minutes, seconds))
 
 
@@ -293,7 +286,6 @@ def main():
             if not os.path.isdir(DEF_EXPORT_DIR):
                 os.mkdir(DEF_EXPORT_DIR)
 
-            success('Ready to go')
             make_kernel(kernel_info, toolchain)
             zip_ota_package(kernel_info['zip_id'])
             export_file(kernel_info['zip_id'], kernel_info)
