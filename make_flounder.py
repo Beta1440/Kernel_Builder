@@ -16,7 +16,7 @@
 
 import os
 import re
-from subprocess import call, getoutput, run
+from subprocess import call, check_call, getoutput, run
 
 from termcolor import colored
 from typing import Dict, List
@@ -188,25 +188,27 @@ def make_boot_img(name : str, z_image : str, ramdisk : str) -> None:
     os.chdir(previous_directory)
 
 
-def make_zip(zip_id) -> None:
+def zip_ota_package(name: str) -> str:
     """Create a zip package that can be installed via recovery
 
+    Return the path to the zip file created
     Keyword arguments:
-    zip_id -- the name of the zip file to create
+    name -- the name of the zip file to create
     """
-    if os.path.isfile(Z_IMAGE):
+    try:
         previous_directory = os.getcwd()
-        run('cp {} {}'.format(Z_IMAGE, RESOURSES_DIR + '/boot'), shell=True)
+        check_call('cp {} {}'.format(Z_IMAGE, RESOURSES_DIR + '/boot'), shell=True)
         os.chdir(RESOURSES_DIR)
-        call('zip {0} META_INF {1} config {1} boot {1}'.format(zip_id, '-r'),
-            shell=True)
-        success('zip successfully created')
+        check_call('zip {0} META-INF {1} config {1} boot {1}'.format(name, '-r'),
+                   shell=True)
+        success('ota package successfully created')
+        return os.path.abspath(name)
+    except:
+        failure('ota package could not be created')
 
-        # return to the original directories if other kernels
-        # need to be built
+    finally:
         os.chdir(previous_directory)
-    else:
-        failure('zip could not be created')
+
 
 # Determine the directory to export the kernel file
 # If SUBLIME_N9_EXPORT_DIR is not specified, then the output folder
@@ -293,7 +295,7 @@ def main():
 
             success('Ready to go')
             make_kernel(kernel_info, toolchain)
-            make_zip(kernel_info['zip_id'])
+            zip_ota_package(kernel_info['zip_id'])
             export_file(kernel_info['zip_id'], kernel_info)
 
         except KeyboardInterrupt:
