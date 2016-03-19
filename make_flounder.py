@@ -16,7 +16,7 @@
 
 import os
 import re
-from subprocess import getoutput
+from subprocess import call, getoutput, run
 
 from termcolor import colored
 from typing import Dict, List
@@ -137,12 +137,12 @@ def make_defconfig(defconfig : str) -> None:
     """Create a default configuration file."""
     print(colored('making:', INFORMATION_COLOR),
           colored(defconfig, HIGHLIGHT_COLOR))
-    os.system('make {}'.format(defconfig))
+    call('make ' + defconfig, shell=True)
 
 def clean_build_enviornment() -> None:
     """Remove old kernel files."""
     print(colored('cleaning the build enviornment', INFORMATION_COLOR))
-    os.system('make archclean')
+    run('make archclean', shell = True)
 
 def make_kernel(kernel_info, toolchain) -> None:
     """Compile the kernel.
@@ -161,7 +161,7 @@ def make_kernel(kernel_info, toolchain) -> None:
     if not os.path.isfile('.config'):
         # Make sure the last defconfig is used
         print(colored('Recreating last defconfig', INFORMATION_COLOR))
-        os.system('make oldconfig')
+        run('make oldconfig', shell=True)
 
     compile_info = 'compiling {} with {}'.format(
         kernel_info['version'],
@@ -170,7 +170,8 @@ def make_kernel(kernel_info, toolchain) -> None:
     # redirect the output to the build log file
     if not os.path.isdir(BUILD_LOG_DIR):
         os.mkdir(BUILD_LOG_DIR)
-    os.system('make -j{} > {} 2>&1'.format(THREADS, kernel_info['build_log']))
+    run('make -j{} > {} 2>&1'.format(THREADS, kernel_info['build_log']),
+        shell=True)
 
     if os.path.isfile(Z_IMAGE):
         success('{} compiled'.format(kernel_info['version']))
@@ -190,9 +191,8 @@ def make_boot_img(name : str, z_image : str, ramdisk : str) -> None:
     """
     previous_directory = os.getcwd()
     os.chdir(RESOURSES_DIR)
-    os.system('mkbootimg --output {} --kernel {} --ramdisk {}'.format(name,
-                                                                      z_image,
-                                                                      ramdisk))
+    run(['mkbootimg', '--output', name, '--kernel', z_image,
+         '--ramdisk', ramdisk], shell=True)
     os.chdir(previous_directory)
 
 
@@ -204,11 +204,10 @@ def make_zip(zip_id) -> None:
     """
     if os.path.isfile(Z_IMAGE):
         previous_directory = os.getcwd()
-        os.system('cp {} {}'.format(Z_IMAGE, RESOURSES_DIR + '/boot'))
+        run('cp {} {}'.format(Z_IMAGE, RESOURSES_DIR + '/boot'), shell=True)
         os.chdir(RESOURSES_DIR)
-        os.system('zip {} {} -r {} -r {} -r'.format(zip_id,
-                                                    'META-INF', 'config',
-                                                    'boot'))
+        call('zip {0} META_INF {1} config {1} boot {1}'.format(zip_id, '-r'),
+            shell=True)
         success('zip successfully created')
 
         # return to the original directories if other kernels
@@ -240,7 +239,7 @@ def export_file(file_export : str, kernel_info : Dict[str, str]) -> None:
     if not os.path.isdir(final_export_dir):
         os.mkdir(final_export_dir)
 
-    os.system('mv {} {}'.format(kernel_file, final_export_dir))
+    run('mv {} {}'.format(kernel_file, final_export_dir), shell=True)
     exported_file = os.path.join(final_export_dir, file_export)
     if os.path.isfile(exported_file):
         success('{} exported to {}'.format(file_export, final_export_dir))
