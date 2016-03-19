@@ -101,14 +101,10 @@ def select_toolchains(toolchains : List[Toolchain]) -> List[Toolchain]:
     for toolchain in toolchains:
         print(info('{}) {}'.format(toolchain.serial_number, toolchain.name)))
 
-    selected_toolchains = []
     toolchain_numbers = input('Enter numbers separated by spaces: ')
-    toolchains_to_select = [int(tc) for tc in toolchain_numbers.split()]
-    for toolchain in toolchains:
-        if toolchain.serial_number in toolchains_to_select:
-            selected_toolchains.append(toolchain)
+    chosen_numbers = [int(num) for num in toolchain_numbers.split()]
+    return filter(lambda x: x.serial_number in chosen_numbers, toolchains)
 
-    return selected_toolchains
 
 
 # Get a set of variables which describe the kernel
