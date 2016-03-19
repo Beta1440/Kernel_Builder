@@ -142,9 +142,7 @@ def make_defconfig(defconfig : str) -> None:
 def clean_build_enviornment() -> None:
     """Remove old kernel files."""
     print(colored('cleaning the build enviornment', INFORMATION_COLOR))
-    os.system('make clean')
-    if os.path.isfile(Z_IMAGE):
-        os.remove(Z_IMAGE)
+    os.system('make archclean')
 
 def make_kernel(kernel_info, toolchain) -> None:
     """Compile the kernel.
