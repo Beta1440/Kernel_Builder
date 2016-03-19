@@ -40,7 +40,6 @@ RESOURSES_DIR = os.path.join(KERNEL_ROOT_DIR, 'build', 'resources')
 DEF_EXPORT_DIR = os.path.join(KERNEL_ROOT_DIR, '..', 'output')
 
 TOOLCHAIN_DIR = os.path.join(KERNEL_ROOT_DIR, '..', 'toolchains')
-DEFCONFIG = 'sublime_defconfig'
 
 ARCH = 'arm64'
 
@@ -122,12 +121,11 @@ def get_kernel_info(toolchain):
                    'id' : kernel_id,
                    'zip_id' : kernel_zip_id,
                    'boot_img_id' : kernel_boot_img_id,
-                   'build_log' : kernel_build_log,
-                   'defconfig' : defconfig}
+                   'build_log' : kernel_build_log}
     return kernel_info
 
 
-def make_defconfig(defconfig : str) -> None:
+def make_defconfig(defconfig: str='defconfig') -> None:
     """Create a default configuration file."""
     print(colored('making:', INFORMATION_COLOR),
           colored(defconfig, HIGHLIGHT_COLOR))
@@ -283,10 +281,10 @@ def main():
     for toolchain in toolchains:
         try:
             os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
-            kernel_info = get_kernel_info(DEFCONFIG, toolchain)
+            kernel_info = get_kernel_info(toolchain)
 
             if regenerate_defconfig:
-                make_defconfig(kernel_info['defconfig'])
+                make_defconfig()
                 regenerate_defconfig = False
 
             start_time = get_current_time()
