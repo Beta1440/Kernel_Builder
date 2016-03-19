@@ -35,7 +35,10 @@ class Toolchain:
 
     def get_binaries(self) -> Iterable:
         binaries_dir = path.join(self.root, 'bin')
-        return scandir(binaries_dir)
+        if path.isdir(binaries_dir):
+            return scandir(binaries_dir)
+        else:
+            return None
 
     def get_compiler_prefix(self) -> str:
 
@@ -43,7 +46,10 @@ class Toolchain:
             name = binary.name
             return name.startswith(prefix) and name.endswith('gcc')
 
-        for entry in self.get_binaries():
+        binaries = self.get_binaries()
+
+        if binaries:
+            for entry in binaries:
                 prefix = Toolchain.binary_file_prefixes[self.arch]
                 if is_gcc_binary(entry, prefix):
                     compiler_prefix = entry.path[:-3]
