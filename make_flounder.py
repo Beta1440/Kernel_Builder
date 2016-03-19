@@ -57,11 +57,8 @@ SUBLIME_N9_EXPORT_DIR = os.getenv('SUBLIME_N9_EXPORT_DIR')
 # Directory for build logs
 BUILD_LOG_DIR = os.path.join(DEF_EXPORT_DIR, 'build_logs')
 
-# The kernel image file
-Z_IMAGE = 'Image.gz-dtb'
-
 # The absolute path to the kernel image file
-Z_IMAGE = os.path.join(KERNEL_ROOT_DIR, 'arch', ARCH, 'boot', Z_IMAGE)
+KBUILD_IMAGE = os.path.join(KERNEL_ROOT_DIR, 'arch', ARCH, 'boot', 'Image.gz-dtb')
 
 RAMDISK_IMG = 'ramdisk.img'
 
@@ -168,41 +165,44 @@ def make_kernel(kernel_info, toolchain) -> None:
     # redirect the output to the build log file
     if not os.path.isdir(BUILD_LOG_DIR):
         os.mkdir(BUILD_LOG_DIR)
-    run('make -j{} > {} 2>&1'.format(THREADS, kernel_info['build_log']),
-        shell=True)
-
-    if os.path.isfile(Z_IMAGE):
+    try:
+        check_call('make -j{} > {} 2>&1'.format(THREADS, kernel_info['build_log']),
+                   shell=True)
         print(success(kernel_info['version'] + ' compiled'))
-    else:
+
+    except:
         print(alert('{} failed to compile'.format(kernel_info['version'])))
+
+    finally:
         print(info('the build log is located at ' + kernel_info['build_log']))
 
 
-def make_boot_img(name : str, z_image : str, ramdisk : str) -> None:
+def make_boot_img(name : str, kbuild_image : str, ramdisk : str) -> None:
     """Create a boot.img file that can be install via fastboot
 
     Keyword arguments:
     name -- the name of the output file
-    z_image -- the compressed kernel image to include in the boot.img file
+    kbuild_image -- the compressed kernel image to include in the boot.img file
     ramdisk -- the ramdisk image to include in the boot.img file
     """
     previous_directory = os.getcwd()
     os.chdir(RESOURSES_DIR)
-    run(['mkbootimg', '--output', name, '--kernel', z_image,
+    run(['mkbootimg', '--output', name, '--kernel', kbuild_image,
          '--ramdisk', ramdisk], shell=True)
     os.chdir(previous_directory)
 
 
-def zip_ota_package(name: str) -> str:
+def zip_ota_package(name: str, kbuild_image: str) -> str:
     """Create a zip package that can be installed via recovery
 
     Return the path to the zip file created
     Keyword arguments:
     name -- the name of the zip file to create
+    kbuild_image -- the path to the compressed kernel image
     """
     try:
         previous_directory = os.getcwd()
-        check_call('cp {} {}'.format(Z_IMAGE, RESOURSES_DIR + '/boot'), shell=True)
+        check_call('cp {} {}'.format(kbuild_image, RESOURSES_DIR + '/boot'), shell=True)
         os.chdir(RESOURSES_DIR)
         check_call('zip {0} META-INF {1} config {1} boot {1}'.format(name, '-r'),
                    shell=True)
@@ -287,7 +287,7 @@ def main():
                 os.mkdir(DEF_EXPORT_DIR)
 
             make_kernel(kernel_info, toolchain)
-            zip_ota_package(kernel_info['zip_id'])
+            zip_ota_package(kernel_info['zip_id'], KBUILD_IMAGE)
             export_file(kernel_info['zip_id'], kernel_info)
 
         except KeyboardInterrupt:
