@@ -50,15 +50,13 @@ DEF_EXPORT_DIR = os.path.join(KERNEL_ROOT_DIR, '..', 'output')
 
 TOOLCHAIN_DIR = os.path.join(KERNEL_ROOT_DIR, '..', 'toolchains')
 
-ARCH = 'arm64'
-
 SUBLIME_N9_EXPORT_DIR = os.getenv('SUBLIME_N9_EXPORT_DIR')
 
 # Directory for build logs
 BUILD_LOG_DIR = os.path.join(DEF_EXPORT_DIR, 'build_logs')
 
 # The absolute path to the kernel image file
-KBUILD_IMAGE = os.path.join(KERNEL_ROOT_DIR, 'arch', ARCH, 'boot', 'Image.gz-dtb')
+KBUILD_IMAGE = os.path.join(KERNEL_ROOT_DIR, 'arch', 'arm64', 'boot', 'Image.gz-dtb')
 
 RAMDISK_IMG = 'ramdisk.img'
 
@@ -79,7 +77,7 @@ def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
     toolchains = []
     serial_number = 1
     for entry in entries:
-        toolchain = Toolchain(entry.path, serial_number, ARCH)
+        toolchain = Toolchain(entry.path, serial_number)
         if(toolchain.compiler_prefix):
             toolchains.append(toolchain)
             print(success('Toolchain located: '), highlight(toolchain.name))

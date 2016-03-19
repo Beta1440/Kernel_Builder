@@ -22,7 +22,7 @@ class Toolchain:
     'Store relevant info of a toolchain'
     binary_file_prefixes = {'arm64':'aarch64', 'arm':'arm-eabi'}
 
-    def __init__(self, root : str, serial_number : int, arch : str) -> None:
+    def __init__(self, root: str, serial_number: int, arch: str='arm64') -> None:
         self.root = root
         self.name = path.basename(root)
         self.serial_number = serial_number
