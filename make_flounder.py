@@ -58,13 +58,8 @@ Z_IMAGE = os.path.join(KERNEL_ROOT_DIR, 'arch', ARCH, 'boot', Z_IMAGE)
 RAMDISK_IMG = 'ramdisk.img'
 
 # Set the kernel version by reading the default configuration file
-def get_kernel_version(kernel_defconfig):
-    with open(kernel_defconfig, 'r') as defconfig:
-        local_version = 'CONFIG_LOCALVERSION='
-        for line in defconfig:
-            if line.startswith(local_version):
-                # return the part of the statment after the CONFIG_LOCALVERSION
-                return line[len(local_version) + 2 : -2]
+def get_kernel_version():
+    return getoutput('make kernelrelease')[8:]
 
 
 def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
@@ -116,9 +111,8 @@ def select_toolchains(toolchains : List[Toolchain]) -> List[Toolchain]:
 
 
 # Get a set of variables which describe the kernel
-def get_kernel_info(defconfig, toolchain):
-    defconfig_path = os.path.join(KERNEL_ROOT_DIR,'arch', ARCH, 'configs', defconfig)
-    kernel_version = get_kernel_version(defconfig_path)
+def get_kernel_info(toolchain):
+    kernel_version = get_kernel_version()
     kernel_id = '{}-{}'.format(kernel_version, toolchain.name)
     kernel_zip_id = kernel_id + '.zip'
     kernel_boot_img_id = kernel_id + '.img'
