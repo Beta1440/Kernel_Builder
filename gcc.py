@@ -15,8 +15,8 @@
 
 from os import scandir, path
 from subprocess import getoutput
-
-from typing import Iterable
+from messages import alert, highlight, success, info
+from typing import Iterable, List
 
 class Toolchain:
     'Store relevant info of a toolchain'
@@ -54,3 +54,44 @@ class Toolchain:
                 if is_gcc_binary(entry, prefix):
                     compiler_prefix = entry.path[:-3]
                     return compiler_prefix
+
+
+def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
+    """Get all the valid the toolchains in a directory.
+
+    A toolchain is valid if it has a gcc executable in its "bin/" directory
+
+    Keyword arguments:
+    toolchain_dir -- the directory to look for toolchains
+    """
+    entries = scandir(toolchain_dir)
+    toolchains = []
+    serial_number = 1
+    for entry in entries:
+        toolchain = Toolchain(entry.path, serial_number)
+        if(toolchain.compiler_prefix):
+            toolchains.append(toolchain)
+            print(success('Toolchain located: '), highlight(toolchain.name))
+            serial_number += 1
+
+    return toolchains
+
+
+def select_toolchains(toolchains : List[Toolchain]) -> List[Toolchain]:
+    """Select which toolchains to use in compiling the kernel.
+
+    The kernel will be compiled once with each toolchain selected.
+    If only one toolchain is available, then it will be automatically selected.
+
+    Keyword arguments:
+    toolchains -- the list of toolchains to select from
+    """
+    if len(toolchains) <= 1:
+        return toolchains
+
+    for toolchain in toolchains:
+        print(info('{}) {}'.format(toolchain.serial_number, toolchain.name)))
+
+    toolchain_numbers = input('Enter numbers separated by spaces: ')
+    chosen_numbers = [int(num) for num in toolchain_numbers.split()]
+    return filter(lambda x: x.serial_number in chosen_numbers, toolchains)
