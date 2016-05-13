@@ -18,26 +18,11 @@ import os
 import re
 from subprocess import call, check_call, getoutput, run
 
-from termcolor import colored
 from typing import Dict, List
 
 from gcc import Toolchain
 
-def alert(message):
-    """Indicate when a process has failed"""
-    return colored(message, 'red')
-
-def highlight(message):
-    """Highlight useful information"""
-    return colored(message, 'yellow')
-
-def success(message):
-    """Notify user when a process is successful"""
-    return colored(message, 'green')
-
-def info(message):
-    """Print general information"""
-    return colored(message, 'blue')
+from messages import alert, highlight, success, info
 
 # The root of the kernel
 KERNEL_ROOT_DIR = os.getcwd()
