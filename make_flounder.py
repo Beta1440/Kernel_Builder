@@ -21,27 +21,9 @@ from subprocess import call, check_call, getoutput, run
 from typing import Dict, List
 
 from gcc import Toolchain, get_toolchains, select_toolchains
-
 from messages import alert, highlight, success, info
-
-# The root of the kernel
-KERNEL_ROOT_DIR = os.getcwd()
-
-# This dirctory should contain the necessary tools for creating the kernel
-RESOURSES_DIR = os.path.join(KERNEL_ROOT_DIR, 'build', 'resources')
-
-# The directory to export the package zip
-DEF_EXPORT_DIR = os.path.join(KERNEL_ROOT_DIR, '..', 'output')
-
-TOOLCHAIN_DIR = os.path.join(KERNEL_ROOT_DIR, '..', 'toolchains')
-
-SUBLIME_N9_EXPORT_DIR = os.getenv('SUBLIME_N9_EXPORT_DIR')
-
-# Directory for build logs
-BUILD_LOG_DIR = os.path.join(DEF_EXPORT_DIR, 'build_logs')
-
-# The absolute path to the kernel image file
-KBUILD_IMAGE = os.path.join(KERNEL_ROOT_DIR, 'arch', 'arm64', 'boot', 'Image.gz-dtb')
+from directories import (KERNEL_ROOT_DIR, DEF_EXPORT_DIR, TOOLCHAIN_DIR,
+    SUBLIME_N9_EXPORT_DIR, BUILD_LOG_DIR, KBUILD_IMAGE)
 
 RAMDISK_IMG = 'ramdisk.img'
 
