@@ -16,6 +16,7 @@
 
 import os
 import re
+import sys
 from subprocess import call, check_call, getoutput, run
 
 from typing import Dict, List
@@ -25,6 +26,12 @@ from messages import alert, highlight, success, info
 from directories import (KERNEL_ROOT_DIR, DEF_EXPORT_DIR, TOOLCHAIN_DIR,
     SUBLIME_N9_EXPORT_DIR, BUILD_LOG_DIR, KBUILD_IMAGE, RESOURSES_DIR)
 from kernel import Kernel, make
+
+version = '{0}.{1}'.format(*sys.version_info[:2])
+
+if version < '3.5':
+    print(alert('Python 3.5+ is required'))
+    exit()
 
 RAMDISK_IMG = 'ramdisk.img'
 
@@ -134,7 +141,7 @@ def main():
     for toolchain in toolchains:
         try:
             toolchain.set_as_active()
-            
+
             if regenerate_defconfig:
                 make_defconfig()
                 regenerate_defconfig = False
