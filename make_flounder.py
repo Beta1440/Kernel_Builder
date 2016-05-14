@@ -15,17 +15,14 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import re
 import sys
-from subprocess import call, check_call, getoutput, run
-from typing import Dict, List
+from subprocess import check_call
 
 import arrow
 
-from directories import (BUILD_LOG_DIR, DEF_EXPORT_DIR, KBUILD_IMAGE,
-                         KERNEL_ROOT_DIR, RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR,
-                         TOOLCHAIN_DIR)
-from gcc import Toolchain, get_toolchains, select_toolchains
+from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
+                         RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR)
+from gcc import get_toolchains, select_toolchains
 from kernel import Kernel, make
 from messages import alert, highlight, info, success
 
@@ -51,7 +48,7 @@ def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img') -> N
     """
     previous_directory = os.getcwd()
     os.chdir(RESOURSES_DIR)
-    run(['mkbootimg', '--output', name, '--kernel', kbuild_image,
+    check_call(['mkbootimg', '--output', name, '--kernel', kbuild_image,
          '--ramdisk', ramdisk], shell=True)
     os.chdir(previous_directory)
 
@@ -101,7 +98,7 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
     if not os.path.isdir(final_export_dir):
         os.mkdir(final_export_dir)
 
-    run('mv {} {}'.format(kernel_file, final_export_dir), shell=True)
+    check_call('mv {} {}'.format(kernel_file, final_export_dir), shell=True)
     exported_file = os.path.join(final_export_dir, file_export)
     if os.path.isfile(exported_file):
         print(success('{} exported to {}'.format(file_export,
