@@ -16,7 +16,7 @@
 
 import os
 import sys
-from subprocess import check_call
+from subprocess import CalledProcessError, check_call
 
 import arrow
 
@@ -72,7 +72,7 @@ def zip_ota_package(name: str, kbuild_image: str) -> str:
                    shell=True)
         print(success('ota package successfully created'))
         return os.path.abspath(name)
-    except:
+    except CalledProcessError:
         print(alert('ota package could not be created'))
 
     finally:
