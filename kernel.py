@@ -23,16 +23,19 @@ from messages import alert, highlight, info, success
 
 
 def make(targets: str, jobs: int=cpu_count()) -> None:
-    """Execute make in the shell"""
+    """Execute make in the shell."""
     check_call('make -j{} {}'.format(jobs, targets), shell=True)
+
 
 def clean() -> None:
     """Remove old kernel files."""
     print(info('cleaning the build enviornment'))
     make('archclean')
 
+
 class Kernel:
-    """store info for a kerrnel"""
+    """store info for a kernel."""
+
     def __init__(self, root: str, arch: str='arm64') -> None:
         self.version = getoutput('make kernelrelease')[8:]
         self.version_numbers = self.version[-5:]
@@ -44,7 +47,7 @@ class Kernel:
 
     def build(self, toolchain: Toolchain):
         full_version = self.get_full_version(toolchain)
-        build_log = join(BUILD_LOG_DIR,'{}-log.txt'.format(full_version))
+        build_log = join(BUILD_LOG_DIR, '{}-log.txt'.format(full_version))
         clean()
         if not isfile('.config'):
             # Make sure the last defconfig is used
@@ -52,7 +55,7 @@ class Kernel:
             make('oldconfig')
 
         compile_info = 'compiling {} with {}'.format(self.version,
-            toolchain.name)
+                                                     toolchain.name)
         print(info(compile_info))
         # redirect the output to the build log file
         if not isdir(BUILD_LOG_DIR):

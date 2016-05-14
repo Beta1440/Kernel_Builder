@@ -21,8 +21,9 @@ from messages import alert, highlight, info, success
 
 
 class Toolchain:
-    'Store relevant info of a toolchain'
-    binary_file_prefixes = {'arm64':'aarch64', 'arm':'arm-eabi'}
+    """Store relevant info of a toolchain."""
+
+    binary_file_prefixes = {'arm64': 'aarch64', 'arm': 'arm-eabi'}
 
     def __init__(self, root: str, serial_number: int, arch: str='arm64') -> None:
         self.root = root
@@ -43,12 +44,12 @@ class Toolchain:
             return None
 
     def set_as_active(self):
-        """Sets this self as the active toolchain to compile with"""
+        """Set this self as the active toolchain to compile with."""
         putenv('CROSS_COMPILE', self.compiler_prefix)
 
     def get_compiler_prefix(self) -> str:
 
-        def is_gcc_binary(binary, prefix : str) -> bool:
+        def is_gcc_binary(binary, prefix: str) -> bool:
             name = binary.name
             return name.startswith(prefix) and name.endswith('gcc')
 
@@ -62,7 +63,7 @@ class Toolchain:
                     return compiler_prefix
 
 
-def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
+def get_toolchains(toolchain_dir: str) -> List[Toolchain]:
     """Get all the valid the toolchains in a directory.
 
     A toolchain is valid if it has a gcc executable in its "bin/" directory
@@ -83,7 +84,7 @@ def get_toolchains(toolchain_dir : str) -> List[Toolchain]:
     return toolchains
 
 
-def select_toolchains(toolchains : List[Toolchain]) -> List[Toolchain]:
+def select_toolchains(toolchains: List[Toolchain]) -> List[Toolchain]:
     """Select which toolchains to use in compiling the kernel.
 
     The kernel will be compiled once with each toolchain selected.

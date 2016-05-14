@@ -17,17 +17,20 @@ from termcolor import colored
 
 
 def alert(message):
-    """Indicate when a process has failed"""
+    """Indicate when a process has failed."""
     return colored(message, 'red')
 
+
 def highlight(message):
-    """Highlight useful information"""
+    """Highlight useful information."""
     return colored(message, 'yellow')
 
+
 def success(message):
-    """Notify user when a process is successful"""
+    """Notify user when a process is successful."""
     return colored(message, 'green')
 
+
 def info(message):
-    """Print general information"""
+    """Print general information."""
     return colored(message, 'blue')

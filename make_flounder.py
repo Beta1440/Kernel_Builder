@@ -32,14 +32,15 @@ if VERSION < '3.5':
     print(alert('Python 3.5+ is required'))
     exit()
 
+
 def make_defconfig(defconfig: str='defconfig') -> None:
     """Create a default configuration file."""
     print(info('making:'), highlight(defconfig))
     make(defconfig)
 
 
-def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img') -> None:
-    """Create a boot.img file that can be install via fastboot
+def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img'):
+    """Create a boot.img file that can be install via fastboot.
 
     Keyword arguments:
     name -- the name of the output file
@@ -48,13 +49,14 @@ def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img') -> N
     """
     previous_directory = os.getcwd()
     os.chdir(RESOURSES_DIR)
-    args = '--output {} --kernel {} --ramdisk '.format(name, kbuild_image, ramdisk)
+    args = '--output {} --kernel {} --ramdisk '.format(name, kbuild_image,
+                                                       ramdisk)
     check_call('mkbootimg ' + args, shell=True)
     os.chdir(previous_directory)
 
 
 def zip_ota_package(name: str, kbuild_image: str) -> str:
-    """Create a zip package that can be installed via recovery
+    """Create a zip package that can be installed via recovery.
 
     Return the path to the zip file created
     Keyword arguments:
@@ -63,9 +65,10 @@ def zip_ota_package(name: str, kbuild_image: str) -> str:
     """
     try:
         previous_directory = os.getcwd()
-        check_call('cp {} {}'.format(kbuild_image, RESOURSES_DIR + '/boot'), shell=True)
+        check_call('cp {} {}'.format(kbuild_image, RESOURSES_DIR + '/boot'),
+                   shell=True)
         os.chdir(RESOURSES_DIR)
-        check_call('zip {0} META-INF {1} config {1} boot {1}'.format(name, '-r'),
+        check_call('zip {0} META-INF -r config -r boot -r'.format(name),
                    shell=True)
         print(success('ota package successfully created'))
         return os.path.abspath(name)
@@ -84,6 +87,7 @@ def get_export_dir():
         return SUBLIME_N9_EXPORT_DIR
     else:
         return DEF_EXPORT_DIR
+
 
 def export_file(file_export: str, kernel_version_number: int) -> None:
     """Send a file to the export directory.
@@ -149,6 +153,7 @@ def main():
         finally:
             end_time = arrow.utcnow().timestamp
             print_time_delta(start_time, end_time)
+
 
 if __name__ == '__main__':
     main()
