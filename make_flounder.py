@@ -91,7 +91,7 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
 
     Keyword arguments:
     file_export -- the file to export
-    kernel_info -- a dictionary containing the kernel's version
+    kernel_version_number -- the version number of the kernel
     """
     kernel_file = os.path.join(RESOURSES_DIR, file_export)
     base_export_dir = get_export_dir()
