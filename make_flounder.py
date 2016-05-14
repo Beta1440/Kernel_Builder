@@ -33,16 +33,13 @@ if version < '3.5':
     print(alert('Python 3.5+ is required'))
     exit()
 
-RAMDISK_IMG = 'ramdisk.img'
-
-
 def make_defconfig(defconfig: str='defconfig') -> None:
     """Create a default configuration file."""
     print(info('making:'), highlight(defconfig))
     make(defconfig)
 
 
-def make_boot_img(name : str, kbuild_image : str, ramdisk : str) -> None:
+def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img') -> None:
     """Create a boot.img file that can be install via fastboot
 
     Keyword arguments:
