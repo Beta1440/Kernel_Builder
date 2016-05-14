@@ -13,10 +13,12 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import scandir, path, putenv
+from os import path, putenv, scandir
 from subprocess import getoutput
-from messages import alert, highlight, success, info
 from typing import Iterable, List
+
+from messages import alert, highlight, info, success
+
 
 class Toolchain:
     'Store relevant info of a toolchain'

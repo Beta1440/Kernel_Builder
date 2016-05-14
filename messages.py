@@ -15,6 +15,7 @@
 
 from termcolor import colored
 
+
 def alert(message):
     """Indicate when a process has failed"""
     return colored(message, 'red')

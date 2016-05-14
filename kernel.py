@@ -14,13 +14,13 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os import cpu_count, mkdir
-from os.path import isfile, isdir, join
+from os.path import isdir, isfile, join
 from subprocess import check_call, getoutput
 
-from messages import alert, highlight, success, info
-
-from directories import KERNEL_ROOT_DIR, BUILD_LOG_DIR
+from directories import BUILD_LOG_DIR, KERNEL_ROOT_DIR
 from gcc import Toolchain
+from messages import alert, highlight, info, success
+
 
 def make(targets: str, jobs: int=cpu_count()) -> None:
     """Execute make in the shell"""
