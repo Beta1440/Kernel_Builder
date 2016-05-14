@@ -13,7 +13,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import scandir, path
+from os import scandir, path, putenv
 from subprocess import getoutput
 from messages import alert, highlight, success, info
 from typing import Iterable, List
@@ -39,6 +39,10 @@ class Toolchain:
             return scandir(binaries_dir)
         else:
             return None
+
+    def set_as_active(self):
+        """Sets this self as the active toolchain to compile with"""
+        putenv('CROSS_COMPILE', self.compiler_prefix)
 
     def get_compiler_prefix(self) -> str:
 

@@ -133,8 +133,8 @@ def main():
     kernel = Kernel(KERNEL_ROOT_DIR)
     for toolchain in toolchains:
         try:
-            os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
-
+            toolchain.set_as_active()
+            
             if regenerate_defconfig:
                 make_defconfig()
                 regenerate_defconfig = False
