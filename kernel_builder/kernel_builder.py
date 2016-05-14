@@ -99,13 +99,12 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
     final_export_dir = os.path.join(base_export_dir, kernel_version_number, '')
     if not os.path.isdir(final_export_dir):
         os.mkdir(final_export_dir)
-
-    check_call('mv {} {}'.format(kernel_file, final_export_dir), shell=True)
-    exported_file = os.path.join(final_export_dir, file_export)
-    if os.path.isfile(exported_file):
+    try:
+        check_call('mv {} {}'.format(kernel_file, final_export_dir), shell=True)
+        exported_file = os.path.join(final_export_dir, file_export)
         print(success('{} exported to {}'.format(file_export,
                                                  final_export_dir)))
-    else:
+    except CalledProcessError:
         print(alert('{} could not be exported to {}'.format(file_export,
                                                             final_export_dir)))
 
