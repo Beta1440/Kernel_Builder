@@ -26,9 +26,9 @@ from gcc import get_toolchains, select_toolchains
 from kernel import Kernel, make
 from messages import alert, highlight, info, success
 
-version = '{0}.{1}'.format(*sys.version_info[:2])
+VERSION = '{0}.{1}'.format(*sys.version_info[:2])
 
-if version < '3.5':
+if VERSION < '3.5':
     print(alert('Python 3.5+ is required'))
     exit()
 
