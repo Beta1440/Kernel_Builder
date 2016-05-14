@@ -37,15 +37,31 @@ class Kernel:
     """store info for a kernel."""
 
     def __init__(self, root: str, arch: str='arm64') -> None:
+        """Initialze a new Kernel.
+
+        Keyword arguments:
+        root -- the root directory of the kernel
+        arch -- the architure of the kernel (default 'arm64')
+        """
         self.version = getoutput('make kernelrelease')[8:]
         self.version_numbers = self.version[-5:]
         self.arch = arch
         self.root = root
 
-    def get_full_version(self, toolchain: Toolchain):
+    def get_full_version(self, toolchain: Toolchain) -> str:
+        """Get the kernel version with the toolchain name appended.
+
+        Keyword arguments:
+        toolchain -- the toolchain to use
+        """
         return '{}-{}'.format(self.version, toolchain.name)
 
     def build(self, toolchain: Toolchain):
+        """Build the kernel.
+
+        Keyword arguments:
+        toolchain -- the toolchain to use min building the kernel
+        """
         full_version = self.get_full_version(toolchain)
         build_log = join(BUILD_LOG_DIR, '{}-log.txt'.format(full_version))
         clean()
