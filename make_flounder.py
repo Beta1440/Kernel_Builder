@@ -26,6 +26,7 @@ from messages import alert, highlight, success, info
 from directories import (KERNEL_ROOT_DIR, DEF_EXPORT_DIR, TOOLCHAIN_DIR,
     SUBLIME_N9_EXPORT_DIR, BUILD_LOG_DIR, KBUILD_IMAGE, RESOURSES_DIR)
 from kernel import Kernel, make
+import arrow
 
 version = '{0}.{1}'.format(*sys.version_info[:2])
 
@@ -109,24 +110,16 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
                                                             final_export_dir)))
 
 
-# Get the current time
-def get_current_time():
-    return int(getoutput('echo $(date +"%s")'))
-
-
-# get the difference for the current time and the time set earlier
-def get_time_since(start_time):
-    date_end = get_current_time()
-    return date_end - start_time
-
-
-def print_time(time) -> None:
+def print_time_delta(start_time: int, end_time: int) -> None:
     """Print the duration of the given time.
 
     Keyword arguments:
-    time -- the time to print out"""
-    minutes = highlight(str(time // 60))
-    seconds = highlight(str(time % 60))
+    start_time -- the timestamp of the start time
+    end_time -- the timestamp of the end time
+    """
+    time_delta = end_time - start_time
+    minutes = highlight(time_delta // 60)
+    seconds = highlight(time_delta % 60)
     print('Time passed: {} minute(s) and {} seconds'.format(minutes, seconds))
 
 
@@ -143,7 +136,7 @@ def main():
                 make_defconfig()
                 regenerate_defconfig = False
 
-            start_time = get_current_time()
+            start_time = arrow.utcnow().timestamp
             if not os.path.isdir(DEF_EXPORT_DIR):
                 os.mkdir(DEF_EXPORT_DIR)
 
@@ -156,7 +149,8 @@ def main():
             exit()
 
         finally:
-            print_time(get_time_since(start_time))
+            end_time = arrow.utcnow().timestamp
+            print_time_delta(start_time, end_time)
 
 if __name__ == '__main__':
     main()
