@@ -49,8 +49,8 @@ def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img'):
     """
     previous_directory = os.getcwd()
     os.chdir(RESOURSES_DIR)
-    args = '--output {} --kernel {} --ramdisk '.format(name, kbuild_image,
-                                                       ramdisk)
+    args = '--output {} --kernel {} --ramdisk {}'.format(name, kbuild_image,
+                                                         ramdisk)
     check_call('mkbootimg ' + args, shell=True)
     os.chdir(previous_directory)
 
