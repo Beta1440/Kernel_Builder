@@ -23,77 +23,16 @@ from typing import Dict, List
 from gcc import Toolchain, get_toolchains, select_toolchains
 from messages import alert, highlight, success, info
 from directories import (KERNEL_ROOT_DIR, DEF_EXPORT_DIR, TOOLCHAIN_DIR,
-    SUBLIME_N9_EXPORT_DIR, BUILD_LOG_DIR, KBUILD_IMAGE)
+    SUBLIME_N9_EXPORT_DIR, BUILD_LOG_DIR, KBUILD_IMAGE, RESOURSES_DIR)
+from kernel import Kernel, make
 
 RAMDISK_IMG = 'ramdisk.img'
-
-# Set the kernel version by reading the default configuration file
-def get_kernel_version():
-    return getoutput('make kernelrelease')[8:]
-
-
-# Get a set of variables which describe the kernel
-def get_kernel_info(toolchain):
-    kernel_version = get_kernel_version()
-    kernel_id = '{}-{}'.format(kernel_version, toolchain.name)
-    kernel_zip_id = kernel_id + '.zip'
-    kernel_boot_img_id = kernel_id + '.img'
-    kernel_build_log = os.path.join(BUILD_LOG_DIR,
-                                    '{}-log.txt'.format(kernel_id))
-    kernel_info = {'version' : kernel_version,
-                   'id' : kernel_id,
-                   'zip_id' : kernel_zip_id,
-                   'boot_img_id' : kernel_boot_img_id,
-                   'build_log' : kernel_build_log}
-    return kernel_info
 
 
 def make_defconfig(defconfig: str='defconfig') -> None:
     """Create a default configuration file."""
     print(info('making:'), highlight(defconfig))
-    call('make ' + defconfig, shell=True)
-
-def clean_build_enviornment() -> None:
-    """Remove old kernel files."""
-    print(info('cleaning the build enviornment'))
-    run('make archclean', shell = True)
-
-def make_kernel(kernel_info, toolchain) -> None:
-    """Compile the kernel.
-
-    Compile the kernel with a given toolchain. The amount of jobs to run "make"
-    is equal to the amount of CPU's available on the host computer. The output
-    of the "make" command will be redirected to a build log file
-
-    Keyword arguments:
-    kernel_info -- Dictionary containing information for compiling the kernel
-    toolchain -- the toolchain to compile the kernel with
-
-    """
-    THREADS = os.cpu_count()
-    clean_build_enviornment()
-    if not os.path.isfile('.config'):
-        # Make sure the last defconfig is used
-        print(info('Recreating last defconfig'))
-        run('make oldconfig', shell=True)
-
-    compile_info = 'compiling {} with {}'.format(
-        kernel_info['version'],
-        toolchain.name)
-    print(info(compile_info))
-    # redirect the output to the build log file
-    if not os.path.isdir(BUILD_LOG_DIR):
-        os.mkdir(BUILD_LOG_DIR)
-    try:
-        check_call('make -j{} > {} 2>&1'.format(THREADS, kernel_info['build_log']),
-                   shell=True)
-        print(success(kernel_info['version'] + ' compiled'))
-
-    except:
-        print(alert('{} failed to compile'.format(kernel_info['version'])))
-
-    finally:
-        print(info('the build log is located at ' + kernel_info['build_log']))
+    make(defconfig)
 
 
 def make_boot_img(name : str, kbuild_image : str, ramdisk : str) -> None:
@@ -143,7 +82,7 @@ def get_export_dir():
     else:
         return DEF_EXPORT_DIR
 
-def export_file(file_export : str, kernel_info : Dict[str, str]) -> None:
+def export_file(file_export: str, kernel_version_number: int) -> None:
     """Send a file to the export directory.
 
     Keyword arguments:
@@ -152,8 +91,7 @@ def export_file(file_export : str, kernel_info : Dict[str, str]) -> None:
     """
     kernel_file = os.path.join(RESOURSES_DIR, file_export)
     base_export_dir = get_export_dir()
-    final_export_dir = os.path.join(base_export_dir,
-                                    kernel_info['version'][-5:], '')
+    final_export_dir = os.path.join(base_export_dir, kernel_version_number, '')
     if not os.path.isdir(final_export_dir):
         os.mkdir(final_export_dir)
 
@@ -192,10 +130,10 @@ def main():
     toolchains = get_toolchains(TOOLCHAIN_DIR)
     toolchains = select_toolchains(toolchains)
     regenerate_defconfig = True
+    kernel = Kernel(KERNEL_ROOT_DIR)
     for toolchain in toolchains:
         try:
             os.putenv('CROSS_COMPILE', toolchain.compiler_prefix)
-            kernel_info = get_kernel_info(toolchain)
 
             if regenerate_defconfig:
                 make_defconfig()
@@ -205,12 +143,12 @@ def main():
             if not os.path.isdir(DEF_EXPORT_DIR):
                 os.mkdir(DEF_EXPORT_DIR)
 
-            make_kernel(kernel_info, toolchain)
-            zip_ota_package(kernel_info['zip_id'], KBUILD_IMAGE)
-            export_file(kernel_info['zip_id'], kernel_info)
+            kernel.build(toolchain)
+            full_version = kernel.get_full_version(toolchain)
+            zip_ota_package(full_version + '.zip', KBUILD_IMAGE)
+            export_file(full_version + '.zip', kernel.version_numbers)
 
         except KeyboardInterrupt:
-            print_time(get_time_since(start_time))
             exit()
 
         finally:
