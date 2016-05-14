@@ -79,10 +79,8 @@ def zip_ota_package(name: str, kbuild_image: str) -> str:
         os.chdir(previous_directory)
 
 
-# Determine the directory to export the kernel file
-# If SUBLIME_N9_EXPORT_DIR is not specified, then the output folder
-# will be set as the export directory
-def get_export_dir():
+def get_export_dir() -> str:
+    """Return the directory to export the kernel."""
     if SUBLIME_N9_EXPORT_DIR:
         return SUBLIME_N9_EXPORT_DIR
     else:
@@ -126,6 +124,7 @@ def print_time_delta(start_time: int, end_time: int) -> None:
 
 
 def main():
+    """Build the kernel with the selected toolchains."""
     toolchains = get_toolchains(TOOLCHAIN_DIR)
     toolchains = select_toolchains(toolchains)
     regenerate_defconfig = True
