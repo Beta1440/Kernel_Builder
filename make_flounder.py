@@ -18,15 +18,16 @@ import os
 import re
 import sys
 from subprocess import call, check_call, getoutput, run
-
 from typing import Dict, List
 
-from gcc import Toolchain, get_toolchains, select_toolchains
-from messages import alert, highlight, success, info
-from directories import (KERNEL_ROOT_DIR, DEF_EXPORT_DIR, TOOLCHAIN_DIR,
-    SUBLIME_N9_EXPORT_DIR, BUILD_LOG_DIR, KBUILD_IMAGE, RESOURSES_DIR)
-from kernel import Kernel, make
 import arrow
+
+from directories import (BUILD_LOG_DIR, DEF_EXPORT_DIR, KBUILD_IMAGE,
+                         KERNEL_ROOT_DIR, RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR,
+                         TOOLCHAIN_DIR)
+from gcc import Toolchain, get_toolchains, select_toolchains
+from kernel import Kernel, make
+from messages import alert, highlight, info, success
 
 version = '{0}.{1}'.format(*sys.version_info[:2])
 
