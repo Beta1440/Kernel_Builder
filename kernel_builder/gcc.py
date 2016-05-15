@@ -86,6 +86,10 @@ def get_toolchains(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
             print(success('Toolchain located: '), highlight(toolchain.name))
             serial_number += 1
 
+    if not toolchains:
+        print('{} no {} toolchains detected in {}'.format((alert('Error:')),
+              highlight(target_arch), highlight(toolchain_dir)))
+
     return toolchains
 
 
