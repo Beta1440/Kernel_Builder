@@ -32,10 +32,6 @@ class Toolchain:
         self.serial_number = serial_number
         self.arch = arch
         self.compiler_prefix = self.get_compiler_prefix()
-        try:
-            self.version = getoutput(self.compiler_prefix + 'gcc -dumpversion')
-        except:
-            self.version = 'unknown'
 
     def get_binaries(self) -> Iterable:
         binaries_dir = path.join(self.root, 'bin')
