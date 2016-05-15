@@ -109,8 +109,8 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
                                                             final_export_dir)))
 
 
-def print_time_delta(start_time: int, end_time: int) -> None:
-    """Print the duration of the given time.
+def time_delta(start_time: int, end_time: int) -> str:
+    """Return the difference between two timestamps.
 
     Keyword arguments:
     start_time -- the timestamp of the start time
@@ -119,7 +119,7 @@ def print_time_delta(start_time: int, end_time: int) -> None:
     time_delta = end_time - start_time
     minutes = highlight(time_delta // 60)
     seconds = highlight(time_delta % 60)
-    print('Time passed: {} minute(s) and {} seconds'.format(minutes, seconds))
+    return 'Time passed: {} minute(s) and {} seconds'.format(minutes, seconds)
 
 
 def main():
@@ -150,7 +150,7 @@ def main():
 
         finally:
             end_time = arrow.utcnow().timestamp
-            print_time_delta(start_time, end_time)
+            print(time_delta(start_time, end_time))
 
 
 if __name__ == '__main__':
