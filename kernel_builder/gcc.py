@@ -13,6 +13,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 from os import path, putenv, scandir
 from subprocess import getoutput
 from typing import Iterable, List
@@ -39,7 +40,7 @@ class Toolchain:
     def get_binaries(self) -> Iterable:
         binaries_dir = path.join(self.root, 'bin')
         if path.isdir(binaries_dir):
-            return scandir(binaries_dir)
+            return os.scandir(binaries_dir)
         else:
             return None
 
@@ -63,7 +64,7 @@ class Toolchain:
                     return compiler_prefix
 
 
-def get_toolchains(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
+def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     """Get all the valid the toolchains in a directory.
 
     A toolchain is valid if it has a gcc executable in its "bin/" directory
@@ -71,7 +72,7 @@ def get_toolchains(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     Keyword arguments:
     toolchain_dir -- the directory to look for toolchains
     """
-    entries = scandir(toolchain_dir)
+    entries = os.scandir(toolchain_dir)
     toolchains = []
     serial_number = 1
 

@@ -23,7 +23,7 @@ import arrow
 
 from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
                          RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR)
-from gcc import get_toolchains, select_toolchains
+import gcc
 from kernel import Kernel, make
 from messages import alert, highlight, info, success
 
@@ -123,8 +123,8 @@ def time_delta(start_time: int, end_time: int) -> str:
 
 def main():
     """Build the kernel with the selected toolchains."""
-    toolchains = get_toolchains(TOOLCHAIN_DIR)
-    toolchains = select_toolchains(toolchains)
+    toolchains = gcc.scandir(TOOLCHAIN_DIR)
+    toolchains = gcc.select_toolchains(toolchains)
     regenerate_defconfig = True
     kernel = Kernel(KERNEL_ROOT_DIR)
     for toolchain in toolchains:
