@@ -38,7 +38,9 @@ class Toolchain:
         self.name = path.basename(root)
         self.serial_number = serial_number
         self.arch = arch
+        self.prefix = Toolchain.binary_file_prefixes[self.arch]
         self.compiler_prefix = self.find_compiler_prefix()
+
 
     def find_binaries(self) -> Iterable:
         """Return an Iterable of binaries in the toolchain's bin folder."""
@@ -54,16 +56,15 @@ class Toolchain:
 
     def find_compiler_prefix(self) -> str:
         """Return the prefix of all binaries of this."""
-        def is_gcc_binary(binary, prefix: str) -> bool:
+        def is_gcc_binary(binary) -> bool:
             name = binary.name
-            return name.startswith(prefix) and name.endswith('gcc')
+            return name.startswith(self.prefix) and name.endswith('gcc')
 
         binaries = self.find_binaries()
 
         if binaries:
             for entry in binaries:
-                prefix = Toolchain.binary_file_prefixes[self.arch]
-                if is_gcc_binary(entry, prefix):
+                if is_gcc_binary(entry):
                     compiler_prefix = entry.path[:-3]
                     return compiler_prefix
 
