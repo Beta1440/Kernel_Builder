@@ -27,6 +27,13 @@ class Toolchain:
     binary_file_prefixes = {'arm64': 'aarch64', 'arm': 'arm-eabi'}
 
     def __init__(self, root: str, serial_number: int, arch: str='arm64') -> None:
+        """Initialize a new Toolchain.
+
+        Keyword arguments:
+        root -- the root directory of the toolchain
+        serial_number -- a unique identification number of the toolchain
+        arch -- the target architecture of the Toolchain (default 'arm64')
+        """
         self.root = root
         self.name = path.basename(root)
         self.serial_number = serial_number
@@ -34,6 +41,7 @@ class Toolchain:
         self.compiler_prefix = self.find_compiler_prefix()
 
     def find_binaries(self) -> Iterable:
+        """Return an Iterable of binaries in the toolchain's bin folder."""
         binaries_dir = path.join(self.root, 'bin')
         if path.isdir(binaries_dir):
             return os.scandir(binaries_dir)
@@ -45,7 +53,7 @@ class Toolchain:
         os.putenv('CROSS_COMPILE', self.compiler_prefix)
 
     def find_compiler_prefix(self) -> str:
-
+        """Return the prefix of all binaries of this."""
         def is_gcc_binary(binary, prefix: str) -> bool:
             name = binary.name
             return name.startswith(prefix) and name.endswith('gcc')
