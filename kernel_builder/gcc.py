@@ -63,7 +63,7 @@ class Toolchain:
                     return compiler_prefix
 
 
-def get_toolchains(toolchain_dir: str) -> List[Toolchain]:
+def get_toolchains(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     """Get all the valid the toolchains in a directory.
 
     A toolchain is valid if it has a gcc executable in its "bin/" directory
@@ -74,9 +74,14 @@ def get_toolchains(toolchain_dir: str) -> List[Toolchain]:
     entries = scandir(toolchain_dir)
     toolchains = []
     serial_number = 1
+
+    if not target_arch:
+        target_arch = 'arm64'
+
     for entry in entries:
-        toolchain = Toolchain(entry.path, serial_number)
-        if(toolchain.compiler_prefix):
+        toolchain = Toolchain(entry.path, serial_number, arch=target_arch)
+
+        if (toolchain.compiler_prefix):
             toolchains.append(toolchain)
             print(success('Toolchain located: '), highlight(toolchain.name))
             serial_number += 1
