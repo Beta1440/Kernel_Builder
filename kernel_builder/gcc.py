@@ -133,6 +133,10 @@ def select(toolchains: List[Toolchain]) -> List[Toolchain]:
     for toolchain in toolchains:
         print(info('{}) {}'.format(toolchain.serial_number, toolchain.name)))
 
-    toolchain_numbers = input('Enter numbers separated by spaces: ')
-    chosen_numbers = [int(num) for num in toolchain_numbers.split()]
-    return filter(lambda x: x.serial_number in chosen_numbers, toolchains)
+    numbers = input('Enter numbers separated by spaces: ')
+    chosen_numbers = [int(num) for num in numbers.split()]
+
+    def chosen(toolchain: Toolchain) -> bool:
+        return toolchain.serial_number in chosen_numbers
+
+    return filter(chosen, toolchains)
