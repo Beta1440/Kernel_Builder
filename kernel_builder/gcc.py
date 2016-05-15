@@ -31,7 +31,7 @@ class Toolchain:
         self.name = path.basename(root)
         self.serial_number = serial_number
         self.arch = arch
-        self.compiler_prefix = self.get_compiler_prefix()
+        self.compiler_prefix = self.find_compiler_prefix()
 
     def get_binaries(self) -> Iterable:
         binaries_dir = path.join(self.root, 'bin')
@@ -44,7 +44,7 @@ class Toolchain:
         """Set this self as the active toolchain to compile with."""
         os.putenv('CROSS_COMPILE', self.compiler_prefix)
 
-    def get_compiler_prefix(self) -> str:
+    def find_compiler_prefix(self) -> str:
 
         def is_gcc_binary(binary, prefix: str) -> bool:
             name = binary.name
