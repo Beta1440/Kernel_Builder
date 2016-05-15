@@ -34,12 +34,6 @@ if VERSION < '3.5':
     exit()
 
 
-def make_defconfig(defconfig: str='defconfig') -> None:
-    """Create a default configuration file."""
-    print(info('making:'), highlight(defconfig))
-    make(defconfig)
-
-
 def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img'):
     """Create a boot.img file that can be install via fastboot.
 
@@ -129,17 +123,17 @@ def main():
     kernel = Kernel(KERNEL_ROOT_DIR)
     for toolchain in toolchains:
         try:
-            toolchain.set_as_active()
-
-            if regenerate_defconfig:
-                make_defconfig()
-                regenerate_defconfig = False
-
             start_time = arrow.utcnow().timestamp
             if not os.path.isdir(DEF_EXPORT_DIR):
                 os.mkdir(DEF_EXPORT_DIR)
 
-            kernel.build(toolchain)
+            if regenerate_defconfig:
+                kernel.build(toolchain, 'defconfig')
+                regenerate_defconfig = False
+
+            else:
+                kernel.build(toolchain)
+
             full_version = kernel.get_full_version(toolchain)
             zip_ota_package(full_version + '.zip', KBUILD_IMAGE)
             export_file(full_version + '.zip', kernel.version_numbers)

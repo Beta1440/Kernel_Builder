@@ -56,26 +56,30 @@ class Kernel:
         """
         return '{}-{}'.format(self.version, toolchain.name)
 
-    def build(self, toolchain: Toolchain):
+    def build(self, toolchain: Toolchain, defconfig: str=''):
         """Build the kernel.
 
         Keyword arguments:
         toolchain -- the toolchain to use min building the kernel
+        defconfig -- the default configuration file (default '')
         """
+        toolchain.set_as_active()
+
+        if defconfig:
+            print(info('making: '), highlight(defconfig))
+            make(defconfig)
+
         full_version = self.get_full_version(toolchain)
         build_log = join(BUILD_LOG_DIR, '{}-log.txt'.format(full_version))
         clean()
-        if not isfile('.config'):
-            # Make sure the last defconfig is used
-            print(info('Recreating last defconfig'))
-            make('oldconfig')
 
         compile_info = 'compiling {} with {}'.format(self.version,
                                                      toolchain.name)
         print(info(compile_info))
-        # redirect the output to the build log file
+
         if not isdir(BUILD_LOG_DIR):
             mkdir(BUILD_LOG_DIR)
+
         try:
             make('> {} 2>&1'.format(build_log))
             print(success(full_version + ' compiled'))
