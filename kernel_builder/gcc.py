@@ -33,7 +33,7 @@ class Toolchain:
         self.arch = arch
         self.compiler_prefix = self.find_compiler_prefix()
 
-    def get_binaries(self) -> Iterable:
+    def find_binaries(self) -> Iterable:
         binaries_dir = path.join(self.root, 'bin')
         if path.isdir(binaries_dir):
             return os.scandir(binaries_dir)
@@ -50,7 +50,7 @@ class Toolchain:
             name = binary.name
             return name.startswith(prefix) and name.endswith('gcc')
 
-        binaries = self.get_binaries()
+        binaries = self.find_binaries()
 
         if binaries:
             for entry in binaries:
