@@ -41,26 +41,25 @@ class Toolchain:
         self.prefix = Toolchain.binary_file_prefixes[self.arch]
         self.compiler_prefix = self.find_compiler_prefix()
 
-
-    def find_binaries(self) -> Iterable:
-        """Return an Iterable of binaries in the toolchain's bin folder."""
-        binaries_dir = path.join(self.root, 'bin')
-        if path.isdir(binaries_dir):
-            return os.scandir(binaries_dir)
-        else:
-            return None
-
     def set_as_active(self):
         """Set this self as the active toolchain to compile with."""
         os.putenv('CROSS_COMPILE', self.compiler_prefix)
 
     def find_compiler_prefix(self) -> str:
         """Return the prefix of all binaries of this."""
+        def find_binaries() -> Iterable:
+            """Return an Iterable of binaries in the toolchain's bin folder."""
+            binaries_dir = path.join(self.root, 'bin')
+            if path.isdir(binaries_dir):
+                return os.scandir(binaries_dir)
+            else:
+                return None
+
         def is_gcc_binary(binary) -> bool:
             name = binary.name
             return name.startswith(self.prefix) and name.endswith('gcc')
 
-        binaries = self.find_binaries()
+        binaries = find_binaries()
 
         if binaries:
             for entry in binaries:
