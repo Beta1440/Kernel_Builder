@@ -124,7 +124,7 @@ def time_delta(start_time: int, end_time: int) -> str:
 def main():
     """Build the kernel with the selected toolchains."""
     toolchains = gcc.scandir(TOOLCHAIN_DIR)
-    toolchains = gcc.select_toolchains(toolchains)
+    toolchains = gcc.select(toolchains)
     regenerate_defconfig = True
     kernel = Kernel(KERNEL_ROOT_DIR)
     for toolchain in toolchains:

@@ -94,7 +94,7 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     return toolchains
 
 
-def select_toolchains(toolchains: List[Toolchain]) -> List[Toolchain]:
+def select(toolchains: List[Toolchain]) -> List[Toolchain]:
     """Select which toolchains to use in compiling the kernel.
 
     The kernel will be compiled once with each toolchain selected.
