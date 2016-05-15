@@ -14,7 +14,7 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from os import path, putenv, scandir
+from os import path
 from subprocess import getoutput
 from typing import Iterable, List
 
@@ -46,7 +46,7 @@ class Toolchain:
 
     def set_as_active(self):
         """Set this self as the active toolchain to compile with."""
-        putenv('CROSS_COMPILE', self.compiler_prefix)
+        os.putenv('CROSS_COMPILE', self.compiler_prefix)
 
     def get_compiler_prefix(self) -> str:
 
