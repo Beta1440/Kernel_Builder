@@ -15,6 +15,7 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import shutil
 import sys
 from subprocess import CalledProcessError, check_call
 
@@ -65,8 +66,7 @@ def zip_ota_package(name: str, kbuild_image: str) -> str:
     """
     try:
         previous_directory = os.getcwd()
-        check_call('cp {} {}'.format(kbuild_image, RESOURSES_DIR + '/boot'),
-                   shell=True)
+        shutil.copy(kbuild_image, RESOURSES_DIR + '/boot')
         os.chdir(RESOURSES_DIR)
         check_call('zip {0} META-INF -r config -r boot -r'.format(name),
                    shell=True)
