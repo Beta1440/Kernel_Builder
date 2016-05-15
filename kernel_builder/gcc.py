@@ -41,6 +41,26 @@ class Toolchain:
         self.prefix = Toolchain.binary_file_prefixes[self.arch]
         self.compiler_prefix = self.find_compiler_prefix()
 
+        @property
+        def name(self):
+            """The name of this."""
+            return self.name
+
+        @property
+        def serial_number(self):
+            """The serial number of this."""
+            return self.serial_number
+
+        @property
+        def arch(self):
+            """The target architecture of this compiler."""
+            return self.arch
+
+        @property
+        def compiler_prefix(self):
+            """The prefix of all binaries of this."""
+            return self.compiler_prefix
+
     def set_as_active(self):
         """Set this self as the active toolchain to compile with."""
         os.putenv('CROSS_COMPILE', self.compiler_prefix)
