@@ -95,18 +95,17 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
     kernel_version_number -- the version number of the kernel
     """
     kernel_file = os.path.join(RESOURSES_DIR, file_export)
-    base_export_dir = get_export_dir()
-    final_export_dir = os.path.join(base_export_dir, kernel_version_number, '')
-    if not os.path.isdir(final_export_dir):
-        os.mkdir(final_export_dir)
+    export_dir = os.path.join(get_export_dir(), kernel_version_number, '')
+    if not os.path.isdir(export_dir):
+        os.mkdir(export_dir)
+
     try:
-        check_call('mv {} {}'.format(kernel_file, final_export_dir), shell=True)
-        exported_file = os.path.join(final_export_dir, file_export)
-        print(success('{} exported to {}'.format(file_export,
-                                                 final_export_dir)))
+        check_call('mv {} {}'.format(kernel_file, export_dir), shell=True)
+        print(success('{} exported to {}'.format(file_export, export_dir)))
+
     except CalledProcessError:
         print(alert('{} could not be exported to {}'.format(file_export,
-                                                            final_export_dir)))
+                                                            export_dir)))
 
 
 def time_delta(start_time: int, end_time: int) -> str:
