@@ -21,7 +21,7 @@ from typing import Iterable, List
 from messages import alert, highlight, info, success
 
 
-class Toolchain:
+class Toolchain(object):
     """Store relevant info of a toolchain."""
 
     binary_file_prefixes = {'arm64': 'aarch64', 'arm': 'arm-eabi'}
