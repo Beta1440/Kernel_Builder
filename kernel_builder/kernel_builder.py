@@ -24,7 +24,7 @@ import arrow
 from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
                          RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR)
 import gcc
-from kernel import Kernel, make
+from kernel import Kernel, make, clean
 from messages import alert, highlight, info, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
@@ -126,6 +126,8 @@ def main():
             start_time = arrow.utcnow().timestamp
             if not os.path.isdir(DEF_EXPORT_DIR):
                 os.mkdir(DEF_EXPORT_DIR)
+
+            clean(toolchain, False)
 
             if regenerate_defconfig:
                 kernel.build(toolchain, 'defconfig')

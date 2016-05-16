@@ -75,7 +75,6 @@ class Kernel(object):
 
         full_version = self.get_full_version(toolchain)
         build_log = join(BUILD_LOG_DIR, '{}-log.txt'.format(full_version))
-        clean()
 
         compile_info = 'compiling {} with {}'.format(self.version,
                                                      toolchain.name)
