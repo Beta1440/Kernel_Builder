@@ -27,10 +27,14 @@ def make(targets: str, jobs: int=cpu_count()) -> None:
     check_call('make -j{} {}'.format(jobs, targets), shell=True)
 
 
-def clean() -> None:
+def clean(toolchain: Toolchain, full_clean: bool=True) -> None:
     """Remove old kernel files."""
     print(info('cleaning the build enviornment'))
-    make('archclean')
+    toolchain.set_as_active()
+    if full_clean:
+        make('clean')
+    else:
+        make('archclean')
 
 
 class Kernel(object):
