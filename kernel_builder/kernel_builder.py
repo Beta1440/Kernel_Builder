@@ -22,7 +22,8 @@ from subprocess import CalledProcessError, check_call
 import arrow
 
 from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
-                         RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR)
+                         RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR,
+                         BUILD_LOG_DIR)
 import gcc
 from kernel import Kernel, make, clean
 from messages import alert, highlight, info, success
@@ -129,14 +130,13 @@ def main():
                 os.mkdir(DEF_EXPORT_DIR)
 
             clean(toolchain, False)
-
+            
             if regenerate_defconfig:
-                kernel.build(toolchain, 'defconfig')
+                kernel.build(toolchain, 'defconfig', BUILD_LOG_DIR)
                 regenerate_defconfig = False
 
             else:
                 kernel.build(toolchain)
-
             full_version = kernel.get_full_version(toolchain)
             zip_ota_package(full_version + '.zip', KBUILD_IMAGE)
             export_file(full_version + '.zip', kernel.version_numbers)
