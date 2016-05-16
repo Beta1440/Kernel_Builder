@@ -24,7 +24,7 @@ from messages import alert, highlight, info, success
 class Toolchain(object):
     """Store relevant info of a toolchain."""
 
-    binary_file_prefixes = {'arm64': 'aarch64', 'arm': 'arm-eabi'}
+    compiler_prefixes = {'arm64': 'aarch64', 'arm': 'arm-eabi'}
 
     def __init__(self, root: str, serial_number: int, arch: str='arm64') -> None:
         """Initialize a new Toolchain.
@@ -38,7 +38,7 @@ class Toolchain(object):
         self.name = path.basename(root)
         self.serial_number = serial_number
         self.arch = arch
-        self.prefix = Toolchain.binary_file_prefixes[self.arch]
+        self.prefix = Toolchain.compiler_prefixes[self.arch]
         self.compiler_prefix = self.find_compiler_prefix()
 
         @property
