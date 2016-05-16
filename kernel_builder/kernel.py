@@ -14,10 +14,9 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os import cpu_count, mkdir
-from os.path import isdir, isfile, join
+from os.path import isdir, join
 from subprocess import check_call, getoutput
 
-from directories import BUILD_LOG_DIR, KERNEL_ROOT_DIR
 from gcc import Toolchain
 from messages import alert, highlight, info, success
 
@@ -60,12 +59,14 @@ class Kernel(object):
         """
         return '{}-{}'.format(self.version, toolchain.name)
 
-    def build(self, toolchain: Toolchain, defconfig: str=''):
+    def build(self, toolchain: Toolchain, defconfig: str='',
+              build_log_dir: str=''):
         """Build the kernel.
 
         Keyword arguments:
-        toolchain -- the toolchain to use min building the kernel
+        toolchain -- the toolchain to use in building the kernel
         defconfig -- the default configuration file (default '')
+        build_log_dir --  the directory of the build log file
         """
         toolchain.set_as_active()
 
@@ -74,15 +75,15 @@ class Kernel(object):
             make(defconfig)
 
         full_version = self.get_full_version(toolchain)
-        build_log = join(BUILD_LOG_DIR, '{}-log.txt'.format(full_version))
 
         compile_info = 'compiling {} with {}'.format(self.version,
                                                      toolchain.name)
         print(info(compile_info))
 
-        if not isdir(BUILD_LOG_DIR):
-            mkdir(BUILD_LOG_DIR)
+        if not isdir(build_log_dir):
+            mkdir(build_log_dir)
 
+        build_log = join(build_log_dir, full_version + '-log.txt')
         try:
             make('> {} 2>&1'.format(build_log))
             print(success(full_version + ' compiled'))
