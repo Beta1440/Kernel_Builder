@@ -24,22 +24,20 @@ from messages import alert, highlight, info, success
 class Toolchain(object):
     """Store relevant info of a toolchain."""
 
-    compiler_prefixes = {'arm64': 'aarch64', 'arm': 'arm-eabi'}
+    compiler_prefixes = {'aarch64': 'arm64', 'arm-eabi': 'arm'}
 
-    def __init__(self, root: str, serial_number: int, arch: str='arm64') -> None:
+    def __init__(self, root: str, serial_number: int) -> None:
         """Initialize a new Toolchain.
 
         Keyword arguments:
         root -- the root directory of the toolchain
         serial_number -- a unique identification number of the toolchain
-        arch -- the target architecture of the Toolchain (default 'arm64')
         """
         self.root = root
         self.name = path.basename(root)
         self.serial_number = serial_number
-        self.arch = arch
-        self.prefix = Toolchain.compiler_prefixes[self.arch]
         self.compiler_prefix = self.find_compiler_prefix()
+        self.target_arch = self.find_target_arch()
 
         @property
         def name(self):
@@ -52,9 +50,9 @@ class Toolchain(object):
             return self.serial_number
 
         @property
-        def arch(self):
+        def target_arch(self):
             """The target architecture of this compiler."""
-            return self.arch
+            return self.target_arch
 
         @property
         def compiler_prefix(self):
@@ -86,6 +84,19 @@ class Toolchain(object):
                     compiler_prefix = entry.path[:-3]
                     return compiler_prefix
 
+    def find_target_arch(self) -> str:
+        """Determine the target architecture of the toolchain."""
+        prefix = path.basename(self.compiler_prefix)
+        for arch_prefix in iter(Toolchain.compiler_prefixes):
+            if prefix.startswith(arch_prefix):
+                target_arch = Toolchain.compiler_prefixes[arch_prefix]
+                return target_arch
+
+    def _is_valid(self, target_arch: str=None) -> bool:
+        is_toolchain = bool(self.compiler_prefix)
+        correct_arch = not target_arch or self.target_arch == target_arch
+        return is_toolchain and correct_arch
+
 
 def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     """Get all the valid the toolchains in a directory.
@@ -94,18 +105,15 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
 
     Keyword arguments:
     toolchain_dir -- the directory to look for toolchains
+    target_arch -- the architecture to get toolchains for
     """
     entries = os.scandir(toolchain_dir)
     toolchains = []
     serial_number = 1
 
-    if not target_arch:
-        target_arch = 'arm64'
-
     for entry in entries:
-        toolchain = Toolchain(entry.path, serial_number, arch=target_arch)
-
-        if (toolchain.compiler_prefix):
+        toolchain = Toolchain(entry.path, serial_number)
+        if (toolchain._is_valid(target_arch)):
             toolchains.append(toolchain)
             print(success('Toolchain located: '), highlight(toolchain.name))
             serial_number += 1
