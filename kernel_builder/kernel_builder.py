@@ -68,6 +68,7 @@ def zip_ota_package(name: str, kbuild_image: str) -> str:
         return os.path.abspath(name)
     except CalledProcessError:
         print(alert('ota package could not be created'))
+        exit()
 
     finally:
         os.chdir(previous_directory)
