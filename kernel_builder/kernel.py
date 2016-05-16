@@ -86,6 +86,7 @@ class Kernel(object):
 
         except:
             print(alert('{} failed to compile'.format(full_version)))
+            exit()
 
         finally:
             print(info('the build log is located at ' + build_log))
