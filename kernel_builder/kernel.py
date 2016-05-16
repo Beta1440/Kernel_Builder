@@ -33,7 +33,7 @@ def clean() -> None:
     make('archclean')
 
 
-class Kernel:
+class Kernel(object):
     """store info for a kernel."""
 
     def __init__(self, root: str, arch: str='arm64') -> None:
