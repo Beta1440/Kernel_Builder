@@ -13,7 +13,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import cpu_count, getcwd, scandir
+import os
 from subprocess import CompletedProcess, getoutput, PIPE, run
 
 from unipath.path import Path
@@ -36,14 +36,14 @@ def find_kernel_root(path_name: str='') -> Path:
     path_name -- the name of the path to begin search in (default '')
     """
     def is_kernel_root(path: Path) -> bool:
-        entries = scandir(path)
+        entries = os.scandir(path)
         entry_names = [entry.name for entry in entries]
         for dir in KERNEL_DIRS:
             if dir not in entry_names:
                 return False
         return True
 
-    def _find_kernel_root(path: Path=Path(getcwd())) -> Path:
+    def _find_kernel_root(path: Path=Path(os.getcwd())) -> Path:
         if is_kernel_root(path):
             return path
         elif path == Path('/'):
@@ -58,7 +58,7 @@ def find_kernel_root(path_name: str='') -> Path:
         return _find_kernel_root()
 
 
-def make(targets: str, jobs: int=cpu_count(),
+def make(targets: str, jobs: int=os.cpu_count(),
          string_output: bool=True) -> CompletedProcess:
     """Execute make in the shell and return a CompletedProcess object.
 
