@@ -14,24 +14,25 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os import getenv
-from os.path import join
 from kernel import find_kernel_root
+
+from unipath.path import Path
 
 # The root of the kernel
 KERNEL_ROOT_DIR = find_kernel_root()
 
 # This dirctory should contain the necessary tools for creating the kernel
-RESOURSES_DIR = join(KERNEL_ROOT_DIR, 'build', 'resources')
+RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'build', 'resources')
 
 # The directory to export the package zip
-DEF_EXPORT_DIR = join(KERNEL_ROOT_DIR, '..', 'output')
+DEF_EXPORT_DIR = Path(KERNEL_ROOT_DIR, '..', 'output').resolve()
 
-TOOLCHAIN_DIR = join(KERNEL_ROOT_DIR, '..', 'toolchains')
+TOOLCHAIN_DIR = Path(KERNEL_ROOT_DIR, '..', 'toolchains').resolve()
 
-SUBLIME_N9_EXPORT_DIR = getenv('SUBLIME_N9_EXPORT_DIR')
+SUBLIME_N9_EXPORT_DIR = Path(getenv('SUBLIME_N9_EXPORT_DIR'))
 
 # Directory for build logs
-BUILD_LOG_DIR = join(DEF_EXPORT_DIR, 'build_logs')
+BUILD_LOG_DIR = Path(DEF_EXPORT_DIR, 'build_logs')
 
 # The absolute path to the kernel image file
-KBUILD_IMAGE = join(KERNEL_ROOT_DIR, 'arch', 'arm64', 'boot', 'Image.gz-dtb')
+KBUILD_IMAGE = Path(KERNEL_ROOT_DIR, 'arch', 'arm64', 'boot', 'Image.gz-dtb')
