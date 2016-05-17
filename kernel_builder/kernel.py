@@ -13,8 +13,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import cpu_count, mkdir, scandir
-from os.path import isdir, join
+from os import cpu_count, scandir
 from subprocess import check_call, getoutput
 
 from unipath import FSPath
@@ -112,10 +111,9 @@ class Kernel(object):
                                                      toolchain.name)
         print(info(compile_info))
 
-        if not isdir(build_log_dir):
-            mkdir(build_log_dir)
+        Path(build_log_dir).mkdir()
 
-        build_log = join(build_log_dir, full_version + '-log.txt')
+        build_log = Path(build_log_dir, full_version + '-log.txt')
         try:
             make('> {} 2>&1'.format(build_log))
             print(success(full_version + ' compiled'))
