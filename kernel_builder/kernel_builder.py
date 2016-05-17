@@ -25,8 +25,8 @@ from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
                          RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR,
                          BUILD_LOG_DIR)
 import gcc
-from kernel import Kernel, make, clean, find_kernel_root
-from messages import alert, highlight, info, success
+from kernel import Kernel, clean
+from messages import alert, highlight, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
 

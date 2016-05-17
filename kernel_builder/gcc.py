@@ -15,7 +15,6 @@
 
 import os
 from os import path
-from subprocess import getoutput
 from typing import Iterable, List
 
 from messages import alert, highlight, info, success
