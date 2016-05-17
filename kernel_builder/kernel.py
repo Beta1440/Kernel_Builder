@@ -117,7 +117,8 @@ class Kernel(object):
 
         build_log = Path(build_log_dir, full_version + '-log.txt')
         try:
-            make('> {} 2>&1'.format(build_log))
+            output_log = (make('all')).stdout
+            build_log.write_file(output_log)
             print(success(full_version + ' compiled'))
 
         except:
