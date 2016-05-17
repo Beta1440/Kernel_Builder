@@ -20,6 +20,7 @@ import sys
 from subprocess import CalledProcessError, check_call
 
 import arrow
+from unipath import Path
 
 from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
                          RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR,
@@ -90,10 +91,9 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
     file_export -- the file to export
     kernel_version_number -- the version number of the kernel
     """
-    kernel_file = os.path.join(RESOURSES_DIR, file_export)
-    export_dir = os.path.join(get_export_dir(), kernel_version_number, '')
-    if not os.path.isdir(export_dir):
-        os.mkdir(export_dir)
+    kernel_file = Path(RESOURSES_DIR, file_export)
+    export_dir = Path(get_export_dir(), kernel_version_number)
+    export_dir.mkdir()
 
     try:
         check_call('mv {} {}'.format(kernel_file, export_dir), shell=True)
@@ -129,8 +129,7 @@ def main():
     kernel = Kernel(kernel_root_dir)
     for toolchain in toolchains:
         try:
-            if not os.path.isdir(DEF_EXPORT_DIR):
-                os.mkdir(DEF_EXPORT_DIR)
+            DEF_EXPORT_DIR.mkdir()
 
             clean(toolchain, False)
 
