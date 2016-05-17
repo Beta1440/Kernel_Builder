@@ -13,10 +13,9 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import cpu_count, scandir
+from os import cpu_count, getcwd, scandir
 from subprocess import CompletedProcess, getoutput, PIPE, run
 
-from unipath import FSPath
 from unipath.path import Path
 
 from gcc import Toolchain
@@ -26,7 +25,7 @@ KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
 
 
-def find_kernel_root(path: Path=FSPath.cwd()) -> Path:
+def find_kernel_root(path_name: str='') -> Path:
     """Find the root of the kernel directory.
 
     Recursively search for the root of the kernel directory. The search
@@ -34,7 +33,7 @@ def find_kernel_root(path: Path=FSPath.cwd()) -> Path:
     If the system root directory is reached, then 'None' is returned.
     Otherwise, the path of the kernel root directory is returned.
     Keyword arguments
-    path -- the path to begin search (default cwd)
+    path_name -- the name of the path to begin search in (default '')
     """
     def is_kernel_root(path: Path) -> bool:
         entries = scandir(path)
@@ -44,12 +43,19 @@ def find_kernel_root(path: Path=FSPath.cwd()) -> Path:
                 return False
         return True
 
-    if is_kernel_root(path):
-        return path
-    elif path == Path('/'):
-        return None
+    def _find_kernel_root(path: Path=Path(getcwd())) -> Path:
+        if is_kernel_root(path):
+            return path
+        elif path == Path('/'):
+            return None
+        else:
+            return _find_kernel_root(path.parent)
+
+    print(path_name)  # print
+    if path_name:
+        return _find_kernel_root(Path(path_name))
     else:
-        return find_kernel_root(path.parent)
+        return _find_kernel_root()
 
 
 def make(targets: str, jobs: int=cpu_count(),
