@@ -14,7 +14,7 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os import cpu_count, scandir
-from subprocess import check_call, getoutput
+from subprocess import CompletedProcess, getoutput, PIPE, run
 
 from unipath import FSPath
 from unipath.path import Path
@@ -53,10 +53,10 @@ def find_kernel_root(path: Path=FSPath.cwd()) -> Path:
 
 
 def make(targets: str, jobs: int=cpu_count(),
-         string_output: bool=True) -> None:
+         string_output: bool=True) -> CompletedProcess:
     """Execute make in the shell."""
-    check_call('make -j{} {}'.format(jobs, targets), shell=True,
-               universal_newlines=string_output)
+    return run('make -j{} {}'.format(jobs, targets), shell=True, stdout=PIPE,
+               universal_newlines=string_output, check=True)
 
 
 def clean(toolchain: Toolchain, full_clean: bool=True) -> None:
