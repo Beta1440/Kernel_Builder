@@ -104,19 +104,21 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
                                                             export_dir)))
 
 
-def time_delta(start_time: int, end_time: int) -> str:
-    """Return the difference between two timestamps.
+def time_delta(func) -> None:
+    """Time how long it takes to run a function."""
+    def args_wrapper(*args, **kw_args):
+        start_time = arrow.utcnow().timestamp
+        func(*args, **kw_args)
+        end_time = arrow.utcnow().timestamp
+        time_delta = end_time - start_time
+        minutes = highlight(time_delta // 60)
+        seconds = highlight(time_delta % 60)
+        print('Time passed: {} minute(s) and {} second(s)'.format(minutes,
+                                                                  seconds))
+    return args_wrapper
 
-    Keyword arguments:
-    start_time -- the timestamp of the start time
-    end_time -- the timestamp of the end time
-    """
-    time_delta = end_time - start_time
-    minutes = highlight(time_delta // 60)
-    seconds = highlight(time_delta % 60)
-    return 'Time passed: {} minute(s) and {} seconds'.format(minutes, seconds)
 
-
+@time_delta
 def main():
     """Build the kernel with the selected toolchains."""
     toolchains = gcc.scandir(TOOLCHAIN_DIR)
@@ -127,7 +129,6 @@ def main():
     kernel = Kernel(kernel_root_dir)
     for toolchain in toolchains:
         try:
-            start_time = arrow.utcnow().timestamp
             if not os.path.isdir(DEF_EXPORT_DIR):
                 os.mkdir(DEF_EXPORT_DIR)
 
@@ -139,16 +140,13 @@ def main():
 
             else:
                 kernel.build(toolchain)
+
             full_version = kernel.get_full_version(toolchain)
             zip_ota_package(full_version + '.zip', KBUILD_IMAGE)
             export_file(full_version + '.zip', kernel.version_numbers)
 
         except KeyboardInterrupt:
             exit()
-
-        finally:
-            end_time = arrow.utcnow().timestamp
-            print(time_delta(start_time, end_time))
 
 
 if __name__ == '__main__':
