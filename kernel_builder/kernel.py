@@ -52,9 +52,11 @@ def find_kernel_root(path: Path=FSPath.cwd()) -> Path:
         return find_kernel_root(path.parent)
 
 
-def make(targets: str, jobs: int=cpu_count()) -> None:
+def make(targets: str, jobs: int=cpu_count(),
+         string_output: bool=True) -> None:
     """Execute make in the shell."""
-    check_call('make -j{} {}'.format(jobs, targets), shell=True)
+    check_call('make -j{} {}'.format(jobs, targets), shell=True,
+               universal_newlines=string_output)
 
 
 def clean(toolchain: Toolchain, full_clean: bool=True) -> None:
