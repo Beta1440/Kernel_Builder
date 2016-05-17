@@ -54,7 +54,14 @@ def find_kernel_root(path: Path=FSPath.cwd()) -> Path:
 
 def make(targets: str, jobs: int=cpu_count(),
          string_output: bool=True) -> CompletedProcess:
-    """Execute make in the shell."""
+    """Execute make in the shell and return a CompletedProcess object.
+
+    A CalledProcessError exeception will be thrown if the return code is not 0.
+    Keyword arguments:
+    jobs -- the amount of jobs to build with (default os.cpu_count())
+    string_output -- If true, the stdout of the CompletedProcess will be a
+        string. Otherwise, the stdout will be a bytes (default True).
+    """
     return run('make -j{} {}'.format(jobs, targets), shell=True, stdout=PIPE,
                universal_newlines=string_output, check=True)
 
