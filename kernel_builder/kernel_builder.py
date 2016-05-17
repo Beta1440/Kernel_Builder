@@ -25,7 +25,7 @@ from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
                          RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR,
                          BUILD_LOG_DIR)
 import gcc
-from kernel import Kernel, make, clean
+from kernel import Kernel, make, clean, find_kernel_root
 from messages import alert, highlight, info, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
@@ -122,7 +122,9 @@ def main():
     toolchains = gcc.scandir(TOOLCHAIN_DIR)
     toolchains = gcc.select(toolchains)
     regenerate_defconfig = True
-    kernel = Kernel(KERNEL_ROOT_DIR)
+    kernel_root_dir = KERNEL_ROOT_DIR
+    kernel_root_dir.chdir()
+    kernel = Kernel(kernel_root_dir)
     for toolchain in toolchains:
         try:
             start_time = arrow.utcnow().timestamp
@@ -130,7 +132,7 @@ def main():
                 os.mkdir(DEF_EXPORT_DIR)
 
             clean(toolchain, False)
-            
+
             if regenerate_defconfig:
                 kernel.build(toolchain, 'defconfig', BUILD_LOG_DIR)
                 regenerate_defconfig = False
