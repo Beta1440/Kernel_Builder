@@ -13,11 +13,12 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import getcwd, getenv
+from os import getenv
 from os.path import join
+from kernel import find_kernel_root
 
 # The root of the kernel
-KERNEL_ROOT_DIR = getcwd()
+KERNEL_ROOT_DIR = find_kernel_root()
 
 # This dirctory should contain the necessary tools for creating the kernel
 RESOURSES_DIR = join(KERNEL_ROOT_DIR, 'build', 'resources')
