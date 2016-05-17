@@ -14,8 +14,9 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from subprocess import CompletedProcess, getoutput, PIPE, run
+from subprocess import CompletedProcess, PIPE, run
 
+from typing import Any, Optional
 from unipath.path import Path
 
 from gcc import Toolchain
@@ -23,6 +24,19 @@ from messages import alert, highlight, info, success
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
+
+
+def temp_visit(path_name: str) -> Optional[Any]:
+    """Temporarily visit a path and perform some actions."""
+    def func_wrapper(func):
+        def arg_wrapper(*args, **kwargs):
+            orig_path = os.getcwd()
+            os.chdir(path_name)
+            output = func(*args, **kwargs)
+            os.chdir(orig_path)
+            return output
+        return arg_wrapper
+    return func_wrapper
 
 
 def find_kernel_root(path_name: str='') -> Path:
@@ -51,7 +65,6 @@ def find_kernel_root(path_name: str='') -> Path:
         else:
             return _find_kernel_root(path.parent)
 
-    print(path_name)  # print
     if path_name:
         return _find_kernel_root(Path(path_name))
     else:
@@ -92,10 +105,16 @@ class Kernel(object):
         root -- the root directory of the kernel
         arch -- the architure of the kernel (default 'arm64')
         """
-        self.version = getoutput('make kernelrelease')[8:]
-        self.version_numbers = self.version[-5:]
         self.arch = arch
         self.root = root
+        self.version = self._find_kernel_verion()
+        self.version_numbers = self.version[-5:]
+
+    def _find_kernel_verion(self):
+        @temp_visit(self.root)
+        def _find_verion(command='kernelrelease'):
+            return make(command).stdout.rstrip()[8:]
+        return _find_verion()
 
     def get_full_version(self, toolchain: Toolchain) -> str:
         """Get the kernel version with the toolchain name appended.
