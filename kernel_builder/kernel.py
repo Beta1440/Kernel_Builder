@@ -13,12 +13,44 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os import cpu_count, mkdir
+from os import cpu_count, mkdir, scandir
 from os.path import isdir, join
 from subprocess import check_call, getoutput
 
+from unipath import FSPath
+from unipath.path import Path
+
 from gcc import Toolchain
 from messages import alert, highlight, info, success
+
+KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
+               'scripts', 'tools']
+
+
+def find_kernel_root(path: Path=FSPath.cwd()) -> Path:
+    """Find the root of the kernel directory.
+
+    Recursively search for the root of the kernel directory. The search
+    continues the kernel root is found or the system root directory is reached.
+    If the system root directory is reached, then 'None' is returned.
+    Otherwise, the path of the kernel root directory is returned.
+    Keyword arguments
+    path -- the path to begin search (default cwd)
+    """
+    def is_kernel_root(path: Path) -> bool:
+        entries = scandir(path)
+        entry_names = [entry.name for entry in entries]
+        for dir in KERNEL_DIRS:
+            if dir not in entry_names:
+                return False
+        return True
+
+    if is_kernel_root(path):
+        return path
+    elif path == Path('/'):
+        return None
+    else:
+        return find_kernel_root(path.parent)
 
 
 def make(targets: str, jobs: int=cpu_count()) -> None:
