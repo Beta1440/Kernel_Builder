@@ -141,9 +141,8 @@ def select(toolchains: List[Toolchain]) -> List[Toolchain]:
     if len(toolchains) <= 1:
         return toolchains
 
-    for toolchain in toolchains:
-        print(info('{}) {}'.format(toolchains.index(toolchain) + 1,
-                                   toolchain.name)))
+    for index, toolchain in enumerate(toolchains):
+        print(info('{}) {}'.format(index + 1, toolchain.name)))
 
     numbers = input('Enter numbers separated by spaces: ')
     chosen_numbers = [int(num) for num in numbers.split()]
