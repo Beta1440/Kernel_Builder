@@ -33,30 +33,48 @@ class Toolchain(object):
         serial_number -- a unique identification number of the toolchain
         """
         self.root = root
-        self.name = path.basename(root)
-        self.serial_number = serial_number
-        self.compiler_prefix = self.find_compiler_prefix()
-        self.target_arch = self.find_target_arch()
+        self._name = path.basename(root)
+        self._serial_number = serial_number
+        self._compiler_prefix = self.find_compiler_prefix()
+        self._target_arch = self.find_target_arch()
 
-        @property
-        def name(self):
-            """The name of this."""
-            return self.name
+    @property
+    def name(self):
+        """The name of this."""
+        return self._name
 
-        @property
-        def serial_number(self):
-            """The serial number of this."""
-            return self.serial_number
+    @name.setter
+    def name(self, value):
+        self._name = value
 
-        @property
-        def target_arch(self):
-            """The target architecture of this compiler."""
-            return self.target_arch
+    @property
+    def serial_number(self):
+        """The serial number of this."""
+        return self._serial_number
 
-        @property
-        def compiler_prefix(self):
-            """The prefix of all binaries of this."""
-            return self.compiler_prefix
+    @serial_number.setter
+    def serial_number(self, value):
+        self._serial_number = value
+
+    @property
+    def target_arch(self):
+        """The target architecture of this compiler."""
+        return self._target_arch
+
+    @target_arch.setter
+    def target_arch(self, value):
+        """The target architecture of this compiler."""
+        self._target_arch = value
+
+    @property
+    def compiler_prefix(self):
+        """The prefix of all binaries of this."""
+        return self._compiler_prefix
+
+    @compiler_prefix.setter
+    def compiler_prefix(self, value):
+        """The prefix of all binaries of this."""
+        self._compiler_prefix = value
 
     def set_as_active(self):
         """Set this self as the active toolchain to compile with."""
