@@ -49,8 +49,6 @@ SUBLIME_N9_EXPORT_DIR = Path(os.getenv('SUBLIME_N9_EXPORT_DIR'))
 # Directory for build logs
 BUILD_LOG_DIR = Path(DEF_EXPORT_DIR, 'build_logs')
 
-# The absolute path to the kernel image file
-KBUILD_IMAGE = Path(KERNEL_ROOT_DIR, 'arch', 'arm64', 'boot', 'Image.gz-dtb')
 
 def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img'):
     """Create a boot.img file that can be install via fastboot.
@@ -148,16 +146,16 @@ def main():
             DEF_EXPORT_DIR.mkdir()
 
             clean(toolchain, False)
-
+            kbuild_image = None
             if regenerate_defconfig:
-                kernel.build(toolchain, 'defconfig', BUILD_LOG_DIR)
+                kbuild_image = kernel.build(toolchain, 'defconfig', BUILD_LOG_DIR)
                 regenerate_defconfig = False
 
             else:
-                kernel.build(toolchain)
+                kbuild_image = kernel.build(toolchain)
 
             full_version = kernel.get_full_version(toolchain)
-            zip_ota_package(full_version + '.zip', KBUILD_IMAGE)
+            zip_ota_package(full_version + '.zip', kbuild_image)
             export_file(full_version + '.zip', kernel.version_numbers)
 
         except KeyboardInterrupt:
