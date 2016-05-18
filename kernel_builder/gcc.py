@@ -142,7 +142,8 @@ def select(toolchains: List[Toolchain]) -> List[Toolchain]:
         return toolchains
 
     for index, toolchain in enumerate(toolchains):
-        print(info('{}) {}'.format(index + 1, toolchain.name)))
+        name = highlight(toolchain.name)
+        print(info('{}) {}'.format(index + 1, name)))
 
     numbers = input('Enter numbers separated by spaces: ')
     chosen_numbers = [int(num) for num in numbers.split()]
