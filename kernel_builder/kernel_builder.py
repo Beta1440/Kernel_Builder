@@ -102,19 +102,21 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
     """Send a file to the export directory.
 
     Keyword arguments:
-    file_export -- the file to export
+    file_export -- the absolute path of the file to export
     kernel_version_number -- the version number of the kernel
     """
+    file_path = Path(file_export)
+    file_path_base = file_path.name
     kernel_file = Path(RESOURSES_DIR, file_export)
     export_dir = Path(get_export_dir(), kernel_version_number)
     export_dir.mkdir()
 
     try:
         check_call('mv {} {}'.format(kernel_file, export_dir), shell=True)
-        print(success('{} exported to {}'.format(file_export, export_dir)))
+        print(success('{} exported to {}'.format(file_path_base, export_dir)))
 
     except CalledProcessError:
-        print(alert('{} could not be exported to {}'.format(file_export,
+        print(alert('{} could not be exported to {}'.format(file_path_base,
                                                             export_dir)))
 
 
