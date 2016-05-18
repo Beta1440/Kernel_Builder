@@ -36,6 +36,10 @@ class Toolchain(object):
         self._compiler_prefix = self.find_compiler_prefix()
         self._target_arch = self.find_target_arch()
 
+    def __str__(self) -> str:
+        """Return the name of the toolchain's root directory."""
+        return self.name
+
     @property
     def name(self):
         """The name of this."""
