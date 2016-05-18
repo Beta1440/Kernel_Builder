@@ -22,7 +22,7 @@ from unipath.path import Path
 KERNEL_ROOT_DIR = find_kernel_root()
 
 # This dirctory should contain the necessary tools for creating the kernel
-RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'build', 'resources')
+RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'resources').resolve()
 
 # The directory to export the package zip
 DEF_EXPORT_DIR = Path(KERNEL_ROOT_DIR, '..', 'output').resolve()
