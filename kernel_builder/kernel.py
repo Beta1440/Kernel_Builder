@@ -129,9 +129,11 @@ class Kernel(object):
         return '{}-{}'.format(self.version, toolchain.name)
 
     def build(self, toolchain: Toolchain, defconfig: str='',
-              build_log_dir: str=''):
+              build_log_dir: str='') -> Path:
         """Build the kernel.
 
+        Return the path of the absolute path of kbuild image if the build is
+        successful.
         Keyword arguments:
         toolchain -- the toolchain to use in building the kernel
         defconfig -- the default configuration file (default '')
@@ -155,6 +157,9 @@ class Kernel(object):
         try:
             make('all', log_file=build_log).stdout
             print(success(full_version + ' compiled'))
+            kbuild_image_path = Path(self.root, 'arch', toolchain.target_arch,
+                                     'boot', 'Image.gz-dtb')
+            return kbuild_image_path
 
         except:
             print(alert('{} failed to compile'.format(full_version)))
