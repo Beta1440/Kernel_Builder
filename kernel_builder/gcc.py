@@ -139,7 +139,7 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
         print('{} no {} toolchains detected in {}'.format((alert('Error:')),
               highlight(target_arch), highlight(toolchain_dir)))
 
-    return toolchains
+    return sorted(toolchains, key=lambda toolchain: toolchain.name)
 
 
 def select(toolchains: List[Toolchain]) -> List[Toolchain]:
@@ -155,12 +155,13 @@ def select(toolchains: List[Toolchain]) -> List[Toolchain]:
         return toolchains
 
     for toolchain in toolchains:
-        print(info('{}) {}'.format(toolchain.serial_number, toolchain.name)))
+        print(info('{}) {}'.format(toolchains.index(toolchain) + 1,
+                                   toolchain.name)))
 
     numbers = input('Enter numbers separated by spaces: ')
     chosen_numbers = [int(num) for num in numbers.split()]
+    selected_toolchains = []
+    for number in chosen_numbers:
+        selected_toolchains.append(toolchains[number - 1])
 
-    def chosen(toolchain: Toolchain) -> bool:
-        return toolchain.serial_number in chosen_numbers
-
-    return filter(chosen, toolchains)
+    return selected_toolchains
