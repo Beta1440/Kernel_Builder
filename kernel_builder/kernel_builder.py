@@ -157,8 +157,8 @@ def main():
                 kbuild_image = kernel.build(toolchain)
 
             full_version = kernel.get_full_version(toolchain)
-            zip_ota_package(full_version + '.zip', kbuild_image)
-            export_file(full_version + '.zip', kernel.version_numbers)
+            kernel_zip = zip_ota_package(full_version + '.zip', kbuild_image)
+            export_file(kernel_zip, kernel.version_numbers)
 
         except KeyboardInterrupt:
             exit()
