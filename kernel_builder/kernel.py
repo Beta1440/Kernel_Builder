@@ -72,7 +72,7 @@ def find_kernel_root(path_name: str='') -> Path:
 
 
 def make(targets: str, jobs: int=os.cpu_count(),
-         string_output: bool=True) -> CompletedProcess:
+         string_output: bool=True, log_file: str=None) -> CompletedProcess:
     """Execute make in the shell and return a CompletedProcess object.
 
     A CalledProcessError exeception will be thrown if the return code is not 0.
@@ -80,8 +80,12 @@ def make(targets: str, jobs: int=os.cpu_count(),
     jobs -- the amount of jobs to build with (default os.cpu_count())
     string_output -- If true, the stdout of the CompletedProcess will be a
         string. Otherwise, the stdout will be a bytes (default True).
+    log_file -- The output of the terminal is redirected to this path (default None).
     """
-    return run('make -j{} {}'.format(jobs, targets), shell=True, stdout=PIPE,
+    command = 'make -j{} {}'.format(jobs, targets)
+    if log_file:
+        command += ' > {} 2>&1'.format(log_file)
+    return run(command, shell=True, stdout=PIPE,
                universal_newlines=string_output, check=True)
 
 
@@ -149,8 +153,7 @@ class Kernel(object):
 
         build_log = Path(build_log_dir, full_version + '-log.txt')
         try:
-            output_log = (make('all')).stdout
-            build_log.write_file(output_log)
+            make('all', log_file=build_log).stdout
             print(success(full_version + ' compiled'))
 
         except:
