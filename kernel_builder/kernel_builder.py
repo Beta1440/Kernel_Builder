@@ -22,11 +22,8 @@ from subprocess import CalledProcessError, check_call
 import arrow
 from unipath import Path
 
-from directories import (DEF_EXPORT_DIR, KBUILD_IMAGE, KERNEL_ROOT_DIR,
-                         RESOURSES_DIR, SUBLIME_N9_EXPORT_DIR, TOOLCHAIN_DIR,
-                         BUILD_LOG_DIR)
 import gcc
-from kernel import Kernel, clean
+from kernel import Kernel, clean, find_kernel_root
 from messages import alert, highlight, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
@@ -35,6 +32,25 @@ if VERSION < '3.5':
     print(alert('Python 3.5+ is required'))
     exit()
 
+
+# The root of the kernel
+KERNEL_ROOT_DIR = find_kernel_root()
+
+# This dirctory should contain the necessary tools for creating the kernel
+RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'resources').resolve()
+
+# The directory to export the package zip
+DEF_EXPORT_DIR = Path(KERNEL_ROOT_DIR, '..', 'output').resolve()
+
+TOOLCHAIN_DIR = Path(KERNEL_ROOT_DIR, '..', 'toolchains').resolve()
+
+SUBLIME_N9_EXPORT_DIR = Path(os.getenv('SUBLIME_N9_EXPORT_DIR'))
+
+# Directory for build logs
+BUILD_LOG_DIR = Path(DEF_EXPORT_DIR, 'build_logs')
+
+# The absolute path to the kernel image file
+KBUILD_IMAGE = Path(KERNEL_ROOT_DIR, 'arch', 'arm64', 'boot', 'Image.gz-dtb')
 
 def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img'):
     """Create a boot.img file that can be install via fastboot.
