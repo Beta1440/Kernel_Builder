@@ -124,12 +124,13 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
         toolchain = Toolchain(entry.path)
         if (toolchain._is_valid(target_arch)):
             toolchains.append(toolchain)
-            print(success('Toolchain located: '), highlight(toolchain.name))
 
     if not toolchains:
         print('{} no {} toolchains detected in {}'.format((alert('Error:')),
               highlight(target_arch), highlight(toolchain_dir)))
 
+    toolchain_names = [highlight(toolchain) for toolchain in toolchains]
+    print(success('Toolchains located: '), ', '.join(toolchain_names))
     return sorted(toolchains, key=lambda toolchain: toolchain.name)
 
 
