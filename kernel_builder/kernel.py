@@ -102,14 +102,12 @@ def clean(toolchain: Toolchain, full_clean: bool=True) -> None:
 class Kernel(object):
     """store info for a kernel."""
 
-    def __init__(self, root: str, arch: str='arm64') -> None:
+    def __init__(self, root: str) -> None:
         """Initialze a new Kernel.
 
         Keyword arguments:
         root -- the root directory of the kernel
-        arch -- the architure of the kernel (default 'arm64')
         """
-        self.arch = arch
         self.root = root
         self.version = self._find_kernel_verion()
         self.version_numbers = self.version[-5:]
