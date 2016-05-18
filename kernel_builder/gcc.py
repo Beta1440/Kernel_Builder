@@ -25,16 +25,14 @@ class Toolchain(object):
 
     compiler_prefixes = {'aarch64': 'arm64', 'arm-eabi': 'arm'}
 
-    def __init__(self, root: str, serial_number: int) -> None:
+    def __init__(self, root: str) -> None:
         """Initialize a new Toolchain.
 
         Keyword arguments:
         root -- the root directory of the toolchain
-        serial_number -- a unique identification number of the toolchain
         """
         self.root = root
         self._name = path.basename(root)
-        self._serial_number = serial_number
         self._compiler_prefix = self.find_compiler_prefix()
         self._target_arch = self.find_target_arch()
 
@@ -46,15 +44,6 @@ class Toolchain(object):
     @name.setter
     def name(self, value):
         self._name = value
-
-    @property
-    def serial_number(self):
-        """The serial number of this."""
-        return self._serial_number
-
-    @serial_number.setter
-    def serial_number(self, value):
-        self._serial_number = value
 
     @property
     def target_arch(self):
@@ -126,14 +115,12 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     """
     entries = os.scandir(toolchain_dir)
     toolchains = []
-    serial_number = 1
 
     for entry in entries:
-        toolchain = Toolchain(entry.path, serial_number)
+        toolchain = Toolchain(entry.path)
         if (toolchain._is_valid(target_arch)):
             toolchains.append(toolchain)
             print(success('Toolchain located: '), highlight(toolchain.name))
-            serial_number += 1
 
     if not toolchains:
         print('{} no {} toolchains detected in {}'.format((alert('Error:')),
