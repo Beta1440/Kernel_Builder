@@ -19,8 +19,8 @@ from subprocess import CompletedProcess, PIPE, run
 from typing import Any, Optional
 from unipath.path import Path
 
-from gcc import Toolchain
-from messages import alert, highlight, info, success
+from kbuilder.core.gcc import Toolchain
+from kbuilder.core.messages import alert, highlight, info, success
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']

@@ -17,7 +17,7 @@ import os
 from os import path
 from typing import Iterable, List
 
-from messages import alert, highlight, info, success
+from kbuilder.core.messages import alert, highlight, info, success
 
 
 class Toolchain(object):

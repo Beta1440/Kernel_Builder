@@ -18,7 +18,7 @@ PYTHON=python3
 FLAGS=
 
 init:
-	pip install -r requirements.txt
+	$(PYTHON) -m pip install -r requirements.txt
 
-otapackage:
-	$(PYTHON) build/make_flounder.py $(FLAGS)
+install:
+	$(PYTHON) setup.py install

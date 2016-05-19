@@ -10,3 +10,10 @@ Kernel Builder is a command line application which automates compiling the Linux
 
 ## Project status
 Kernel Builder is currently under active development
+
+## Installation
+
+``` bash
+$ make init
+$ make install
+```

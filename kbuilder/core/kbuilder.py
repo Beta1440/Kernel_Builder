@@ -22,9 +22,9 @@ from subprocess import CalledProcessError, check_call
 import arrow
 from unipath import Path
 
-import gcc
-from kernel import Kernel, clean, find_kernel_root
-from messages import alert, highlight, success
+from kbuilder.core import gcc
+from kbuilder.core.kernel import Kernel, clean, find_kernel_root
+from kbuilder.core.messages import alert, highlight, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
 
