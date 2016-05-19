@@ -59,14 +59,13 @@ def make(targets: str, jobs: int=os.cpu_count(),
 
 class Kernel(object):
     """store info for a kernel."""
-
     def __init__(self, root: str) -> None:
         """Initialze a new Kernel.
 
         Keyword arguments:
         root -- the root directory of the kernel
         """
-        self.root = root
+        self.root = Path(root)
         self.version = self._find_kernel_verion()
         self.version_numbers = self.version[-5:]
 
