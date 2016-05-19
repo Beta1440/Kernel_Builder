@@ -66,6 +66,7 @@ class Kernel(object):
         root -- the root directory of the kernel
         """
         self.root = Path(root)
+        self.name = self.root.name
         self.version = self._find_kernel_verion()
         self.version_numbers = self.version[-5:]
 
