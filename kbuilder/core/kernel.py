@@ -95,7 +95,7 @@ class Kernel(object):
         return '{}-{}'.format(self.version, toolchain.name)
 
     @staticmethod
-    def find_kernel_root(path_name: str='') -> Path:
+    def find_root(path_name: str='') -> Path:
         """Find the root of the kernel directory.
 
         Recursively search for the root of the kernel directory. The search

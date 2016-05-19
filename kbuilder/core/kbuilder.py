@@ -34,7 +34,7 @@ if VERSION < '3.5':
 
 
 # The root of the kernel
-KERNEL_ROOT_DIR = Kernel.find_kernel_root()
+KERNEL_ROOT_DIR = Kernel.find_root()
 
 # This dirctory should contain the necessary tools for creating the kernel
 RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'resources').resolve()
