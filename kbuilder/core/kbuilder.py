@@ -74,23 +74,14 @@ def zip_ota_package(name: str, kbuild_image: str) -> str:
     name -- the name of the zip file to create
     kbuild_image -- the path to the compressed kernel image
     """
-    zip_name = name
-    if not zip_name.endswith('.zip'):
-        zip_name += '.zip'
     try:
-        previous_directory = os.getcwd()
         shutil.copy(kbuild_image, RESOURSES_DIR + '/boot')
-        os.chdir(RESOURSES_DIR)
-        check_call('zip {0} META-INF -r config -r boot -r'.format(zip_name),
-                   shell=True)
-        print(success('ota package successfully created'))
-        return os.path.abspath(zip_name)
-    except CalledProcessError:
+        output = shutil.make_archive(name, 'zip', RESOURSES_DIR)
+        print(success('ota package created'))
+        return output
+    except FileNotFoundError:
         print(alert('ota package could not be created'))
         exit()
-
-    finally:
-        os.chdir(previous_directory)
 
 
 def get_export_dir() -> str:
@@ -159,8 +150,7 @@ def main():
 
             export_dir = Path(export_dir_parent, kernel.version_numbers)
             full_version = kernel.get_full_version(toolchain)
-            kernel_zip = zip_ota_package(full_version, kbuild_image)
-            export_file(kernel_zip, export_dir)
+            zip_ota_package(Path(export_dir, full_version), kbuild_image)
 
         except KeyboardInterrupt:
             exit()
