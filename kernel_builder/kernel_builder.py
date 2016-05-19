@@ -155,7 +155,7 @@ def main():
                 regenerate_defconfig = False
 
             else:
-                kbuild_image = kernel.build(toolchain)
+                kbuild_image = kernel.build(toolchain, BUILD_LOG_DIR)
 
             export_dir = Path(export_dir_parent, kernel.version_numbers)
             full_version = kernel.get_full_version(toolchain)
