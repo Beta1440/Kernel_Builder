@@ -66,16 +66,15 @@ def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img'):
     os.chdir(previous_directory)
 
 
-def zip_ota_package(name: str, kbuild_image: str) -> str:
+def zip_ota_package(name: str, base_dir: str=os.getcwd()) -> str:
     """Create a zip package that can be installed via recovery.
 
     Return the path to the zip file created
     Keyword arguments:
     name -- the name of the zip file to create
-    kbuild_image -- the path to the compressed kernel image
+    base_dir -- the directory whose contents should be zipped (default cwd)
     """
-    shutil.copy(kbuild_image, RESOURSES_DIR + '/boot')
-    output = shutil.make_archive(name, 'zip', RESOURSES_DIR)
+    output = shutil.make_archive(name, 'zip', base_dir)
     print(success('ota package created'))
     return output
 
@@ -140,7 +139,8 @@ def main():
 
             export_dir = Path(export_dir_parent, kernel.version_numbers)
             full_version = kernel.get_full_version(toolchain)
-            zip_ota_package(Path(export_dir, full_version), kbuild_image)
+            shutil.copy(kbuild_image, RESOURSES_DIR + '/boot')
+            zip_ota_package(Path(export_dir, full_version), RESOURSES_DIR)
 
         except KeyboardInterrupt:
             exit()
