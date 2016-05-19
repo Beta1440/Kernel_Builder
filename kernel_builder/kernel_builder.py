@@ -101,7 +101,7 @@ def get_export_dir() -> str:
         return DEF_EXPORT_DIR
 
 
-def export_file(file_export: str, kernel_version_number: int) -> None:
+def export_file(file_export: str, export_dir: str) -> None:
     """Send a file to the export directory.
 
     Keyword arguments:
@@ -111,8 +111,7 @@ def export_file(file_export: str, kernel_version_number: int) -> None:
     file_path = Path(file_export)
     file_path_base = file_path.name
     kernel_file = Path(RESOURSES_DIR, file_export)
-    export_dir = Path(get_export_dir(), kernel_version_number)
-    export_dir.mkdir()
+    Path(export_dir).mkdir()
 
     try:
         check_call('mv {} {}'.format(kernel_file, export_dir), shell=True)
@@ -146,6 +145,7 @@ def main():
     kernel_root_dir = KERNEL_ROOT_DIR
     kernel_root_dir.chdir()
     kernel = Kernel(kernel_root_dir)
+    export_dir_parent = get_export_dir()
     for toolchain in toolchains:
         try:
             DEF_EXPORT_DIR.mkdir()
@@ -159,9 +159,10 @@ def main():
             else:
                 kbuild_image = kernel.build(toolchain)
 
+            export_dir = Path(export_dir_parent, kernel.version_numbers)
             full_version = kernel.get_full_version(toolchain)
             kernel_zip = zip_ota_package(full_version, kbuild_image)
-            export_file(kernel_zip, kernel.version_numbers)
+            export_file(kernel_zip, export_dir)
 
         except KeyboardInterrupt:
             exit()
