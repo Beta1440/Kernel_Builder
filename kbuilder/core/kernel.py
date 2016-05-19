@@ -39,38 +39,6 @@ def temp_visit(path_name: str) -> Optional[Any]:
     return func_wrapper
 
 
-def find_kernel_root(path_name: str='') -> Path:
-    """Find the root of the kernel directory.
-
-    Recursively search for the root of the kernel directory. The search
-    continues the kernel root is found or the system root directory is reached.
-    If the system root directory is reached, then 'None' is returned.
-    Otherwise, the path of the kernel root directory is returned.
-    Keyword arguments
-    path_name -- the name of the path to begin search in (default '')
-    """
-    def is_kernel_root(path: Path) -> bool:
-        entries = os.scandir(path)
-        entry_names = [entry.name for entry in entries]
-        for dir in KERNEL_DIRS:
-            if dir not in entry_names:
-                return False
-        return True
-
-    def _find_kernel_root(path: Path=Path(os.getcwd())) -> Path:
-        if is_kernel_root(path):
-            return path
-        elif path == Path('/'):
-            return None
-        else:
-            return _find_kernel_root(path.parent)
-
-    if path_name:
-        return _find_kernel_root(Path(path_name))
-    else:
-        return _find_kernel_root()
-
-
 def make(targets: str, jobs: int=os.cpu_count(),
          string_output: bool=True, log_file: str=None) -> CompletedProcess:
     """Execute make in the shell and return a CompletedProcess object.
@@ -125,6 +93,38 @@ class Kernel(object):
         toolchain -- the toolchain to use
         """
         return '{}-{}'.format(self.version, toolchain.name)
+
+    @staticmethod
+    def find_kernel_root(path_name: str='') -> Path:
+        """Find the root of the kernel directory.
+
+        Recursively search for the root of the kernel directory. The search
+        continues the kernel root is found or the system root directory is reached.
+        If the system root directory is reached, then 'None' is returned.
+        Otherwise, the path of the kernel root directory is returned.
+        Keyword arguments
+        path_name -- the name of the path to begin search in (default '')
+        """
+        def is_kernel_root(path: Path) -> bool:
+            entries = os.scandir(path)
+            entry_names = [entry.name for entry in entries]
+            for dir in KERNEL_DIRS:
+                if dir not in entry_names:
+                    return False
+            return True
+
+        def _find_kernel_root(path: Path=Path(os.getcwd())) -> Path:
+            if is_kernel_root(path):
+                return path
+            elif path == Path('/'):
+                return None
+            else:
+                return _find_kernel_root(path.parent)
+
+        if path_name:
+            return _find_kernel_root(Path(path_name))
+        else:
+            return _find_kernel_root()
 
     def build(self, toolchain: Toolchain, defconfig: str='',
               build_log_dir: str='') -> Path:

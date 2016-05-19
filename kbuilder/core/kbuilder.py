@@ -23,7 +23,7 @@ import arrow
 from unipath import Path
 
 from kbuilder.core import gcc
-from kbuilder.core.kernel import Kernel, clean, find_kernel_root
+from kbuilder.core.kernel import Kernel, clean
 from kbuilder.core.messages import alert, highlight, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
@@ -34,7 +34,7 @@ if VERSION < '3.5':
 
 
 # The root of the kernel
-KERNEL_ROOT_DIR = find_kernel_root()
+KERNEL_ROOT_DIR = Kernel.find_kernel_root()
 
 # This dirctory should contain the necessary tools for creating the kernel
 RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'resources').resolve()
