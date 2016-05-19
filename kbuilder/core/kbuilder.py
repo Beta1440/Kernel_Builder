@@ -23,7 +23,7 @@ import arrow
 from unipath import Path
 
 from kbuilder.core import gcc
-from kbuilder.core.kernel import Kernel, clean
+from kbuilder.core.kernel import Kernel
 from kbuilder.core.messages import alert, highlight, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
@@ -128,7 +128,7 @@ def main():
         try:
             DEF_EXPORT_DIR.mkdir()
 
-            clean(toolchain, False)
+            Kernel.clean(toolchain, False)
             kbuild_image = None
             if regenerate_defconfig:
                 kbuild_image = kernel.build(toolchain, 'defconfig', BUILD_LOG_DIR)

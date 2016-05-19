@@ -57,16 +57,6 @@ def make(targets: str, jobs: int=os.cpu_count(),
                universal_newlines=string_output, check=True)
 
 
-def clean(toolchain: Toolchain, full_clean: bool=True) -> None:
-    """Remove old kernel files."""
-    print(info('cleaning the build enviornment'))
-    toolchain.set_as_active()
-    if full_clean:
-        make('clean')
-    else:
-        make('archclean')
-
-
 class Kernel(object):
     """store info for a kernel."""
 
@@ -125,6 +115,16 @@ class Kernel(object):
             return _find_kernel_root(Path(path_name))
         else:
             return _find_kernel_root()
+
+    @staticmethod
+    def clean(toolchain: Toolchain, full_clean: bool=True) -> None:
+        """Remove old kernel files."""
+        print(info('cleaning the build enviornment'))
+        toolchain.set_as_active()
+        if full_clean:
+            make('clean')
+        else:
+            make('archclean')
 
     def build(self, toolchain: Toolchain, defconfig: str='',
               build_log_dir: str='') -> Path:
