@@ -4,3 +4,5 @@
 *.
 TAGS
 __pycache__/
+*.egg*
+build
