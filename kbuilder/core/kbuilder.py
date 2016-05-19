@@ -74,14 +74,10 @@ def zip_ota_package(name: str, kbuild_image: str) -> str:
     name -- the name of the zip file to create
     kbuild_image -- the path to the compressed kernel image
     """
-    try:
-        shutil.copy(kbuild_image, RESOURSES_DIR + '/boot')
-        output = shutil.make_archive(name, 'zip', RESOURSES_DIR)
-        print(success('ota package created'))
-        return output
-    except FileNotFoundError:
-        print(alert('ota package could not be created'))
-        exit()
+    shutil.copy(kbuild_image, RESOURSES_DIR + '/boot')
+    output = shutil.make_archive(name, 'zip', RESOURSES_DIR)
+    print(success('ota package created'))
+    return output
 
 
 def get_export_dir() -> str:
@@ -101,14 +97,8 @@ def export_file(file_export: str, export_dir: str) -> None:
     """
     file_path = Path(file_export)
     Path(export_dir).mkdir()
-
-    try:
-        check_call('mv {} {}'.format(file_path, export_dir), shell=True)
-        print(success('{} exported to {}'.format(file_path.name, export_dir)))
-
-    except CalledProcessError:
-        print(alert('{} could not be exported to {}'.format(file_path.name,
-                                                            export_dir)))
+    check_call('mv {} {}'.format(file_path, export_dir), shell=True)
+    print(success('{} exported to {}'.format(file_path.name, export_dir)))
 
 
 def time_delta(func) -> None:
