@@ -14,8 +14,9 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from os import path
 from typing import Iterable, List
+
+from unipath.path import Path
 
 from kbuilder.core.messages import alert, highlight, info, success
 
@@ -31,9 +32,9 @@ class Toolchain(object):
         Keyword arguments:
         root -- the root directory of the toolchain
         """
-        self.root = root
-        self._name = path.basename(root)
-        self._compiler_prefix = self.find_compiler_prefix()
+        self.root = Path(root)
+        self._name = self.root.name
+        self._compiler_prefix = Path(self.find_compiler_prefix())
         self._target_arch = self.find_target_arch()
 
     def __str__(self) -> str:
@@ -77,8 +78,8 @@ class Toolchain(object):
         """Return the prefix of all binaries of this."""
         def find_binaries() -> Iterable:
             """Return an Iterable of binaries in the toolchain's bin folder."""
-            binaries_dir = path.join(self.root, 'bin')
-            if path.isdir(binaries_dir):
+            binaries_dir = Path(self.root, 'bin')
+            if binaries_dir.isdir():
                 return os.scandir(binaries_dir)
             else:
                 return None
@@ -96,7 +97,7 @@ class Toolchain(object):
 
     def find_target_arch(self) -> str:
         """Determine the target architecture of the toolchain."""
-        prefix = path.basename(self.compiler_prefix)
+        prefix = self.compiler_prefix.name
         for arch_prefix in iter(Toolchain.compiler_prefixes):
             if prefix.startswith(arch_prefix):
                 target_arch = Toolchain.compiler_prefixes[arch_prefix]
