@@ -53,29 +53,15 @@ class Toolchain(object):
         """The name of this."""
         return self._name
 
-    @name.setter
-    def name(self, value):
-        self._name = value
-
     @property
     def target_arch(self):
         """The target architecture of this compiler."""
         return self._target_arch
 
-    @target_arch.setter
-    def target_arch(self, value):
-        """The target architecture of this compiler."""
-        self._target_arch = value
-
     @property
     def compiler_prefix(self):
         """The prefix of all binaries of this."""
         return self._compiler_prefix
-
-    @compiler_prefix.setter
-    def compiler_prefix(self, value):
-        """The prefix of all binaries of this."""
-        self._compiler_prefix = value
 
     def set_as_active(self):
         """Set this self as the active toolchain to compile with."""
