@@ -31,8 +31,3 @@ def highlight(message):
 def success(message):
     """Notify user when a process is successful."""
     return colored(message, 'green')
-
-
-def info(message):
-    """Print general information."""
-    return colored(message, 'blue')

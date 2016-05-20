@@ -18,7 +18,7 @@ from typing import Iterable, List
 
 from unipath.path import Path
 
-from kbuilder.core.messages import alert, highlight, info, success
+from kbuilder.core.messages import alert, highlight, success
 
 
 class Toolchain(object):
@@ -152,7 +152,7 @@ def select(toolchains: List[Toolchain]) -> List[Toolchain]:
 
     for index, toolchain in enumerate(toolchains):
         name = highlight(toolchain.name)
-        print(info('{}) {}'.format(index + 1, name)))
+        print('{}) {}'.format(index + 1, name))
 
     numbers = input('Enter numbers separated by spaces: ')
     chosen_numbers = [int(num) for num in numbers.split()]

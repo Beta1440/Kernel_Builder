@@ -20,7 +20,7 @@ from typing import Any, Optional
 from unipath.path import Path
 
 from kbuilder.core.gcc import Toolchain
-from kbuilder.core.messages import alert, highlight, info, success
+from kbuilder.core.messages import alert, highlight, success
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
@@ -119,7 +119,7 @@ class Kernel(object):
     @staticmethod
     def clean(toolchain: Toolchain, full_clean: bool=True) -> None:
         """Remove old kernel files."""
-        print(info('cleaning the build enviornment'))
+        print('cleaning the build enviornment')
         toolchain.set_as_active()
         if full_clean:
             make('clean')
@@ -140,19 +140,15 @@ class Kernel(object):
         toolchain.set_as_active()
 
         if defconfig:
-            print(info('making: '), highlight(defconfig))
+            print('making: ' + highlight(defconfig))
             make(defconfig)
 
         full_version = self.get_full_version(toolchain)
-
-        compile_info = 'compiling {} with {}'.format(self.version,
-                                                     toolchain.name)
-        print(info(compile_info))
-
         Path(build_log_dir).mkdir()
-
         build_log = Path(build_log_dir, full_version + '-log.txt')
+
         try:
+            print('compiling {} with {}'.format(self.version, toolchain.name))
             make('all', log_file=build_log).stdout
             print(success(full_version + ' compiled'))
             kbuild_image_path = Path(self.root, 'arch', toolchain.target_arch,
@@ -164,4 +160,4 @@ class Kernel(object):
             exit()
 
         finally:
-            print(info('the build log is located at ' + build_log))
+            print('the build log is located at ' + build_log)
