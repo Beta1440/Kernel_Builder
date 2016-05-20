@@ -20,9 +20,11 @@ import sys
 from subprocess import CalledProcessError, check_call
 
 import arrow
+from typing import Iterable
 from unipath import Path
 
 from kbuilder.core import gcc
+from kbuilder.core.gcc import Toolchain
 from kbuilder.core.kernel import Kernel
 from kbuilder.core.messages import alert, highlight, success
 
@@ -115,35 +117,42 @@ def time_delta(func) -> None:
 
 
 @time_delta
+def build(kernel: Kernel, toolchains: Iterable[Toolchain], export_dir: str=None,
+          ota_package_dir: str=None, build_log_dir: str=None) -> None:
+    """Build the kernel with the given toolchains."""
+    regenerate_defconfig = True
+    kbuild_image = None
+    for toolchain in toolchains:
+        kernel.clean(toolchain, False)
+        if regenerate_defconfig:
+            kbuild_image = kernel.build(toolchain, 'defconfig', build_log_dir)
+            regenerate_defconfig = False
+
+        else:
+            kbuild_image = kernel.build(toolchain, build_log_dir)
+
+        if ota_package_dir:
+            shutil.copy(kbuild_image, ota_package_dir + '/boot')
+            full_version = kernel.get_full_version(toolchain)
+            zip_ota_package(Path(export_dir, full_version), ota_package_dir)
+
+
 def main():
     """Build the kernel with the selected toolchains."""
     toolchains = gcc.scandir(TOOLCHAIN_DIR)
     toolchains = gcc.select(toolchains)
-    regenerate_defconfig = True
     kernel_root_dir = KERNEL_ROOT_DIR
     kernel_root_dir.chdir()
     kernel = Kernel(kernel_root_dir)
-    export_dir_parent = get_export_dir()
-    for toolchain in toolchains:
-        try:
-            DEF_EXPORT_DIR.mkdir()
+    export_dir = Path(get_export_dir(), kernel.version_numbers)
+    try:
+        DEF_EXPORT_DIR.mkdir()
+        build(kernel, toolchains, export_dir,
+              ota_package_dir=RESOURSES_DIR, build_log_dir=BUILD_LOG_DIR)
 
-            Kernel.clean(toolchain, False)
-            kbuild_image = None
-            if regenerate_defconfig:
-                kbuild_image = kernel.build(toolchain, 'defconfig', BUILD_LOG_DIR)
-                regenerate_defconfig = False
-
-            else:
-                kbuild_image = kernel.build(toolchain, BUILD_LOG_DIR)
-
-            export_dir = Path(export_dir_parent, kernel.version_numbers)
-            full_version = kernel.get_full_version(toolchain)
-            shutil.copy(kbuild_image, RESOURSES_DIR + '/boot')
-            zip_ota_package(Path(export_dir, full_version), RESOURSES_DIR)
-
-        except KeyboardInterrupt:
-            exit()
+    except KeyboardInterrupt:
+        print(alert('Exiting due to KeyboardInterrupt'))
+        exit()
 
 
 if __name__ == '__main__':
