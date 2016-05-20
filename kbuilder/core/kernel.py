@@ -96,10 +96,9 @@ class Kernel(object):
         path_name -- the name of the path to begin search in (default '')
         """
         def is_kernel_root(path: Path) -> bool:
-            entries = os.scandir(path)
-            entry_names = [entry.name for entry in entries]
+            path_files = [file.name for file in os.scandir(path)]
             for dir in KERNEL_DIRS:
-                if dir not in entry_names:
+                if dir not in path_files:
                     return False
             return True
 
