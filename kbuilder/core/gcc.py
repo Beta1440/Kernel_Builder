@@ -120,8 +120,8 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     toolchain_dir -- the directory to look for toolchains
     target_arch -- the architecture to get toolchains for
     """
-    entries = os.scandir(toolchain_dir)
     toolchains = []
+    entries = sorted(os.scandir(toolchain_dir), key=lambda x: x.name)
 
     for entry in entries:
         toolchain = Toolchain(entry.path)
@@ -134,8 +134,8 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
               highlight(target_arch), highlight(toolchain_dir)))
 
     toolchain_names = [highlight(toolchain) for toolchain in toolchains]
-    print(success('Toolchains located: '), ', '.join(toolchain_names))
-    return sorted(toolchains, key=lambda toolchain: toolchain.name)
+    print(success('Toolchains located: ') + ', '.join(toolchain_names))
+    return toolchains
 
 
 def select(toolchains: List[Toolchain]) -> List[Toolchain]:
@@ -150,12 +150,11 @@ def select(toolchains: List[Toolchain]) -> List[Toolchain]:
     if len(toolchains) <= 1:
         return toolchains
 
-    for index, toolchain in enumerate(toolchains):
-        name = highlight(toolchain.name)
-        print('{}) {}'.format(index + 1, name))
+    for index, toolchain in enumerate(toolchains, 1):
+        print('{}) {}'.format(index, highlight(toolchain)))
 
     numbers = input('Enter numbers separated by spaces: ')
-    chosen_numbers = [int(num) for num in numbers.split()]
+    chosen_numbers = [int(x) for x in numbers.split()]
     selected_toolchains = []
     for number in chosen_numbers:
         selected_toolchains.append(toolchains[number - 1])
