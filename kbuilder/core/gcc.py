@@ -41,6 +41,13 @@ class Toolchain(object):
         """Return the name of the toolchain's root directory."""
         return self.name
 
+    def __nonzero__(self) -> bool:
+        """Return whether the toolchain is valid.
+
+        A toolchain needs a 'bin' directory to be valid.
+        """
+        return self.root.isdir() and Path(self.root, 'bin').isdir()
+
     @property
     def name(self):
         """The name of this."""
@@ -103,11 +110,6 @@ class Toolchain(object):
                 target_arch = Toolchain.compiler_prefixes[arch_prefix]
                 return target_arch
 
-    def _is_valid(self, target_arch: str=None) -> bool:
-        is_toolchain = bool(self.compiler_prefix)
-        correct_arch = not target_arch or self.target_arch == target_arch
-        return is_toolchain and correct_arch
-
 
 def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     """Get all the valid the toolchains in a directory.
@@ -123,7 +125,8 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
 
     for entry in entries:
         toolchain = Toolchain(entry.path)
-        if (toolchain._is_valid(target_arch)):
+        if toolchain and (not target_arch or
+                          toolchain.target_arch == target_arch):
             toolchains.append(toolchain)
 
     if not toolchains:
