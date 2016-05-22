@@ -63,10 +63,6 @@ class Toolchain(object):
         """The prefix of all binaries of this."""
         return self._compiler_prefix
 
-    def set_as_active(self):
-        """Set this self as the active toolchain to compile with."""
-        os.putenv('CROSS_COMPILE', self.compiler_prefix)
-
     def find_compiler_prefix(self) -> str:
         """Return the prefix of all binaries of this."""
         def find_binaries() -> Iterable:
@@ -95,6 +91,10 @@ class Toolchain(object):
             if prefix.startswith(arch_prefix):
                 target_arch = Toolchain.compiler_prefixes[arch_prefix]
                 return target_arch
+
+    def set_as_active(self):
+        """Set this self as the active toolchain to compile with."""
+        os.putenv('CROSS_COMPILE', self.compiler_prefix)
 
 
 def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
