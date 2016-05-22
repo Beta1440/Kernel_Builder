@@ -2,14 +2,27 @@
 
 from cement.core.controller import CementBaseController, expose
 
+VERSION = '0.1.0'
+
+BANNER = """
+Kernel Builder {}
+Copyright (c) 2016 Dela Anthonio
+""".format(VERSION)
+
 class KbuilderBaseController(CementBaseController):
     class Meta:
         label = 'base'
         description = 'Automate compilling the Linux kernel for android devices'
         arguments = [
-            (['-f', '--foo'],
-             dict(help='the notorious foo option', dest='foo', action='store',
-                  metavar='TEXT') ),
+            (['-c', '--clean'],
+             dict(help='execute make clean before each build', dest='clean',
+                  action='store_true')),
+            (['-j', '--jobs'],
+             dict(help='the amount of jobs to build with', dest='jobs',
+                  action='store')),
+            (['-v', '--version'],
+             dict(version=BANNER,
+                  action='version'))
             ]
 
     @expose(hide=True)
