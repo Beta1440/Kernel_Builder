@@ -1,6 +1,7 @@
 """Kernel Builder base controller."""
 
 from cement.core.controller import CementBaseController, expose
+from kbuilder.core import kbuilder
 
 VERSION = '0.1.0'
 
@@ -27,7 +28,8 @@ class KbuilderBaseController(CementBaseController):
 
     @expose(hide=True)
     def default(self):
-        print("Inside KbuilderBaseController.default().")
+        """Build all targets """
+        kbuilder.main()
 
         # If using an output handler such as 'mustache', you could also
         # render a data dictionary using a template.  For example:

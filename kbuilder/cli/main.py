@@ -3,7 +3,7 @@
 from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
 from cement.core.exc import FrameworkError, CaughtSignal
-from kbuilder.core import exc, kbuilder
+from kbuilder.core import exc
 
 # Application default.  Should update config/kbuilder.conf to reflect any
 # changes, or additions here.
@@ -57,7 +57,6 @@ def main():
     with app:
         try:
             app.run()
-            kbuilder.main()
 
         except exc.KbuilderError as e:
             # Catch our application errors and exit 1 (error)
