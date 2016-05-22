@@ -67,22 +67,18 @@ class Toolchain(object):
         """Return the prefix of all binaries of this."""
         def find_binaries() -> Iterable:
             """Return an Iterable of binaries in the toolchain's bin folder."""
-            binaries_dir = Path(self.root, 'bin')
-            if binaries_dir.isdir():
-                return os.scandir(binaries_dir)
-            else:
-                return None
+            try:
+                return os.scandir(self.root.child('bin'))
+            except:
+                pass
 
         def is_gcc_binary(binary_name: str) -> bool:
             return binary_name.endswith('gcc')
 
-        binaries = find_binaries()
-
-        if binaries:
-            for entry in binaries:
-                if is_gcc_binary(entry.name):
-                    compiler_prefix = entry.path[:-3]
-                    return compiler_prefix
+        for entry in find_binaries():
+            if is_gcc_binary(entry.name):
+                compiler_prefix = entry.path[:-3]
+                return compiler_prefix
 
     def find_target_arch(self) -> str:
         """Determine the target architecture of the toolchain."""
