@@ -39,7 +39,7 @@ if VERSION < '3.5':
 KERNEL_ROOT_DIR = Kernel.find_root()
 
 # This dirctory should contain the necessary tools for creating the kernel
-RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'resources').resolve()
+RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'android', 'ota').resolve()
 
 # The directory to export the package zip
 DEF_EXPORT_DIR = Path(KERNEL_ROOT_DIR, '..', 'output').resolve()
