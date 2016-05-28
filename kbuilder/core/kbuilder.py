@@ -122,8 +122,13 @@ def build(kernel: Kernel, toolchains: Iterable[Toolchain], export_dir: str=None,
     """Build the kernel with the given toolchains."""
     regenerate_defconfig = True
     kbuild_image = None
+    clean = None
+    if len(toolchains) > 1:
+        clean = kernel.clean
+    else:
+        clean = kernel.arch_clean
     for toolchain in toolchains:
-        kernel.clean(toolchain, False)
+        clean(toolchain)
         if regenerate_defconfig:
             kbuild_image = kernel.build(toolchain, 'defconfig', build_log_dir)
             regenerate_defconfig = False
