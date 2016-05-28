@@ -25,7 +25,7 @@ from unipath import Path
 
 from kbuilder.core import gcc
 from kbuilder.core.gcc import Toolchain
-from kbuilder.core.kernel import Kernel
+from kbuilder.core.kernel import Kernel, make
 from kbuilder.core.messages import alert, highlight, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
@@ -117,24 +117,21 @@ def time_delta(func) -> None:
 
 
 @time_delta
-def build(kernel: Kernel, toolchains: Iterable[Toolchain], export_dir: str=None,
+def build(kernel: Kernel, toolchains: Iterable[Toolchain],
+          defconfig: str='defconfig', export_dir: str=None,
           ota_package_dir: str=None, build_log_dir: str=None) -> None:
     """Build the kernel with the given toolchains."""
-    regenerate_defconfig = True
     kbuild_image = None
     clean = None
+    print('making: ' + highlight(defconfig))
+    make(defconfig)
     if len(toolchains) > 1:
         clean = kernel.clean
     else:
         clean = kernel.arch_clean
     for toolchain in toolchains:
         clean(toolchain)
-        if regenerate_defconfig:
-            kbuild_image = kernel.build(toolchain, 'defconfig', build_log_dir)
-            regenerate_defconfig = False
-
-        else:
-            kbuild_image = kernel.build(toolchain, defconfig=None build_log_dir)
+        kbuild_image = kernel.build(toolchain, build_log_dir)
 
         if ota_package_dir:
             shutil.copy(kbuild_image, ota_package_dir + '/boot')
@@ -153,7 +150,7 @@ def main():
     export_path = Path(get_export_dir(), kernel.version_numbers)
     try:
         DEF_EXPORT_DIR.mkdir(parents=True)
-        build(kernel, toolchains, export_dir=export_path,
+        build(kernel, toolchains, defconfig='defconfig', export_dir=export_path,
               ota_package_dir=RESOURSES_DIR, build_log_dir=BUILD_LOG_DIR)
 
     except KeyboardInterrupt:
