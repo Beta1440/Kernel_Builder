@@ -134,12 +134,13 @@ def build(kernel: Kernel, toolchains: Iterable[Toolchain], export_dir: str=None,
             regenerate_defconfig = False
 
         else:
-            kbuild_image = kernel.build(toolchain, build_log_dir)
+            kbuild_image = kernel.build(toolchain, defconfig=None build_log_dir)
 
         if ota_package_dir:
             shutil.copy(kbuild_image, ota_package_dir + '/boot')
             full_version = kernel.get_full_version(toolchain)
-            zip_ota_package(Path(export_dir, full_version), ota_package_dir)
+            ota_package_path = Path(str(export_dir), full_version)
+            zip_ota_package(ota_package_path, ota_package_dir)
 
 
 def main():
@@ -149,10 +150,10 @@ def main():
     kernel_root_dir = KERNEL_ROOT_DIR
     kernel_root_dir.chdir()
     kernel = Kernel(kernel_root_dir)
-    export_dir = Path(get_export_dir(), kernel.version_numbers)
+    export_path = Path(get_export_dir(), kernel.version_numbers)
     try:
-        DEF_EXPORT_DIR.mkdir()
-        build(kernel, toolchains, export_dir,
+        DEF_EXPORT_DIR.mkdir(parents=True)
+        build(kernel, toolchains, export_dir=export_path,
               ota_package_dir=RESOURSES_DIR, build_log_dir=BUILD_LOG_DIR)
 
     except KeyboardInterrupt:
