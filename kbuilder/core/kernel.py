@@ -141,8 +141,7 @@ class Kernel(object):
         toolchain.set_as_active()
         return make('clean')
 
-    def build(self, toolchain: Toolchain, defconfig: str='',
-              build_log_dir: str='') -> Path:
+    def build(self, toolchain: Toolchain, build_log_dir: str=None) -> Path:
         """Build the kernel.
 
         Return the path of the absolute path of kbuild image if the build is
@@ -153,11 +152,7 @@ class Kernel(object):
         build_log_dir --  the directory of the build log file
         """
         toolchain.set_as_active()
-
-        if defconfig:
-            print('making: ' + highlight(defconfig))
-            make(defconfig)
-
+            
         full_version = self.get_full_version(toolchain)
         Path(build_log_dir).mkdir()
         build_log = Path(build_log_dir, full_version + '-log.txt')
