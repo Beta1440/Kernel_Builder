@@ -109,29 +109,25 @@ class Kernel(object):
             return _find_kernel_root()
 
     @staticmethod
-    def arch_clean(toolchain: Toolchain) -> CompletedProcess:
+    def arch_clean() -> CompletedProcess:
         """Remove compiled kernel files in the arch directory.
 
         This form of cleaning is useful for rebuilding the kernel with the same
         Toolchain, since only files that were changed will be compiled.
         Keyword arguements
-        toolchain --  the toolchain to use to invoke the clean command
         """
         print('Performing an arch clean')
-        toolchain.set_as_active()
         return make('archclean')
 
     @staticmethod
-    def clean(toolchain: Toolchain) -> CompletedProcess:
+    def clean() -> CompletedProcess:
         """Remove all compiled kernel files.
 
         This form of cleaning is useful when switching the toolchain to build
         kernel since all files need to be recompiled.
         Keyword arguements
-        toolchain --  the toolchain to use to invoke the clean command
         """
         print('Removing all compiled files')
-        toolchain.set_as_active()
         return make('clean')
 
     def build(self, toolchain: Toolchain, build_log_dir: str=None) -> Path:
@@ -144,8 +140,6 @@ class Kernel(object):
         defconfig -- the default configuration file (default '')
         build_log_dir --  the directory of the build log file
         """
-        toolchain.set_as_active()
-
         full_version = self.get_full_version(toolchain)
         Path(build_log_dir).mkdir()
         build_log = Path(build_log_dir, full_version + '-log.txt')
