@@ -139,23 +139,15 @@ def build(kernel: Kernel, toolchains: Iterable[Toolchain],
             ota_package_path = Path(str(export_dir), full_version)
             zip_ota_package(ota_package_path, ota_package_dir)
 
-
 def main():
     """Build the kernel with the selected toolchains."""
     toolchains = gcc.scandir(TOOLCHAIN_DIR)
     toolchains = gcc.select(toolchains)
-    kernel_root_dir = KERNEL_ROOT_DIR
-    kernel_root_dir.chdir()
-    kernel = Kernel(kernel_root_dir)
-    export_path = Path(get_export_dir(), kernel.version_numbers)
-    try:
+    with Kernel(KERNEL_ROOT_DIR) as kernel:
+        export_path = Path(get_export_dir(), kernel.version_numbers)
         DEF_EXPORT_DIR.mkdir(parents=True)
         build(kernel, toolchains, defconfig='defconfig', export_dir=export_path,
               ota_package_dir=RESOURSES_DIR, build_log_dir=BUILD_LOG_DIR)
-
-    except KeyboardInterrupt:
-        print(alert('Exiting due to KeyboardInterrupt'))
-        exit()
 
 
 if __name__ == '__main__':
