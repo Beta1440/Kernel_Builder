@@ -16,27 +16,13 @@
 import os
 from subprocess import CompletedProcess, PIPE, run
 
-from typing import Any, Optional
 from unipath.path import Path
 
 from kbuilder.core.gcc import Toolchain
-from kbuilder.core.messages import alert, highlight, success
+from kbuilder.core.messages import alert, success
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
-
-
-def temp_visit(path_name: str) -> Optional[Any]:
-    """Temporarily visit a path and perform some actions."""
-    def func_wrapper(func):
-        def arg_wrapper(*args, **kwargs):
-            orig_path = os.getcwd()
-            os.chdir(path_name)
-            output = func(*args, **kwargs)
-            os.chdir(orig_path)
-            return output
-        return arg_wrapper
-    return func_wrapper
 
 
 def make(targets: str, jobs: int=os.cpu_count(),
@@ -71,10 +57,8 @@ class Kernel(object):
         self.version_numbers = self.version[-5:]
 
     def _find_kernel_verion(self):
-        @temp_visit(self.root)
-        def _find_verion(command='kernelrelease'):
-            return make(command).stdout.rstrip()[8:]
-        return _find_verion()
+        with self:
+            return make('kernelrelease').stdout.rstrip()[8:]
 
     def __enter__(self):
         self._prev_dir = Path(os.getcwd())
@@ -161,14 +145,14 @@ class Kernel(object):
         build_log_dir --  the directory of the build log file
         """
         toolchain.set_as_active()
-            
+
         full_version = self.get_full_version(toolchain)
         Path(build_log_dir).mkdir()
         build_log = Path(build_log_dir, full_version + '-log.txt')
 
         try:
-            print('compiling {} with {}'.format(self.version, toolchain.name))
-            make('all', log_file=build_log).stdout
+            print('compiling {0.version} with {1.name}'.format(self, toolchain))
+            make('all', log_file=build_log)
             print(success(full_version + ' compiled'))
             kbuild_image_path = Path(self.root, 'arch', toolchain.target_arch,
                                      'boot', 'Image.gz-dtb')
