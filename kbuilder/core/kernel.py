@@ -76,6 +76,15 @@ class Kernel(object):
             return make(command).stdout.rstrip()[8:]
         return _find_verion()
 
+    def __enter__(self):
+        self._prev_dir = Path(os.getcwd())
+        self.root.chdir()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._prev_dir.chdir()
+        return False
+
     def get_full_version(self, toolchain: Toolchain) -> str:
         """Get the kernel version with the toolchain name appended.
 
