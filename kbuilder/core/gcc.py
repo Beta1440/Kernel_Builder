@@ -91,6 +91,7 @@ class Toolchain(object):
     def set_as_active(self):
         """Set this self as the active toolchain to compile with."""
         os.putenv('CROSS_COMPILE', self.compiler_prefix)
+        os.putenv('SUBARCH', self.target_arch)
 
 
 def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
