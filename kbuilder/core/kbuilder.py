@@ -122,15 +122,10 @@ def build(kernel: Kernel, toolchains: Iterable[Toolchain],
           ota_package_dir: str=None, build_log_dir: str=None) -> None:
     """Build the kernel with the given toolchains."""
     kbuild_image = None
-    clean = None
     print('making: ' + highlight(defconfig))
     make(defconfig)
-    if len(toolchains) > 1:
-        clean = kernel.clean
-    else:
-        clean = kernel.arch_clean
     for toolchain in toolchains:
-        clean(toolchain)
+        kernel.arch_clean(toolchain)
         kbuild_image = kernel.build(toolchain, build_log_dir)
 
         if ota_package_dir:
