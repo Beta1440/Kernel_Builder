@@ -48,6 +48,15 @@ class Toolchain(object):
         """
         return self.root.isdir() and Path(self.root, 'bin').isdir()
 
+    def __enter__(self):
+        """Set this self as the toolchain to compile targets."""
+        self.set_as_active()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Not implemented"""
+        return False
+
     @property
     def name(self):
         """The name of this."""
