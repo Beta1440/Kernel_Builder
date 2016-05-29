@@ -58,7 +58,10 @@ class Kernel(object):
 
     def _find_kernel_verion(self):
         with self:
-            return make('kernelrelease').stdout.rstrip()[8:]
+            output = make('kernelrelease').stdout.rstrip()
+            lines = output.split('\n')
+            kernelrelease = lines[-1]
+            return kernelrelease[8:]
 
     def __enter__(self):
         self._prev_dir = Path(os.getcwd())
