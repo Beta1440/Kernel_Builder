@@ -26,7 +26,7 @@ KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
 
 
 def make(targets: str, jobs: int=os.cpu_count(),
-         string_output: bool=True, log_file: str=None) -> CompletedProcess:
+         string_output: bool=True) -> CompletedProcess:
     """Execute make in the shell and return a CompletedProcess object.
 
     A CalledProcessError exeception will be thrown if the return code is not 0.
@@ -34,11 +34,8 @@ def make(targets: str, jobs: int=os.cpu_count(),
     jobs -- the amount of jobs to build with (default os.cpu_count())
     string_output -- If true, the stdout of the CompletedProcess will be a
         string. Otherwise, the stdout will be a bytes (default True).
-    log_file -- The output of the terminal is redirected to this path (default None).
     """
     command = 'make -j{} {}'.format(jobs, targets)
-    if log_file:
-        command += ' > {} 2>&1'.format(log_file)
     return run(command, shell=True, stdout=PIPE,
                universal_newlines=string_output, check=True)
 
@@ -149,7 +146,8 @@ class Kernel(object):
 
         try:
             print('compiling {0.version} with {1.name}'.format(self, toolchain))
-            make('all', log_file=build_log)
+            output = make('all').stdout
+            build_log.write_file(output)
             print(success(full_version + ' compiled'))
             kbuild_image_path = Path(self.root, 'arch', toolchain.target_arch,
                                      'boot', 'Image.gz-dtb')
