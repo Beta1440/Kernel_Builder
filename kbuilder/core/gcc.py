@@ -120,13 +120,6 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
         if toolchain and (not target_arch or
                           toolchain.target_arch == target_arch):
             toolchains.append(toolchain)
-
-    if not toolchains:
-        print('{} no {} toolchains detected in {}'.format((alert('Error:')),
-              highlight(target_arch), highlight(toolchain_dir)))
-
-    toolchain_names = [highlight(toolchain) for toolchain in toolchains]
-    print(success('Toolchains located: ') + ', '.join(toolchain_names))
     return toolchains
 
 
