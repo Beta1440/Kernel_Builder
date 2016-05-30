@@ -80,35 +80,33 @@ class Kernel(object):
         return '{}-{}'.format(self.version, toolchain.name)
 
     @staticmethod
-    def find_root(path_name: str='') -> Path:
+    def find_root(initial_path: str) -> Path:
         """Find the root of the kernel directory.
 
-        Recursively search for the root of the kernel directory. The search
-        continues the kernel root is found or the system root directory is reached.
-        If the system root directory is reached, then 'None' is returned.
-        Otherwise, the path of the kernel root directory is returned.
-        Keyword arguments
-        path_name -- the name of the path to begin search in (default '')
+        Search for the root of a kernel directory starting at a given directory.
+        The search continues until the kernel root is found or the system root
+        directory is reached. If the system root directory is reached, then
+        'None' is returned. Otherwise, the path of the kernel root directory is
+        returned.
+        Arguments
+        initial_path -- the path to begin search
         """
         def is_kernel_root(path: Path) -> bool:
-            path_files = [file.name for file in os.scandir(path)]
-            for dir in KERNEL_DIRS:
-                if dir not in path_files:
-                    return False
-            return True
+            """Check if the current path is the root directory of a kernel."""
+            files_in_dir = [file.name for file in os.scandir(path)]
+            return all(kernel_dir in files_in_dir for kernel_dir in KERNEL_DIRS)
 
-        def _find_kernel_root(path: Path=Path(os.getcwd())) -> Path:
+        def walk_to_root(path: Path) -> Path:
+            """Search for the root of the kernel directory."""
+            system_root = Path('/')
             if is_kernel_root(path):
                 return path
-            elif path == Path('/'):
+            elif path == system_root:
                 return None
             else:
-                return _find_kernel_root(path.parent)
+                return walk_to_root(path.parent)
 
-        if path_name:
-            return _find_kernel_root(Path(path_name))
-        else:
-            return _find_kernel_root()
+        return walk_to_root(Path(initial_path))
 
     @staticmethod
     def arch_clean() -> CompletedProcess:
