@@ -112,13 +112,14 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     toolchain_dir -- the directory to look for toolchains
     target_arch -- the architecture to get toolchains for
     """
+    def valid_arch():
+        return not target_arch or toolchain.target_arch == target_arch
     toolchains = []
     entries = sorted(os.scandir(toolchain_dir), key=lambda x: x.name)
 
     for entry in entries:
         toolchain = Toolchain(entry.path)
-        if toolchain and (not target_arch or
-                          toolchain.target_arch == target_arch):
+        if toolchain and valid_arch():
             toolchains.append(toolchain)
     return toolchains
 
