@@ -14,12 +14,14 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from subprocess import CompletedProcess, PIPE, run
+import logging
+from subprocess import CalledProcessError, CompletedProcess, PIPE, run
+import sys
 
 from unipath.path import Path
 
 from kbuilder.core.gcc import Toolchain
-from kbuilder.core.messages import alert, success
+from kbuilder.core.messages import alert, highlight, success
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
@@ -154,9 +156,9 @@ class Kernel(object):
                                      'boot', 'Image.gz-dtb')
             return kbuild_image_path
 
-        except:
-            print(alert('{} failed to compile'.format(full_version)))
-            exit()
-
-        finally:
-            print('the build log is located at ' + build_log)
+        except CalledProcessError:
+            logging.exception(
+                alert('{kernel} failed to compile'.format(
+                kernel = full_version)))
+            print('the build log is located at ' + highlight(build_log))
+            sys.exit(1)
