@@ -149,7 +149,8 @@ class Kernel(object):
             output = make('all').stdout
             build_log.write_file(output)
             print(success(full_version + ' compiled'))
-            kbuild_image_path = Path(self.root, 'arch', toolchain.target_arch,
+            kbuild_image_path = Path(self.root, 'arch',
+                                     toolchain.target_arch.name,
                                      'boot', 'Image.gz-dtb')
             return kbuild_image_path
 

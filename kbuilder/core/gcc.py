@@ -14,17 +14,17 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 from unipath.path import Path
 
 from kbuilder.core.messages import alert, highlight, success
-
+from kbuilder.core.arch import Arch
 
 class Toolchain(object):
     """Store relevant info of a toolchain."""
 
-    compiler_prefixes = {'aarch64': 'arm64', 'arm-eabi': 'arm'}
+    compiler_prefixes = {'aarch64': Arch.arm64, 'arm-eabi': Arch.arm}
 
     def __init__(self, root: str) -> None:
         """Initialize a new Toolchain.
@@ -35,7 +35,7 @@ class Toolchain(object):
         self.root = Path(root)
         self._name = self.root.name
         self._compiler_prefix = Path(self.find_compiler_prefix())
-        self._target_arch = self.find_target_arch()
+        self._target_arch = self._find_target_arch()
 
     def __str__(self) -> str:
         """Return the name of the toolchain's root directory."""
@@ -89,7 +89,7 @@ class Toolchain(object):
                 compiler_prefix = entry.path[:-3]
                 return compiler_prefix
 
-    def find_target_arch(self) -> str:
+    def _find_target_arch(self) -> Arch:
         """Determine the target architecture of the toolchain."""
         prefix = self.compiler_prefix.name
         for arch_prefix in iter(Toolchain.compiler_prefixes):
@@ -100,10 +100,11 @@ class Toolchain(object):
     def set_as_active(self):
         """Set this self as the active toolchain to compile with."""
         os.putenv('CROSS_COMPILE', self.compiler_prefix)
-        os.putenv('SUBARCH', self.target_arch)
+        os.putenv('SUBARCH', self.target_arch.name)
 
 
-def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
+def scandir(toolchain_dir: str,
+            target_arch: Optional[Arch]=None) -> List[Toolchain]:
     """Get all the valid the toolchains in a directory.
 
     A toolchain is valid if it has a gcc executable in its "bin/" directory
