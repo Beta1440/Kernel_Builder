@@ -123,7 +123,7 @@ def scandir(toolchain_dir: str, target_arch: str='') -> List[Toolchain]:
     return toolchains
 
 
-def select(toolchains: List[Toolchain]) -> List[Toolchain]:
+def select(toolchains: List[Toolchain]) -> Iterable[Toolchain]:
     """Select which toolchains to use in compiling the kernel.
 
     The kernel will be compiled once with each toolchain selected.
@@ -140,8 +140,5 @@ def select(toolchains: List[Toolchain]) -> List[Toolchain]:
 
     numbers = input('Enter numbers separated by spaces: ')
     chosen_numbers = [int(x) for x in numbers.split()]
-    selected_toolchains = []
     for number in chosen_numbers:
-        selected_toolchains.append(toolchains[number - 1])
-
-    return selected_toolchains
+        yield toolchains[number - 1]
