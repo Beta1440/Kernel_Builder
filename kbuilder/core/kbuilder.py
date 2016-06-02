@@ -36,15 +36,16 @@ if VERSION < '3.5':
 
 
 # The root of the kernel
-KERNEL_ROOT_DIR = Kernel.find_root()
+KERNEL_ROOT_DIR = str(Kernel.find_root(os.getcwd()))
+print(KERNEL_ROOT_DIR)
 
 # This dirctory should contain the necessary tools for creating the kernel
-RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'android', 'ota').resolve()
+RESOURSES_DIR = Path(KERNEL_ROOT_DIR, 'android', 'ota')
 
 # The directory to export the package zip
-DEF_EXPORT_DIR = Path(KERNEL_ROOT_DIR, '..', 'output').resolve()
+DEF_EXPORT_DIR = Path(KERNEL_ROOT_DIR, '..', 'output').norm()
 
-TOOLCHAIN_DIR = Path(KERNEL_ROOT_DIR, '..', 'toolchains').resolve()
+TOOLCHAIN_DIR = Path(KERNEL_ROOT_DIR, '..', 'toolchains').norm()
 
 SUBLIME_N9_EXPORT_DIR = Path(os.getenv('SUBLIME_N9_EXPORT_DIR'))
 
