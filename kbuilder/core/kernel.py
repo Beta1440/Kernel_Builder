@@ -20,6 +20,7 @@ import sys
 
 from unipath.path import Path
 
+from kbuilder.core.arch import Arch
 from kbuilder.core.gcc import Toolchain
 from kbuilder.core.messages import alert, highlight, success
 
@@ -130,6 +131,17 @@ class Kernel(object):
         print('Removing all compiled files')
         return make('clean')
 
+    def kbuild_image_abs_path(self, arch: Arch, kbuild_image: str) -> Path:
+        """Return the absolute path to the kbuild image of the kernel.
+
+        The kbuild image is a compressed kernel image that if produced
+        after the kernel if compiled.
+        Arguements:
+        arch -- the architecture being compiled.
+        kbuild_image -- the name of the kbuild image file.
+        """
+        return self.root.child('arch', arch.name, 'boot', kbuild_image)
+
     def build(self, toolchain: Toolchain, build_log_dir: str=None) -> Path:
         """Build the kernel.
 
@@ -149,10 +161,8 @@ class Kernel(object):
             output = make('all').stdout
             build_log.write_file(output)
             print(success(full_version + ' compiled'))
-            kbuild_image_path = Path(self.root, 'arch',
-                                     toolchain.target_arch.name,
-                                     'boot', 'Image.gz-dtb')
-            return kbuild_image_path
+            return self.kbuild_image_abs_path(toolchain.target_arch,
+                                              'Image.gz-dtb')
 
         except CalledProcessError:
             logging.exception(
