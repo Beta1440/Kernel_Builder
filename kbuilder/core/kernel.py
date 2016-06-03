@@ -18,6 +18,7 @@ import logging
 from subprocess import CalledProcessError, CompletedProcess, PIPE, run
 import sys
 
+from typing import Iterable, Tuple
 from unipath.path import Path
 
 from kbuilder.core.arch import Arch
@@ -142,7 +143,8 @@ class Kernel(object):
         """
         return self.root.child('arch', arch.name, 'boot', kbuild_image)
 
-    def build(self, toolchain: Toolchain, build_log_dir: str=None) -> Path:
+    def build(self, toolchain: Toolchain,
+              build_log_dir: str=None) -> Tuple[Path, str]:
         """Build the kernel.
 
         Return the path of the absolute path of kbuild image if the build is
@@ -162,7 +164,7 @@ class Kernel(object):
             build_log.write_file(output)
             print(success(full_version + ' compiled'))
             return self.kbuild_image_abs_path(toolchain.target_arch,
-                                              'Image.gz-dtb')
+                                              'Image.gz-dtb'), full_version
 
         except CalledProcessError:
             logging.exception(
