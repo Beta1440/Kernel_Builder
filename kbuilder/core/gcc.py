@@ -21,6 +21,7 @@ from unipath.path import Path
 from kbuilder.core.messages import alert, highlight, success
 from kbuilder.core.arch import Arch
 
+
 class Toolchain(object):
     """Store relevant info of a toolchain."""
 
@@ -54,7 +55,13 @@ class Toolchain(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Not implemented"""
+        """Do not supresses any errors.
+
+        Positional arguments:
+        exc_type -- the type of exception
+        exc_val -- the value of the exception
+        exc_tb -- the traceback of the exception
+        """
         return False
 
     @property
@@ -105,13 +112,19 @@ class Toolchain(object):
 
 def scandir(toolchain_dir: str,
             target_arch: Optional[Arch]=None) -> List[Toolchain]:
-    """Get all the valid the toolchains in a directory.
+    """Return a list of toolchains located in a directory.
 
-    A toolchain is valid if it has a gcc executable in its "bin/" directory
+    A toolchain is considered valid if it has a gcc executable in its
+     'bin' directory.
+
+    Positional arguments:
+    toolchain_dir -- the directory to look for toolchains.
 
     Keyword arguments:
-    toolchain_dir -- the directory to look for toolchains
-    target_arch -- the architecture to get toolchains for
+    target_arch -- the target architecture of toolchains to search for.
+        If empty, then toolchains of any architecture may be returned
+        otherwise only toolchains with the matching architecture will be
+        returned (default None).
     """
     def valid_arch():
         return not target_arch or toolchain.target_arch == target_arch
@@ -126,12 +139,16 @@ def scandir(toolchain_dir: str,
 
 
 def select(toolchains: List[Toolchain]) -> Iterable[Toolchain]:
-    """Select which toolchains to use in compiling the kernel.
+    """Return an Iterator of toolchains from a list of toolchains.
 
-    The kernel will be compiled once with each toolchain selected.
-    If only one toolchain is available, then it will be automatically selected.
+    Each toolchain will be printed with its position in the list.
+    The positions begin at 1 and are printed next to the toolchain.
+    Then the client will be prompted to enter in a series of numbers.
+    An Iterable containing toolchains with the matching positions from the
+    input will be returned. If only one toolchain is in the list,
+    then it will be automatically selected.
 
-    Keyword arguments:
+    Positional arguments:
     toolchains -- the list of toolchains to select from
     """
     if len(toolchains) <= 1:
