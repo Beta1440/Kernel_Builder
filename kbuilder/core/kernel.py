@@ -15,33 +15,19 @@
 
 import os
 import logging
-from subprocess import CalledProcessError, CompletedProcess, PIPE, run
 import sys
 
+from subprocess import CalledProcessError, CompletedProcess
 from typing import Iterable, Tuple
 from unipath.path import Path
 
 from kbuilder.core.arch import Arch
 from kbuilder.core.gcc import Toolchain
+import kbuilder.core.make as mk
 from kbuilder.core.messages import alert, highlight, success
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
-
-
-def make(targets: str, jobs: int=os.cpu_count(),
-         string_output: bool=True) -> CompletedProcess:
-    """Execute make in the shell and return a CompletedProcess object.
-
-    A CalledProcessError exeception will be thrown if the return code is not 0.
-    Keyword arguments:
-    jobs -- the amount of jobs to build with (default os.cpu_count())
-    string_output -- If true, the stdout of the CompletedProcess will be a
-        string. Otherwise, the stdout will be a bytes (default True).
-    """
-    command = 'make -j{} {}'.format(jobs, targets)
-    return run(command, shell=True, stdout=PIPE,
-               universal_newlines=string_output, check=True)
 
 
 class Kernel(object):
@@ -59,7 +45,7 @@ class Kernel(object):
 
     def _find_kernel_verion(self):
         with self:
-            output = make('kernelrelease').stdout.rstrip()
+            output = mk.make_output('kernelrelease').rstrip()
             lines = output.split('\n')
             kernelrelease = lines[-1]
             return kernelrelease[8:]
@@ -119,7 +105,7 @@ class Kernel(object):
         Keyword arguements
         """
         print('Performing an arch clean')
-        return make('archclean')
+        return mk.make('archclean')
 
     @staticmethod
     def clean() -> CompletedProcess:
@@ -130,7 +116,7 @@ class Kernel(object):
         Keyword arguements
         """
         print('Removing all compiled files')
-        return make('clean')
+        return mk.make('clean')
 
     def kbuild_image_abs_path(self, arch: Arch, kbuild_image: str) -> Path:
         """Return the absolute path to the kbuild image of the kernel.
@@ -160,7 +146,7 @@ class Kernel(object):
 
         try:
             print('compiling {0.version} with {1.name}'.format(self, toolchain))
-            output = make('all').stdout
+            output = mk.make_output('all')
             build_log.write_file(output)
             print(success(full_version + ' compiled'))
             return self.kbuild_image_abs_path(toolchain.target_arch,

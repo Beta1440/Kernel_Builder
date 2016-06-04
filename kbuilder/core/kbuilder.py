@@ -25,7 +25,8 @@ from unipath import Path
 
 from kbuilder.core import gcc
 from kbuilder.core.gcc import Toolchain
-from kbuilder.core.kernel import Kernel, make
+from kbuilder.core.kernel import Kernel
+import kbuilder.core.make as mk
 from kbuilder.core.messages import alert, highlight, success
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
@@ -124,7 +125,7 @@ def build(kernel: Kernel, toolchains: Iterable[Toolchain],
     """Build the kernel with the given toolchains."""
     kbuild_image = None
     print('making: ' + highlight(defconfig))
-    make(defconfig)
+    mk.make(defconfig)
     for toolchain in toolchains:
         with toolchain:
             kernel.arch_clean()
