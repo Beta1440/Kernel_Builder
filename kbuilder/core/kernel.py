@@ -38,10 +38,19 @@ class Kernel(object):
         Keyword arguments:
         root -- the root directory of the kernel
         """
-        self.root = Path(root)
-        self.name = self.root.name
+        self._root = Path(root)
         self.version = self._find_kernel_verion()
         self.version_numbers = self.version[-5:]
+
+    @property
+    def root(self):
+        """The absolute path of the kernel root"""
+        return self._root
+
+    @property
+    def name(self):
+        """The name of the kernel root"""
+        return self.root.name
 
     def _find_kernel_verion(self):
         with self:
