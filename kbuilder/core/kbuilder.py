@@ -128,7 +128,8 @@ def build(kernel: Kernel, toolchains: Iterable[Toolchain],
     for toolchain in toolchains:
         with toolchain:
             kernel.arch_clean()
-            kbuild_image, kernel_release = kernel.build(toolchain, build_log_dir)
+            kbuild_image, kernel_release =  kernel.build_kbuild_image(toolchain,
+                                                                      build_log_dir)
 
             if ota_package_dir:
                 shutil.copy(kbuild_image, ota_package_dir + '/boot')

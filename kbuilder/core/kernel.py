@@ -138,7 +138,7 @@ class Kernel(object):
         """
         return self.root.child('arch', arch.name, 'boot', kbuild_image)
 
-    def build(self, toolchain: Toolchain,
+    def build_kbuild_image(self, toolchain: Toolchain,
               build_log_dir: str=None) -> Tuple[Path, str]:
         """Build the kernel.
 
