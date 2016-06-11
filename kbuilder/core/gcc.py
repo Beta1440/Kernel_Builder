@@ -161,3 +161,22 @@ def select(toolchains: List[Toolchain]) -> Iterable[Toolchain]:
     chosen_numbers = [int(x) for x in numbers.split()]
     for number in chosen_numbers:
         yield toolchains[number - 1]
+
+
+def select_one(toolchains: List[Toolchain]) -> Toolchain:
+    """Select a toolchain from a list of toolchains.
+
+    Each toolchain will be printed with its position in the list.
+    The positions begin at 1 and are printed next to the toolchain.
+    Then the client will be prompted to enter in the corresponsing position.
+    of the desired toolchain. An Iterable containing toolchains with the
+    matching positions from the input will be returned.
+
+    Positional arguments:
+    toolchains -- the list of toolchains to select from.
+    """
+    for index, toolchain in enumerate(toolchains, 1):
+        print('{}) {}'.format(index, highlight(toolchain)))
+
+    number = input('Enter a single number: ')
+    return toolchains[int(number) - 1]
