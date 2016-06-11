@@ -123,18 +123,16 @@ def build(kernel: Kernel, toolchains: Iterable[Toolchain],
           defconfig: str='defconfig', export_dir: str=None,
           ota_package_dir: str=None, build_log_dir: str=None) -> None:
     """Build the kernel with the given toolchains."""
-    kbuild_image = None
     print('making: ' + highlight(defconfig))
     mk.make(defconfig)
     for toolchain in toolchains:
         with toolchain:
             kernel.arch_clean()
-            kbuild_image = kernel.build(toolchain, build_log_dir)
+            kbuild_image, kernel_release = kernel.build(toolchain, build_log_dir)
 
             if ota_package_dir:
                 shutil.copy(kbuild_image, ota_package_dir + '/boot')
-                full_version = kernel.get_full_version(toolchain)
-                ota_package_path = Path(str(export_dir), full_version)
+                ota_package_path = Path(str(export_dir), kernel_release)
                 zip_ota_package(ota_package_path, ota_package_dir)
 
 def main():
