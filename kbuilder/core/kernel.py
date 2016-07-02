@@ -164,6 +164,19 @@ class Kernel(object):
         except CalledProcessError:
             logging.exception(
                 alert('{kernel} failed to compile'.format(
-                kernel = full_version)))
+                      kernel = full_version)))
             print('the build log is located at ' + highlight(build_log))
             sys.exit(1)
+
+    def build_kbuild_images(self, toolchains: Iterable[Toolchain],
+                              build_log_dir: str=None) -> Tuple[Path, str]:
+        """Build multiple kbuild images the kernel.
+
+        Return the path of the absolute path of kbuild image if the build is
+        successful.
+        Keyword arguments:
+        toolchains -- the toolchain to use in building the kernel
+        build_log_dir --  the directory of the build log file
+        """
+        for toolchain in toolchains:
+            yield self.build(toolchain, build_log_dir)

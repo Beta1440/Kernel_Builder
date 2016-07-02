@@ -3,6 +3,7 @@
 from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
 from cement.core.exc import FrameworkError, CaughtSignal
+from cement.core import hook
 from kbuilder.core import exc
 
 # Application default.  Should update config/kbuilder.conf to reflect any
@@ -32,6 +33,14 @@ class KbuilderApp(CementApp):
 
         # Internal templates (ship with application code)
         template_module = 'kbuilder.cli.templates'
+
+    def setup(self):
+        # always run core setup first
+        super(KbuilderApp, self).setup()
+
+        # define application hooks here
+        self.hook.define('pre_kernel_compile')
+
 
 
 class KbuilderTestApp(KbuilderApp):

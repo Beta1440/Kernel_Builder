@@ -2,6 +2,10 @@
 
 from cement.core.controller import CementBaseController, expose
 from kbuilder.core import kbuilder
+from kbuilder.core import gcc
+from kbuilder.cli.main import app
+import os
+from unipath import Path
 
 VERSION = '0.1.0'
 
@@ -30,6 +34,21 @@ class KbuilderBaseController(CementBaseController):
     def default(self):
         """Build all targets """
         kbuilder.main()
+
+    @expose(help="select a toolchain to use")
+    def select(self):
+        """Build all targets."""
+        toolchain_dir = app.config.get('sublime-flounder', 'toolchain_dir')
+        toolchain = gcc.select_one(gcc.scandir(toolchain_dir))
+        root_dir = Path(app.config.get('sublime-flounder', 'root_dir'))
+        root_dir.child('.kbuilder_cur_toolchain').write_file(toolchain.name)
+
+
+    @expose(help="Show the toolchain selected")
+    def show(self):
+        """Build all targets."""
+        root_dir = Path(app.config.get('sublime-flounder', 'root_dir'))
+        print(root_dir.child('.kbuilder_cur_toolchain').read_file())
 
         # If using an output handler such as 'mustache', you could also
         # render a data dictionary using a template.  For example:
