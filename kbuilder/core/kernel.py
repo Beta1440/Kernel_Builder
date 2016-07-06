@@ -19,7 +19,7 @@ import sys
 
 from cached_property import cached_property
 from subprocess import CalledProcessError, CompletedProcess
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Optional
 from unipath.path import Path
 
 from kbuilder.core.arch import Arch
@@ -73,13 +73,16 @@ class Kernel(object):
         self._prev_dir.chdir()
         return False
 
-    def get_full_version(self, toolchain: Toolchain) -> str:
+    def release_version(self, *, suffix: Optional[str]=None) -> str:
         """Get the kernel version with the toolchain name appended.
 
-        Keyword arguments:
-        toolchain -- the toolchain to use
+        Arguments:
+        extension -- the extension to add to this.
         """
-        return '{}-{}'.format(self.version, toolchain.name)
+        if suffix:
+            return '{0.version}-{1}'.format(self, suffix)
+        else:
+            return self.version
 
     @staticmethod
     def find_root(initial_path: str) -> Path:
