@@ -40,7 +40,6 @@ class Kernel(object):
         root -- the root directory of the kernel
         """
         self._root = Path(root)
-        self.version_numbers = self.version[-5:]
 
     @property
     def root(self):
@@ -165,3 +164,16 @@ class Kernel(object):
         output = mk.make_output('all')
         build_log.write_file(output)
         return self.kbuild_image, kernel_release_version
+
+    def build_kbuild_images(self, toolchains: Iterable[Toolchain],
+                            log_dir: str=None) -> Tuple[Path, str]:
+        """Build multiple kbuild images the kernel.
+
+        Return the path of the absolute path of kbuild image if the build is
+        successful.
+        Keyword arguments:
+        toolchains -- the toolchain to use in building the kernel
+        log_dir --  the directory of the build log file
+        """
+        for toolchain in toolchains:
+            yield self.build(toolchain, log_dir)
