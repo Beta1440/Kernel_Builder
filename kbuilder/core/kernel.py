@@ -147,31 +147,21 @@ class Kernel(object):
         return self.root.child('arch', arch.name, 'boot', kbuild_image)
 
     def build_kbuild_image(self, toolchain: Toolchain,
-              build_log_dir: str=None) -> Tuple[Path, str]:
-        """Build the kernel.
+                           log_dir: Optional[str]=None) -> Tuple[Path, str]:
+        """Build the kernel kbuild.
 
         Return the path of the absolute path of kbuild image if the build is
         successful.
+        Positional arguments:
         Keyword arguments:
         toolchain -- the toolchain to use in building the kernel
-        defconfig -- the default configuration file (default '')
-        build_log_dir --  the directory of the build log file
+        log_dir --  the directory of the build log file
         """
-        full_version = self.get_full_version(toolchain)
-        Path(build_log_dir).mkdir()
-        build_log = Path(build_log_dir, full_version + '-log.txt')
+        kernel_release_version = self.release_version(suffix=toolchain.name)
+        Path(log_dir).mkdir()
+        build_log = Path(log_dir, kernel_release_version + '-log.txt')
 
-        try:
-            print('compiling {0.version} with {1.name}'.format(self, toolchain))
-            output = mk.make_output('all')
-            build_log.write_file(output)
-            print(success(full_version + ' compiled'))
-            return self.kbuild_image_abs_path(toolchain.target_arch,
-                                              'Image.gz-dtb'), full_version
-
-        except CalledProcessError:
-            logging.exception(
-                alert('{kernel} failed to compile'.format(
-                kernel = full_version)))
-            print('the build log is located at ' + highlight(build_log))
-            sys.exit(1)
+        print('compiling {0.version} with {1.name}'.format(self, toolchain))
+        output = mk.make_output('all')
+        build_log.write_file(output)
+        return self.kbuild_image, kernel_release_version
