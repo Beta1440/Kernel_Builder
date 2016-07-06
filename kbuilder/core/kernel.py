@@ -17,6 +17,7 @@ import os
 import logging
 import sys
 
+from cached_property import cached_property
 from subprocess import CalledProcessError, CompletedProcess
 from typing import Iterable, Tuple
 from unipath.path import Path
@@ -39,7 +40,6 @@ class Kernel(object):
         root -- the root directory of the kernel
         """
         self._root = Path(root)
-        self.version = self._find_kernel_verion()
         self.version_numbers = self.version[-5:]
 
     @property
@@ -51,6 +51,11 @@ class Kernel(object):
     def name(self):
         """The name of the kernel root"""
         return self.root.name
+
+    @cached_property
+    def version(self):
+        """The local kernel version in the defconfig file."""
+        return self._find_kernel_version()
 
     def _find_kernel_verion(self):
         with self:
