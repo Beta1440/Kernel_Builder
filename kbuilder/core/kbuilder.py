@@ -23,9 +23,11 @@ import arrow
 from typing import Iterable
 from unipath import Path
 
+from kbuilder.core.arch import Arch
 from kbuilder.core import gcc
 from kbuilder.core.gcc import Toolchain
 from kbuilder.core.kernel import Kernel
+from kbuilder.core.kernel_android import AndroidKernel
 import kbuilder.core.make as mk
 from kbuilder.core.messages import alert, highlight, success
 
@@ -51,36 +53,7 @@ TOOLCHAIN_DIR = Path(KERNEL_ROOT_DIR, '..', 'toolchains').norm()
 SUBLIME_N9_EXPORT_DIR = Path(os.getenv('SUBLIME_N9_EXPORT_DIR'))
 
 # Directory for build logs
-BUILD_LOG_DIR = Path(DEF_EXPORT_DIR, 'build_logs')
-
-
-def make_boot_img(name: str, kbuild_image: str, ramdisk: str='ramdisk.img'):
-    """Create a boot.img file that can be install via fastboot.
-
-    Keyword arguments:
-    name -- the name of the output file
-    kbuild_image -- the compressed kernel image to include in the boot.img file
-    ramdisk -- the ramdisk image to include in the boot.img file
-    """
-    previous_directory = os.getcwd()
-    os.chdir(RESOURSES_DIR)
-    args = '--output {} --kernel {} --ramdisk {}'.format(name, kbuild_image,
-                                                         ramdisk)
-    check_call('mkbootimg ' + args, shell=True)
-    os.chdir(previous_directory)
-
-
-def zip_ota_package(name: str, base_dir: str=os.getcwd()) -> str:
-    """Create a zip package that can be installed via recovery.
-
-    Return the path to the zip file created
-    Keyword arguments:
-    name -- the name of the zip file to create
-    base_dir -- the directory whose contents should be zipped (default cwd)
-    """
-    output = shutil.make_archive(name, 'zip', base_dir)
-    print(success('ota package created'))
-    return output
+LOG_DIR = Path(DEF_EXPORT_DIR, 'build_logs')
 
 
 def get_export_dir() -> str:
@@ -121,30 +94,30 @@ def time_delta(func) -> None:
 @time_delta
 def build(kernel: Kernel, toolchains: Iterable[Toolchain],
           defconfig: str='defconfig', export_dir: str=None,
-          ota_package_dir: str=None, build_log_dir: str=None) -> None:
+          ota_package_dir: str=None, log_dir: str=None) -> None:
     """Build the kernel with the given toolchains."""
     print('making: ' + highlight(defconfig))
     mk.make(defconfig)
     for toolchain in toolchains:
         with toolchain:
             kernel.arch_clean()
-            kbuild_image, kernel_release =  kernel.build_kbuild_image(toolchain,
-                                                                      build_log_dir)
-
+            kbuild_image, _ = kernel.build_kbuild_image(toolchain,
+                                                        log_dir=log_dir)
             if ota_package_dir:
                 shutil.copy(kbuild_image, ota_package_dir + '/boot')
-                ota_package_path = Path(str(export_dir), kernel_release)
-                zip_ota_package(ota_package_path, ota_package_dir)
+                kernel.make_ota_package(output_dir=export_dir,
+                                        source_dir=ota_package_dir,
+                                        extra_version=toolchain.name)
 
 def main():
     """Build the kernel with the selected toolchains."""
     toolchains = gcc.scandir(TOOLCHAIN_DIR)
     toolchains = gcc.select(toolchains)
-    with Kernel(KERNEL_ROOT_DIR) as kernel:
+    with AndroidKernel(KERNEL_ROOT_DIR, Arch.arm64) as kernel:
         export_path = Path(get_export_dir(), kernel.version_numbers)
         DEF_EXPORT_DIR.mkdir(parents=True)
         build(kernel, toolchains, defconfig='defconfig', export_dir=export_path,
-              ota_package_dir=RESOURSES_DIR, build_log_dir=BUILD_LOG_DIR)
+              ota_package_dir=RESOURSES_DIR, log_dir=LOG_DIR)
 
 
 if __name__ == '__main__':
