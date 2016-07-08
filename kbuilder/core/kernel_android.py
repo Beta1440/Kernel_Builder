@@ -69,7 +69,7 @@ class AndroidKernel(Kernel):
     @cached_property
     def version_numbers(self):
         """The kernel version in MAJOR.MINOR.PATCH format."""
-        return self.version[:-5]
+        return self.version[-5:]
 
     @cached_property
     def kbuild_image(self):
