@@ -180,3 +180,19 @@ def select_one(toolchains: List[Toolchain]) -> Toolchain:
 
     number = input('Enter a single number: ')
     return toolchains[int(number) - 1]
+
+
+def select_from_scandir(toolchain_dir: str, *,
+                        target_arch: Optional[Arch]=None) -> Iterable[Toolchain]:
+    """Select a toolchain from a directory of toolchains.
+
+    Positional arguments:
+        toolchain_dir -- directory to search for toolchain
+
+    Keyword arguements:
+        target_arch -- architecture of toolchains to search for (Default None).
+
+    Returns:
+        An iterator of the selected toolchains.
+    """
+    return select(scandir(toolchain_dir, target_arch))
