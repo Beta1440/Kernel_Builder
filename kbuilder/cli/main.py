@@ -4,6 +4,7 @@ from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
 from cement.core.exc import FrameworkError, CaughtSignal
 from kbuilder.core import exc
+from kbuilder.cli.config_parser import parse_android_kernel_config
 
 # Application default.  Should update config/kbuilder.conf to reflect any
 # changes, or additions here.
@@ -56,6 +57,7 @@ app = KbuilderApp()
 def main():
     with app:
         try:
+            app.hook.register('pre_run', parse_android_kernel_config)
             app.run()
 
         except exc.KbuilderError as e:
