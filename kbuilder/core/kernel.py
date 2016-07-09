@@ -14,18 +14,14 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import logging
-import sys
+from subprocess import CompletedProcess
+from typing import Iterable, Optional, Tuple
 
+import kbuilder.core.make as mk
 from cached_property import cached_property
-from subprocess import CalledProcessError, CompletedProcess
-from typing import Iterable, Tuple, Optional
-from unipath.path import Path
-
 from kbuilder.core.arch import Arch
 from kbuilder.core.gcc import Toolchain
-import kbuilder.core.make as mk
-from kbuilder.core.messages import alert, highlight, success
+from unipath.path import Path
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']

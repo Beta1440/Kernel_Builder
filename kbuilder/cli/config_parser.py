@@ -1,6 +1,7 @@
 import os
-from unipath import Path
+
 from kbuilder.core.kernel import Kernel
+from unipath import Path
 
 """Parse config files."""
 

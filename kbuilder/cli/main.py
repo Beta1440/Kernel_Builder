@@ -1,10 +1,11 @@
 """Kernel Builder main application entry point."""
 
+from cement.core.exc import CaughtSignal, FrameworkError
 from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
-from cement.core.exc import FrameworkError, CaughtSignal
-from kbuilder.core import exc
 from kbuilder.cli.config_parser import parse_android_kernel_config
+from kbuilder.core import exc
+
 
 # Application default.  Should update config/kbuilder.conf to reflect any
 # changes, or additions here.

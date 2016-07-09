@@ -16,18 +16,17 @@
 """Provide a kernel interface for android kernels."""
 
 import os
-from typing import Iterable, Optional, Tuple
 import shutil
 from subprocess import check_call
+from typing import Iterable, Optional, Tuple
 
+import kbuilder.core.make as mk
 from cached_property import cached_property
-from unipath import Path
-
 from kbuilder.core.arch import Arch
 from kbuilder.core.gcc import Toolchain
-from kbuilder.core.kernel import Kernel
 from kbuilder.core.kbuild_image import KbuildImage
-import kbuilder.core.make as mk
+from kbuilder.core.kernel import Kernel
+from unipath import Path
 
 
 class AndroidKernel(Kernel):

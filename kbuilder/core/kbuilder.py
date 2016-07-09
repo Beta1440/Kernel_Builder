@@ -17,19 +17,18 @@
 import os
 import shutil
 import sys
-from subprocess import CalledProcessError, check_call
+from subprocess import check_call
+from typing import Iterable
 
 import arrow
-from typing import Iterable
-from unipath import Path
-
-from kbuilder.core.arch import Arch
+import kbuilder.core.make as mk
 from kbuilder.core import gcc
+from kbuilder.core.arch import Arch
 from kbuilder.core.gcc import Toolchain
 from kbuilder.core.kernel import Kernel
 from kbuilder.core.kernel_android import AndroidKernel
-import kbuilder.core.make as mk
 from kbuilder.core.messages import alert, highlight, success
+from unipath import Path
 
 VERSION = '{0}.{1}'.format(*sys.version_info[:2])
 
