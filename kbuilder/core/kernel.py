@@ -22,6 +22,7 @@ from cached_property import cached_property
 from kbuilder.core.arch import Arch
 from kbuilder.core.gcc import Toolchain
 from unipath.path import Path
+from kbuilder.core.kbuild_image import KbuildImage
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
@@ -29,15 +30,23 @@ KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
 
 class Kernel(object):
     """store info for a kernel."""
-    def __init__(self, root: str) -> None:
+    def __init__(self, root: str, *, arch: Arch=None,
+                 defconfig: str='defconfig') -> None:
         """Initialze a new Kernel.
 
+        Positional arguments:
+            root -- kernel root directory.
+
         Keyword arguments:
-        root -- the root directory of the kernel
+            arch -- kernel architecture.
+            defconfig -- default configuration file.
         """
         self._root = Path(root)
         self._release_version = self.version
         self._extra_version = None
+        self._defconfig = defconfig
+        self._arch = arch
+        self._kbuild_image = KbuildImage[self.arch.name].value
 
     @property
     def root(self):
@@ -73,6 +82,23 @@ class Kernel(object):
         if self.extra_version:
             return '{0.version}-{0.extra_version}'.format(self)
         return self.version
+
+    @property
+    def arch(self):
+        """The architecture of the kernel."""
+        return self._arch
+
+    @property
+    def defconfig(self):
+        """The default configuration file.
+
+        The defconfig file specifies which modules to build for the kernel."""
+        return self._defconfig
+
+    @property
+    def kbuild_image(self):
+        """The absolute path to the compressed kernel image."""
+        return self.root.child('arch', self.arch.name, 'boot', self._kbuild_image)
 
     def _find_kernel_verion(self):
         with self:
@@ -141,6 +167,10 @@ class Kernel(object):
         print('Removing all compiled files')
         return mk.make('clean')
 
+    def make_defconfig(self) -> None:
+        """Make the default configuration file."""
+        mk.make(self.defconfig)
+
     def kbuild_image_abs_path(self, arch: Arch, kbuild_image: str) -> Path:
         """Return the absolute path to the kbuild image of the kernel.
 
@@ -158,7 +188,10 @@ class Kernel(object):
         Keyword arguments:
             log_dir -- the directory of the build log file
 
-        Return:
+        Precondition:
+            self.arch is set
+
+        Returns:
             the absolute path of kbuild image on successful build.
         """
         Path(log_dir).mkdir()

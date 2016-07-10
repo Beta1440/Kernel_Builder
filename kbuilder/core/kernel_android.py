@@ -37,43 +37,10 @@ class AndroidKernel(Kernel):
     main build targets: an over-the-air (OTA) package and boot.img. This class
     facilitates building the main android build targets."""
 
-    def __init__(self, root: str, arch: Arch,
-                 defconfig: str='defconfig') -> None:
-        """Initialze a new Kernel.
-
-        Positional arguments:
-            root -- kernel root directory.
-            arch -- kernel architecture.
-
-        Keyword arguments:
-            defconfig -- default configuration file.
-        """
-        Kernel.__init__(self, root)
-        self._defconfig = defconfig
-        self._arch = arch
-        self._kbuild_image = KbuildImage[self.arch.name].value
-
-    @property
-    def arch(self):
-        """The architecture of the kernel."""
-        return self._arch
-
-    @property
-    def defconfig(self):
-        """The default configuration file.
-
-        The defconfig file specifies which modules to build for the kernel."""
-        return self._defconfig
-
     @cached_property
     def version_numbers(self):
         """The kernel version in MAJOR.MINOR.PATCH format."""
         return self.version[-5:]
-
-    @cached_property
-    def kbuild_image(self):
-        """The absolute path to the compressed kernel image."""
-        return self.kbuild_image_abs_path(self.arch, self._kbuild_image)
 
     def _find_kernel_version(self) -> str:
         """Return what the version of the kernel is."""
@@ -82,10 +49,6 @@ class AndroidKernel(Kernel):
             lines = output.split('\n')
             kernelrelease = lines[-1]
             return kernelrelease[8:]
-
-    def make_defconfig(self) -> None:
-        """Make the default configuration file."""
-        mk.make(self.defconfig)
 
     def make_boot_img(self, ramdisk: str='ramdisk.img',
                       extra_version: Optional[str]=None):
