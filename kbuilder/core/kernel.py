@@ -36,6 +36,8 @@ class Kernel(object):
         root -- the root directory of the kernel
         """
         self._root = Path(root)
+        self._release_version = self.version
+        self._extra_version = None
 
     @property
     def root(self):
@@ -52,6 +54,26 @@ class Kernel(object):
         """The local kernel version in the defconfig file."""
         return self._find_kernel_version()
 
+    @property
+    def extra_version(self):
+        """An optional version to append to the end of the kernel version."""
+        return self._extra_version
+
+    @extra_version.setter
+    def extra_version(self, version: str):
+        """Set extra_version."""
+        self._extra_version = version
+
+    @property
+    def release_version(self):
+        """Version of the kernel release.
+
+        If extraversion is defined, then it will be contatened.
+        """
+        if self.extra_version:
+            return '{0.version}-{0.extra_version}'.format(self)
+        return self.version
+
     def _find_kernel_verion(self):
         with self:
             output = mk.make_output('kernelrelease').rstrip()
@@ -67,17 +89,6 @@ class Kernel(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._prev_dir.chdir()
         return False
-
-    def release_version(self, *, suffix: Optional[str]=None) -> str:
-        """Get the kernel version with the toolchain name appended.
-
-        Arguments:
-        extension -- the extension to add to this.
-        """
-        if suffix:
-            return '{0.version}-{1}'.format(self, suffix)
-        else:
-            return self.version
 
     @staticmethod
     def find_root(initial_path: str) -> Path:
@@ -141,25 +152,20 @@ class Kernel(object):
         """
         return self.root.child('arch', arch.name, 'boot', kbuild_image)
 
-    def build_kbuild_image(self, toolchain: Toolchain,
-                           log_dir: Optional[str]=None) -> Tuple[Path, str]:
-        """Build the kernel kbuild.
+    def build_kbuild_image(self, log_dir: Optional[str]=None) -> Path:
+        """Make the kbuild image.
 
-        Return the path of the absolute path of kbuild image if the build is
-        successful.
-        Positional arguments:
         Keyword arguments:
-        toolchain -- the toolchain to use in building the kernel
-        log_dir --  the directory of the build log file
-        """
-        kernel_release_version = self.release_version(suffix=toolchain.name)
-        Path(log_dir).mkdir()
-        build_log = Path(log_dir, kernel_release_version + '-log.txt')
+            log_dir -- the directory of the build log file
 
-        print('compiling {0.version} with {1.name}'.format(self, toolchain))
+        Return:
+            the absolute path of kbuild image on successful build.
+        """
+        Path(log_dir).mkdir()
+        build_log = Path(log_dir, self.release_version + '-log.txt')
         output = mk.make_output('all')
         build_log.write_file(output)
-        return self.kbuild_image, kernel_release_version
+        return self.kbuild_image
 
     def build_kbuild_images(self, toolchains: Iterable[Toolchain],
                             log_dir: str=None) -> Tuple[Path, str]:
