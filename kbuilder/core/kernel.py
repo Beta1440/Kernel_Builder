@@ -15,14 +15,13 @@
 
 import os
 from subprocess import CompletedProcess
-from typing import Iterable, Optional, Tuple
+from typing import Optional
 
-import kbuilder.core.make as mk
+from kbuilder.core.make import make, make_output
 from cached_property import cached_property
-from kbuilder.core.arch import Arch
-from kbuilder.core.gcc import Toolchain
 from unipath.path import Path
 from kbuilder.core.kbuild_image import KbuildImage
+from kbuilder.core.arch import Arch
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
@@ -102,7 +101,7 @@ class Kernel(object):
 
     def _find_kernel_verion(self):
         with self:
-            output = mk.make_output('kernelrelease').rstrip()
+            output = make_output('kernelrelease').rstrip()
             lines = output.split('\n')
             kernelrelease = lines[-1]
             return kernelrelease[8:]
@@ -154,7 +153,7 @@ class Kernel(object):
         Keyword arguements
         """
         print('Performing an arch clean')
-        return mk.make('archclean')
+        return make('archclean')
 
     @staticmethod
     def clean() -> CompletedProcess:
@@ -165,22 +164,11 @@ class Kernel(object):
         Keyword arguements
         """
         print('Removing all compiled files')
-        return mk.make('clean')
+        return make('clean')
 
     def make_defconfig(self) -> None:
         """Make the default configuration file."""
-        mk.make(self.defconfig)
-
-    def kbuild_image_abs_path(self, arch: Arch, kbuild_image: str) -> Path:
-        """Return the absolute path to the kbuild image of the kernel.
-
-        The kbuild image is a compressed kernel image that if produced
-        after the kernel if compiled.
-        Arguements:
-        arch -- the architecture being compiled.
-        kbuild_image -- the name of the kbuild image file.
-        """
-        return self.root.child('arch', arch.name, 'boot', kbuild_image)
+        make(self.defconfig)
 
     def build_kbuild_image(self, log_dir: Optional[str]=None) -> Path:
         """Make the kbuild image.
@@ -196,19 +184,6 @@ class Kernel(object):
         """
         Path(log_dir).mkdir()
         build_log = Path(log_dir, self.release_version + '-log.txt')
-        output = mk.make_output('all')
+        output = make_output('all')
         build_log.write_file(output)
         return self.kbuild_image
-
-    def build_kbuild_images(self, toolchains: Iterable[Toolchain],
-                            log_dir: str=None) -> Tuple[Path, str]:
-        """Build multiple kbuild images the kernel.
-
-        Return the path of the absolute path of kbuild image if the build is
-        successful.
-        Keyword arguments:
-        toolchains -- the toolchain to use in building the kernel
-        log_dir --  the directory of the build log file
-        """
-        for toolchain in toolchains:
-            yield self.build(toolchain, log_dir)
