@@ -18,13 +18,7 @@
 import os
 import shutil
 from subprocess import check_call
-from typing import Iterable, Optional, Tuple
 
-import kbuilder.core.make as mk
-from cached_property import cached_property
-from kbuilder.core.arch import Arch
-from kbuilder.core.gcc import Toolchain
-from kbuilder.core.kbuild_image import KbuildImage
 from kbuilder.core.kernel import Kernel
 from unipath import Path
 
@@ -37,33 +31,24 @@ class AndroidKernel(Kernel):
     main build targets: an over-the-air (OTA) package and boot.img. This class
     facilitates building the main android build targets."""
 
-    @cached_property
+    @property
     def version_numbers(self):
         """The kernel version in MAJOR.MINOR.PATCH format."""
         return self.version[-5:]
 
-    def _find_kernel_version(self) -> str:
-        """Return what the version of the kernel is."""
-        with self:
-            output = mk.make_output('kernelrelease').rstrip()
-            lines = output.split('\n')
-            kernelrelease = lines[-1]
-            return kernelrelease[8:]
-
-    def make_boot_img(self, ramdisk: str='ramdisk.img',
-                      extra_version: Optional[str]=None):
+    def make_boot_img(self, ramdisk: str='ramdisk.img'):
         """Create a boot.img file that can be install via fastboot.
 
         Keyword arguments:
             ramdisk -- the ramdisk image to include in the boot.img file
         """
-        output = '--output {}'.format(self.release_version(extra_version))
+        output = '--output {}'.format(self.release_version)
         kernel = '--kernel {}'.format(self.kbuild_image)
         ramdisk = '--ramdisk {}'.format(ramdisk)
         check_call('mkbootimg {} {} {}'.format(output, kernel, ramdisk), shell=True)
 
-    def make_ota_package(self, *, output_dir: str, source_dir: str=os.getcwd(),
-                         extra_version: Optional[str]=None) -> str:
+    def make_ota_package(self, *, output_dir: str,
+                         source_dir: str=os.getcwd()) -> str:
         """Create an Over the Air (OTA) package that can be installed via recovery.
 
         Keyword arguments:
@@ -73,5 +58,5 @@ class AndroidKernel(Kernel):
         Returns:
             the path to the zip file created.
         """
-        archive_path = Path(output_dir, self.release_version(suffix=extra_version))
+        archive_path = Path(output_dir, self.release_version)
         return shutil.make_archive(archive_path, 'zip', source_dir)
