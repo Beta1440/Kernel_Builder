@@ -20,7 +20,7 @@ class AndroidKernel(LinuxKernel):
     @property
     def version_numbers(self):
         """The kernel version in MAJOR.MINOR.PATCH format."""
-        return self.version[-5:]
+        return self.release[-5:]
 
     def _find_kernel_version(self) -> str:
         """The local kernel version in the defconfig file."""

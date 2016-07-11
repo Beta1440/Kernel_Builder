@@ -26,7 +26,7 @@ class LinuxKernel(object):
             defconfig -- default configuration file.
         """
         self._root = Path(root)
-        self._release_version = self.version
+        self._release_version = self.release
         self._extra_version = None
         self._defconfig = defconfig
         self._arch = arch
@@ -43,8 +43,10 @@ class LinuxKernel(object):
         return self.root.name
 
     @cached_property
-    def version(self):
-        """The local kernel version in the defconfig file."""
+    def release(self):
+        """The kernel version with the local version appended.
+        
+        The local version is defined in the kernel defconfig file"""
         return self._find_kernel_version()
 
     @property
@@ -64,8 +66,8 @@ class LinuxKernel(object):
         If extraversion is defined, then it will be contatened.
         """
         if self.extra_version:
-            return '{0.version}-{0.extra_version}'.format(self)
-        return self.version
+            return '{0.release}-{0.extra_version}'.format(self)
+        return self.release
 
     @property
     def arch(self):
