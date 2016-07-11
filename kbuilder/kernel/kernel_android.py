@@ -5,7 +5,7 @@ import shutil
 from subprocess import check_call
 from kbuilder.core.make import make_output
 
-from kbuilder.core.kernel import LinuxKernel
+from kbuilder.kernel.kernel_linux import LinuxKernel
 from unipath import Path
 
 
