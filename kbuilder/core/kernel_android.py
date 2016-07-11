@@ -5,15 +5,15 @@ import shutil
 from subprocess import check_call
 from kbuilder.core.make import make_output
 
-from kbuilder.core.kernel import Kernel
+from kbuilder.core.kernel import LinuxKernel
 from unipath import Path
 
 
-class AndroidKernel(Kernel):
+class AndroidKernel(LinuxKernel):
     """Provide a kernel interface for android kernels.
 
     Android kernels are usually compiled for one particular architecture.
-    The same defconfig file is used every tie. Additionally, android has two
+    The same defconfig file is used every time. Additionally, android has two
     main build targets: an over-the-air (OTA) package and boot.img. This class
     facilitates building the main android build targets."""
 

@@ -12,7 +12,7 @@ KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
                'scripts', 'tools']
 
 
-class Kernel(object):
+class LinuxKernel(object):
     """store info for a kernel."""
     def __init__(self, root: str, *, arch: Arch=None,
                  defconfig: str='defconfig') -> None:
