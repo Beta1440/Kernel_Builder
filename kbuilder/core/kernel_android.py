@@ -3,6 +3,7 @@
 import os
 import shutil
 from subprocess import check_call
+from kbuilder.core.make import make_output
 
 from kbuilder.core.kernel import Kernel
 from unipath import Path
@@ -12,7 +13,7 @@ class AndroidKernel(Kernel):
     """Provide a kernel interface for android kernels.
 
     Android kernels are usually compiled for one particular architecture.
-    The same defconfig file is used every time. Additionally, android has two
+    The same defconfig file is used every tie. Additionally, android has two
     main build targets: an over-the-air (OTA) package and boot.img. This class
     facilitates building the main android build targets."""
 
@@ -20,6 +21,10 @@ class AndroidKernel(Kernel):
     def version_numbers(self):
         """The kernel version in MAJOR.MINOR.PATCH format."""
         return self.version[-5:]
+
+    def _find_kernel_version(self) -> str:
+        """The local kernel version in the defconfig file."""
+        return super()._find_kernel_version()[8:]
 
     def make_boot_img(self, ramdisk: str='ramdisk.img'):
         """Create a boot.img file that can be install via fastboot.
