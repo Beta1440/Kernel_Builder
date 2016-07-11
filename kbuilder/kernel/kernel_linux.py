@@ -47,7 +47,7 @@ class LinuxKernel(object):
         """The kernel version with the local version appended.
         
         The local version is defined in the kernel defconfig file"""
-        return self._find_kernel_version()
+        return self._find_release_version()
 
     @property
     def extra_version(self):
@@ -86,7 +86,7 @@ class LinuxKernel(object):
         """The absolute path to the compressed kernel image."""
         return self.root.child('arch', self.arch.name, 'boot', self._kbuild_image)
 
-    def _find_kernel_version(self) -> str:
+    def _find_release_version(self) -> str:
         with self:
             output = make_output('kernelrelease').rstrip()
             lines = output.split('\n')

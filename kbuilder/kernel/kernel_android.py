@@ -22,9 +22,10 @@ class AndroidKernel(LinuxKernel):
         """The kernel version in MAJOR.MINOR.PATCH format."""
         return self.release[-5:]
 
-    def _find_kernel_version(self) -> str:
+    def _find_release_version(self) -> str:
         """The local kernel version in the defconfig file."""
-        return super()._find_kernel_version()[8:]
+        return super()._find_release_version()[8:]
+
 
     def make_boot_img(self, ramdisk: str='ramdisk.img'):
         """Create a boot.img file that can be install via fastboot.
