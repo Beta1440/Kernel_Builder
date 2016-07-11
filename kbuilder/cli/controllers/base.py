@@ -1,7 +1,6 @@
 """Kernel Builder base controller."""
 
 from cement.core.controller import CementBaseController, expose
-from kbuilder.core import kbuilder
 
 VERSION = '0.1.0'
 
@@ -10,10 +9,11 @@ Kernel Builder {}
 Copyright (c) 2016 Dela Anthonio
 """.format(VERSION)
 
+
 class KbuilderBaseController(CementBaseController):
     class Meta:
         label = 'base'
-        description = 'Automate compilling the Linux kernel for android devices'
+        description = 'Automate compilling the Linux kernel '
         arguments = [
             (['-c', '--clean'],
              dict(help='execute make clean before each build', dest='clean',
@@ -29,7 +29,7 @@ class KbuilderBaseController(CementBaseController):
     @expose(hide=True)
     def default(self):
         """Build all targets """
-        kbuilder.main()
+        pass
 
         # If using an output handler such as 'mustache', you could also
         # render a data dictionary using a template.  For example:
