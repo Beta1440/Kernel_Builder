@@ -43,9 +43,17 @@ class LinuxKernel(object):
         return self.root.name
 
     @cached_property
+    def version(self):
+        """The Linux version of the kernel in Major.Minior.Patch format."""
+        with self:
+            output = make_output('kernelversion').rstrip()
+            lines = output.split('\n')
+            return lines[-1]
+
+    @cached_property
     def release(self):
         """The kernel version with the local version appended.
-        
+
         The local version is defined in the kernel defconfig file"""
         return self._find_release_version()
 
