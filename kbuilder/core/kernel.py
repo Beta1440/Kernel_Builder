@@ -99,12 +99,12 @@ class Kernel(object):
         """The absolute path to the compressed kernel image."""
         return self.root.child('arch', self.arch.name, 'boot', self._kbuild_image)
 
-    def _find_kernel_verion(self):
+    def _find_kernel_version(self) -> str:
         with self:
             output = make_output('kernelrelease').rstrip()
             lines = output.split('\n')
             kernelrelease = lines[-1]
-            return kernelrelease[8:]
+            return kernelrelease
 
     def __enter__(self):
         self._prev_dir = Path(os.getcwd())
