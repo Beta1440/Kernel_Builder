@@ -33,7 +33,7 @@ class AndroidKernel(LinuxKernel):
         Keyword arguments:
             ramdisk -- the ramdisk image to include in the boot.img file
         """
-        output = '--output {}'.format(self.release_version)
+        output = '--output {}'.format(self.custom_release)
         kernel = '--kernel {}'.format(self.kbuild_image)
         ramdisk = '--ramdisk {}'.format(ramdisk)
         check_call('mkbootimg {} {} {}'.format(output, kernel, ramdisk), shell=True)
@@ -49,5 +49,5 @@ class AndroidKernel(LinuxKernel):
         Returns:
             the path to the zip file created.
         """
-        archive_path = Path(output_dir, self.release_version)
+        archive_path = Path(output_dir, self.custom_release)
         return shutil.make_archive(archive_path, 'zip', source_dir)

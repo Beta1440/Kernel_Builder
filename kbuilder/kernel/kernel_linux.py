@@ -60,10 +60,10 @@ class LinuxKernel(object):
         self._extra_version = version
 
     @property
-    def release_version(self):
-        """Version of the kernel release.
+    def custom_release(self):
+        """A custom kernel release.
 
-        If extraversion is defined, then it will be contatened.
+        If extraversion is defined, then it will be contatened to the kernel release.
         """
         if self.extra_version:
             return '{0.release}-{0.extra_version}'.format(self)
@@ -170,7 +170,7 @@ class LinuxKernel(object):
             the absolute path of kbuild image on successful build.
         """
         Path(log_dir).mkdir()
-        build_log = Path(log_dir, self.release_version + '-log.txt')
+        build_log = Path(log_dir, self.custom_release + '-log.txt')
         output = make_output('all')
         build_log.write_file(output)
         return self.kbuild_image
