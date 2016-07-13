@@ -13,17 +13,22 @@ KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
 
 
 class LinuxKernel(object):
-    """store info for a kernel."""
+    """A high level interface for the Linux Kernel.
+
+    Provides access to attributes and common operations of the Linux Kernel.
+    """
     def __init__(self, root: str, *, arch: Arch=None,
                  defconfig: str='defconfig') -> None:
         """Initialze a new Kernel.
 
-        Positional arguments:
-            root -- kernel root directory.
+        All methods must be invoked from the kernel root directory.
 
-        Keyword arguments:
-            arch -- kernel architecture.
-            defconfig -- default configuration file.
+        Positional Args:
+            root: kernel root directory.
+
+        Keyword Args:
+            arch: kernel architecture.
+            defconfig: default configuration file.
         """
         self._root = Path(root)
         self._release_version = self.release
@@ -34,12 +39,12 @@ class LinuxKernel(object):
 
     @property
     def root(self):
-        """The absolute path of the kernel root"""
+        """The absolute path of the kernel root."""
         return self._root
 
     @property
     def name(self):
-        """The name of the kernel root"""
+        """The name of the kernel root directory."""
         return self.root.name
 
     @cached_property
@@ -95,6 +100,9 @@ class LinuxKernel(object):
         return self.root.child('arch', self.arch.name, 'boot', self._kbuild_image)
 
     def _find_release_version(self) -> str:
+        """Find the kernel release.
+
+        Get the last line of the make command 'kernelrelease'."""
         with self:
             output = make_output('kernelrelease').rstrip()
             lines = output.split('\n')
@@ -102,11 +110,13 @@ class LinuxKernel(object):
             return kernelrelease
 
     def __enter__(self):
+        """Change the current directory the kernel root."""
         self._prev_dir = Path(os.getcwd())
         self.root.chdir()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """Revert the current directory to the original directory."""
         self._prev_dir.chdir()
         return False
 
@@ -119,8 +129,9 @@ class LinuxKernel(object):
         directory is reached. If the system root directory is reached, then
         'None' is returned. Otherwise, the path of the kernel root directory is
         returned.
-        Arguments
-        initial_path -- the path to begin search
+
+        Args:
+            initial_path: Path to begin search. Must be subdirectory of kernel.
         """
         def is_kernel_root(path: Path) -> bool:
             """Check if the current path is the root directory of a kernel."""
@@ -145,7 +156,6 @@ class LinuxKernel(object):
 
         This form of cleaning is useful for rebuilding the kernel with the same
         Toolchain, since only files that were changed will be compiled.
-        Keyword arguements
         """
         print('Performing an arch clean')
         return make('archclean')
@@ -166,16 +176,21 @@ class LinuxKernel(object):
         make(self.defconfig)
 
     def build_kbuild_image(self, log_dir: Optional[str]=None) -> Path:
-        """Make the kbuild image.
+        """Make the kernel kbuild image.
 
-        Keyword arguments:
-            log_dir -- the directory of the build log file
+        Keyword Args:
+            log_dir: Directory of the build log file.
+                The output of the compiler will be redirected
+                to a file in this directory .
 
         Precondition:
             self.arch is set
 
         Returns:
-            the absolute path of kbuild image on successful build.
+            The absolute path of kbuild image on successful build.
+
+        Raises:
+            CalledProcessError: If The target fails to build.
         """
         Path(log_dir).mkdir()
         build_log = Path(log_dir, self.custom_release + '-log.txt')
