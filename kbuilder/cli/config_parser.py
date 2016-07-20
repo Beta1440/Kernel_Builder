@@ -1,15 +1,28 @@
+"""This module is parses config files. It also dervies a kernel based on
+the config file that was parsed.
+"""
+
 import os
+from os.path import join
 
-from kbuilder.core.kernel import Kernel
-from unipath import Path
+from kbuilder.core.arch import Arch
+from kbuilder.kernel.kernel_linux import LinuxKernel
+from kbuilder.kernel.kernel_android import AndroidKernel
 
-"""Parse config files."""
 
-
-def parse_android_kernel_config(app):
-    """Parse an Android kernel config file."""
-    kernel_root = Kernel.find_root(os.getcwd())
-    kernel_config_file = str(Path(kernel_root, '.kbuilder.conf'))
+def parse_kernel_config(app):
+    """Parse a kernel config file."""
+    kernel_root = LinuxKernel.find_root(os.getcwd())
+    kernel_config_file = join(kernel_root, '.kbuilder.conf')
     kernel_name = str(kernel_root.name)
     app.config.parse_file(kernel_config_file)
-    app.log.info('Parsed config file for ' + kernel_name)
+    defconfig = app.config.get(kernel_name, 'defconfig')
+    arch = Arch[app.config.get(kernel_name, 'arch')]
+    kernel = derive_kernel(kernel_root, arch, defconfig)
+    app.extend('active_kernel', kernel)
+
+
+def derive_kernel(kernel_root: str, arch: Arch, defconfig: str) -> LinuxKernel:
+    """Determine which type of kernel that needs to be created."""
+    #  To be implemented later
+    return AndroidKernel(kernel_root, arch=arch, defconfig=defconfig)
