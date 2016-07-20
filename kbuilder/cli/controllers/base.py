@@ -1,6 +1,7 @@
 """Kernel Builder base controller."""
 
 from cement.core.controller import CementBaseController, expose
+from kbuilder.kernel.kernel_linux import LinuxKernel
 
 VERSION = '0.1.0'
 
@@ -15,9 +16,6 @@ class KbuilderBaseController(CementBaseController):
         label = 'base'
         description = 'Automate compilling the Linux kernel '
         arguments = [
-            (['-c', '--clean'],
-             dict(help='execute make clean before each build', dest='clean',
-                  action='store_true')),
             (['-j', '--jobs'],
              dict(help='the amount of jobs to build with', dest='jobs',
                   action='store')),
@@ -30,6 +28,28 @@ class KbuilderBaseController(CementBaseController):
     def default(self):
         """Build all targets """
         pass
+
+    @expose(help='Print the kernel Linux version',
+            aliases=['linuxversion', 'version'],
+            aliases_only=True)
+    def linux_version(self):
+        """Print the kernel linux version."""
+        print(self.app.active_kernel.linux_version)
+
+    @expose(help='Print the kernel release version',
+            aliases=['releaseversion', 'release'],
+            aliases_only=True)
+    def release_version(self):
+        """Print the kernel release version."""
+        print(self.app.active_kernel.release_version)
+
+    @expose(help='Print the kernel local version',
+            aliases=['localversion', 'local'],
+            aliases_only=True)
+    def local_version(self):
+        """Print the kernel local version."""
+        print(self.app.active_kernel.local_version)
+
 
         # If using an output handler such as 'mustache', you could also
         # render a data dictionary using a template.  For example:
