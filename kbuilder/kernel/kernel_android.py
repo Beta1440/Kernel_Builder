@@ -3,7 +3,7 @@
 import os
 import shutil
 from subprocess import check_call
-from kbuilder.core.make import make_output
+from typing import Optional
 
 from kbuilder.kernel.kernel_linux import LinuxKernel
 from unipath import Path
@@ -43,16 +43,19 @@ class AndroidKernel(LinuxKernel):
         ramdisk = '--ramdisk {}'.format(ramdisk)
         check_call('mkbootimg {} {} {}'.format(output, kernel, ramdisk), shell=True)
 
-    def make_ota_package(self, *, output_dir: str,
-                         source_dir: str=os.getcwd()) -> str:
+    def make_ota_package(self, *, kbuild_image_dir: Optional[str]=None,
+                         output_dir: str, source_dir: str=os.getcwd()) -> str:
         """Create an Over the Air (OTA) package that can be installed via recovery.
 
-        Keyword arguments:
-            extra_version -- appended to the name of the zip archive
-            source_dir -- the directory to be zipped (default cwd)
+        Keyword Args:
+            output_dir: Where the otapackage will be stored
+            source_dir: The directory to be zipped (default cwd)
+            kbuild_image_dir: Optional path to to copy kbuild image into; relative to source_dir 
 
         Returns:
             the path to the zip file created.
         """
+        if kbuild_image_dir:
+            shutil.copy(self.kbuild_image, Path(source_dir, kbuild_image_dir))
         archive_path = Path(output_dir, self.custom_release)
         return shutil.make_archive(archive_path, 'zip', source_dir)
