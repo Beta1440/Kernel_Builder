@@ -5,7 +5,6 @@ from typing import Optional
 from kbuilder.core.make import make, make_output
 from cached_property import cached_property
 from unipath.path import Path
-from kbuilder.core.kbuild_image import KbuildImage
 from kbuilder.core.arch import Arch
 
 KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
@@ -17,6 +16,10 @@ class LinuxKernel(object):
 
     Provides access to attributes and common operations of the Linux Kernel.
     """
+    kbuild_image_dict = dict(arm='zImage',
+                             arm64='Image.gz-dtb',
+                             x86='bzImage')
+
     def __init__(self, root: str, *, arch: Arch=None,
                  defconfig: str='defconfig') -> None:
         """Initialze a new Kernel.
@@ -35,7 +38,7 @@ class LinuxKernel(object):
         self._extra_version = None
         self._defconfig = defconfig
         self._arch = arch
-        self._kbuild_image = KbuildImage[self.arch.name].value
+        self._kbuild_image = LinuxKernel.kbuild_image_dict[self.arch.name]
 
     @property
     def root(self):
