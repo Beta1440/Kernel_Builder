@@ -85,7 +85,7 @@ class LinuxKernel(object):
         If extraversion is defined, then it will be contatened to the kernel release.
         """
         if self.extra_version:
-            return '{0.release}-{0.extra_version}'.format(self)
+            return '{0.release_version}-{0.extra_version}'.format(self)
         return self.release_version
 
     @property
