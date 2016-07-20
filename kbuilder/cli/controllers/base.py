@@ -29,6 +29,19 @@ class KbuilderBaseController(CementBaseController):
         """Build all targets """
         pass
 
+    @expose(help='Remove build files in the arch directory',
+            aliases=['archclean'], aliases_only=True)
+    def arch_clean(self):
+        """Print the kernel linux version."""
+        self.app.log.info('Cleaning arch specific files')
+        self.app.active_kernel.arch_clean()
+
+    @expose(help='Remove build files')
+    def clean(self):
+        """Clean build files."""
+        self.app.log.info('Cleaning build files')
+        self.app.active_kernel.clean()
+
     @expose(help='Print the kernel Linux version',
             aliases=['linuxversion', 'version'],
             aliases_only=True)
