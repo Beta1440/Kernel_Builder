@@ -57,10 +57,16 @@ class LinuxKernel(object):
 
     @cached_property
     def release(self):
-        """The kernel version with the local version appended.
-
-        The local version is defined in the kernel defconfig file"""
+        """The kernel version with the local version appended."""
         return self._find_release_version()
+
+    @cached_property
+    def local_version(self):
+        """The local version of the kernel.
+
+        The local version is defined in the kernel defconfig file.
+        """
+        return self.release[len(self.version) + 1:]
 
     @property
     def extra_version(self):
