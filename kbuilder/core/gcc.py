@@ -80,6 +80,23 @@ class Toolchain(object):
                 compiler_prefix = entry.path[:-3]
                 return compiler_prefix
 
+    @staticmethod
+    def find(toolchains: Iterable, target_name: str) -> List:
+        """Search for a toolchain with a given root directory.
+
+        Args:
+            toolchains: Iterable of toolchains to search thourgh.
+            target_arch: Target architecture of toolchains to search for.
+            target_name: Name of the toolchain root directory.
+
+        Returns:
+            The first toolchain the given name.
+                return None if no toolchain could be located.
+        """
+        for toolchain in toolchains:
+            if toolchain.name == target_name:
+                return toolchain
+
     def _find_target_arch(self) -> Arch:
         """Determine the target architecture of the toolchain."""
         prefix = self.compiler_prefix.name
@@ -179,3 +196,5 @@ def prompt_from_scandir(toolchain_dir: str, *,
         An iterator of the selected toolchains.
     """
     return prompt(scandir(toolchain_dir, target_arch))
+
+
