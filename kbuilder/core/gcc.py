@@ -94,8 +94,7 @@ class Toolchain(object):
         os.putenv('SUBARCH', self.target_arch.name)
 
 
-def scandir(toolchain_dir: str,
-            target_arch: Optional[Arch]=None) -> List[Toolchain]:
+def scandir(toolchain_dir: str, target_arch: Optional[Arch]=None) -> List:
     """Return a list of toolchains located in a directory.
 
     A toolchain is considered valid if it has a gcc executable in its
@@ -122,7 +121,7 @@ def scandir(toolchain_dir: str,
     return toolchains
 
 
-def select(toolchains: List[Toolchain]) -> Iterable[Toolchain]:
+def prompt(toolchains: List) -> Iterable:
     """Return an Iterator of toolchains from a list of toolchains.
 
     Each toolchain will be printed with its position in the list.
@@ -147,7 +146,7 @@ def select(toolchains: List[Toolchain]) -> Iterable[Toolchain]:
         yield toolchains[number - 1]
 
 
-def select_one(toolchains: List[Toolchain]) -> Toolchain:
+def prompt_one(toolchains: List) -> Toolchain:
     """Select a toolchain from a list of toolchains.
 
     Each toolchain will be printed with its position in the list.
@@ -166,8 +165,8 @@ def select_one(toolchains: List[Toolchain]) -> Toolchain:
     return toolchains[int(number) - 1]
 
 
-def select_from_scandir(toolchain_dir: str, *,
-                        target_arch: Optional[Arch]=None) -> Iterable[Toolchain]:
+def prompt_from_scandir(toolchain_dir: str, *,
+                        target_arch: Optional[Arch]=None) -> Iterable:
     """Select a toolchain from a directory of toolchains.
 
     Positional arguments:
@@ -179,4 +178,4 @@ def select_from_scandir(toolchain_dir: str, *,
     Returns:
         An iterator of the selected toolchains.
     """
-    return select(scandir(toolchain_dir, target_arch))
+    return prompt(scandir(toolchain_dir, target_arch))
