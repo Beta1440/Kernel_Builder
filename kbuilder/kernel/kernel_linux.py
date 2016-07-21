@@ -7,9 +7,6 @@ from cached_property import cached_property
 from unipath.path import Path
 from kbuilder.core.arch import Arch
 
-KERNEL_DIRS = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
-               'scripts', 'tools']
-
 
 class LinuxKernel(object):
     """A high level interface for the Linux Kernel.
@@ -19,6 +16,9 @@ class LinuxKernel(object):
     kbuild_image_dict = dict(arm='zImage',
                              arm64='Image.gz-dtb',
                              x86='bzImage')
+
+    required_dirs = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
+                            'scripts', 'tools']
 
     def __init__(self, root: str, *, arch: Arch=None,
                  defconfig: str='defconfig') -> None:
@@ -144,8 +144,8 @@ class LinuxKernel(object):
         """
         def is_kernel_root(path: Path) -> bool:
             """Check if the current path is the root directory of a kernel."""
-            files_in_dir = [file.name for file in os.scandir(path)]
-            return all(kernel_dir in files_in_dir for kernel_dir in KERNEL_DIRS)
+            path_dirs = [file.name for file in os.scandir(path)]
+            return all(dir in path_dirs for dir in LinuxKernel.required_dirs)
 
         def walk_to_root(path: Path) -> Path:
             """Search for the root of the kernel directory."""
