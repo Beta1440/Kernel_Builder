@@ -34,11 +34,9 @@ class LinuxKernel(object):
             defconfig: default configuration file.
         """
         self._root = Path(root)
-        self._release_version = self.release_version
         self._extra_version = None
         self._defconfig = defconfig
         self._arch = arch
-        self._kbuild_image = LinuxKernel.kbuild_image_dict[self.arch.name]
 
     @property
     def root(self):
@@ -106,7 +104,8 @@ class LinuxKernel(object):
     @property
     def kbuild_image(self):
         """The absolute path to the compressed kernel image."""
-        return self.root.child('arch', self.arch.name, 'boot', self._kbuild_image)
+        kbuild_image = LinuxKernel.kbuild_image_dict[self.arch.name]
+        return self.root.child('arch', self.arch.name, 'boot', kbuild_image)
 
     def _find_release_version(self) -> str:
         """Find the kernel release.
