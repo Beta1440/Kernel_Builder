@@ -13,12 +13,12 @@ class LinuxKernel(object):
 
     Provides access to attributes and common operations of the Linux Kernel.
     """
-    kbuild_image_dict = dict(arm='zImage',
-                             arm64='Image.gz-dtb',
-                             x86='bzImage')
+    kbuild_image_name = {Arch.arm: 'zImage',
+                         Arch.arm64: 'Image.gz-dtb',
+                         Arch.x86: 'bzImage'}
 
     required_dirs = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
-                            'scripts', 'tools']
+                     'scripts', 'tools']
 
     def __init__(self, root: str, *, arch: Arch=None,
                  defconfig: str='defconfig') -> None:
@@ -104,7 +104,7 @@ class LinuxKernel(object):
     @property
     def kbuild_image(self):
         """The absolute path to the compressed kernel image."""
-        kbuild_image = LinuxKernel.kbuild_image_dict[self.arch.name]
+        kbuild_image = LinuxKernel.kbuild_image_name[self.arch]
         return self.root.child('arch', self.arch.name, 'boot', kbuild_image)
 
     def _find_release_version(self) -> str:
