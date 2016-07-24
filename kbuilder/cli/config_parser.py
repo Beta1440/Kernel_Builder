@@ -6,8 +6,8 @@ import os
 from os.path import join
 
 from kbuilder.core.arch import Arch
-from kbuilder.kernel.kernel_linux import LinuxKernel
-from kbuilder.kernel.kernel_android import AndroidKernel
+from kbuilder.core.kernel.linux import LinuxKernel
+from kbuilder.core.kernel.android import AndroidKernel
 
 
 def parse_kernel_config(app):
