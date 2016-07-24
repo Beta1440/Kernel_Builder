@@ -32,4 +32,5 @@ def make_output(build_target: str, *, jobs: int=os.cpu_count()) -> str:
     jobs -- the amount of jobs to build with (default os.cpu_count()).
     """
     command = 'make -j{} {}'.format(jobs, build_target)
-    return sp.check_output(command, shell=True, universal_newlines=True)
+    return sp.check_output(command, shell=True,
+                           universal_newlines=True).rstrip()
