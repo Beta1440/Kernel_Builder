@@ -1,36 +1,51 @@
-"""Provide an interface for make commands"""
+"""GNU make invocation.
+
+This module facilitates invoking the GNU make shell command.
+
+Example:
+    .. code-block:: python
+        from kbuilder.core.make import make
+
+        make('all', jobs=8)
+"""
 
 import os
-import subprocess as sp
-from subprocess import CompletedProcess
+from subprocess import check_call, check_output, CompletedProcess
 
 
-def make(build_target: str, *, jobs: int=os.cpu_count()) -> CompletedProcess:
-    """Execute make in the shell and return a CompletedProcess object.
+def make(recipe: str, *, jobs: int=os.cpu_count()) -> CompletedProcess:
+    """Execute a make recipe in the shell.
 
-    A CalledProcessError exeception will be thrown if the return code is not 0.
+    Args:
+        recipe: Recipe to invoke.
+        jobs: Amount of threads to invoke recipe (default os.cpu_count()).
 
-    Positional arguments:
-    build_target --  the target to build.
+    Raises:
+          A CalledProcessError if the recipe is unsuccessful.
 
-    Keyword arguments:
-    jobs -- the amount of jobs to build with (default os.cpu_count()).
+    Returns:
+          A CompletedProcess object.
     """
-    command = 'make -j{} {}'.format(jobs, build_target)
-    return sp.check_call(command, shell=True)
+    command = _format_make_command(recipe, jobs=jobs)
+    return check_call(command, shell=True)
 
 
-def make_output(build_target: str, *, jobs: int=os.cpu_count()) -> str:
-    """Execute make in the shell and return the output as a string.
+def make_output(recipe: str, *, jobs: int=os.cpu_count()) -> str:
+    """Execute a make recipe in the shell and return output.
 
-    A CalledProcessError exeception will be thrown if the return code is not 0.
+    Args:
+        recipe: Recipe to invoke.
+        jobs: Amount of threads to invoke recipe (default os.cpu_count()).
 
-    Positional arguments:
-    build_target --  the target to build.
+    Raises:
+          A CalledProcessError if the recipe is unsuccessful.
 
-    Keyword arguments:
-    jobs -- the amount of jobs to build with (default os.cpu_count()).
+    Returns:
+          Output of make with trailing whitespace trimmed.
     """
-    command = 'make -j{} {}'.format(jobs, build_target)
-    return sp.check_output(command, shell=True,
-                           universal_newlines=True).rstrip()
+    command = _format_make_command(recipe, jobs=jobs)
+    return check_output(command, shell=True, universal_newlines=True).rstrip()
+
+
+def _format_make_command(recipe: str, *, jobs: int) -> str:
+    return 'make {} -j{}'.format(recipe, jobs)
