@@ -1,8 +1,7 @@
 import os
-from subprocess import CompletedProcess
 from typing import Optional
 
-from kbuilder.core.make import make, make_output
+from kbuilder.core.make import make, make_output, make_output_last_line
 from cached_property import cached_property
 from unipath.path import Path
 from kbuilder.core.arch import Arch
@@ -17,19 +16,20 @@ class LinuxKernel(object):
                          Arch.arm64: 'Image.gz-dtb',
                          Arch.x86: 'bzImage'}
 
-    required_dirs = ['arch', 'crypto', 'Documentation', 'drivers', 'include',
-                     'scripts', 'tools']
+    required_dirs = ['arch',
+                     'crypto',
+                     'Documentation',
+                     'drivers',
+                     'include',
+                     'scripts',
+                     'tools']
 
     def __init__(self, root: str, *, arch: Arch=None,
                  defconfig: str='defconfig') -> None:
         """Initialze a new Kernel.
 
-        All methods must be invoked from the kernel root directory.
-
-        Positional Args:
+        Args:
             root: kernel root directory.
-
-        Keyword Args:
             arch: kernel architecture.
             defconfig: default configuration file.
         """
@@ -50,16 +50,14 @@ class LinuxKernel(object):
 
     @cached_property
     def linux_version(self):
-        """The Linux version of the kernel in Major.Minior.Patch format."""
+        """The Linux version of the kernel."""
         with self:
-            output = make_output('kernelversion').rstrip()
-            lines = output.split('\n')
-            return lines[-1]
+            return make_output_last_line('kernelversion')
 
     @cached_property
     def release_version(self):
-        """The kernel version with the local version appended."""
-        return self._find_release_version()
+        """Linux kernel version with the local version appended."""
+        return make_output_last_line('kernelrelease')
 
     @cached_property
     def local_version(self):
@@ -83,7 +81,7 @@ class LinuxKernel(object):
     def custom_release(self):
         """A custom kernel release.
 
-        If extraversion is defined, then it will be contatened to the kernel release.
+        Append extraversion to the kernel release.
         """
         if self.extra_version:
             return '{0.release_version}-{0.extra_version}'.format(self)
@@ -101,21 +99,11 @@ class LinuxKernel(object):
         The defconfig file specifies which modules to build for the kernel."""
         return self._defconfig
 
-    @property
+    @cached_property
     def kbuild_image(self):
         """The absolute path to the compressed kernel image."""
         kbuild_image = LinuxKernel.kbuild_image_name[self.arch]
         return self.root.child('arch', self.arch.name, 'boot', kbuild_image)
-
-    def _find_release_version(self) -> str:
-        """Find the kernel release.
-
-        Get the last line of the make command 'kernelrelease'."""
-        with self:
-            output = make_output('kernelrelease').rstrip()
-            lines = output.split('\n')
-            kernelrelease = lines[-1]
-            return kernelrelease
 
     def __enter__(self):
         """Change the current directory the kernel root."""
@@ -129,76 +117,74 @@ class LinuxKernel(object):
         return False
 
     @staticmethod
-    def find_root(initial_path: str) -> Path:
-        """Find the root of the kernel directory.
+    def find_root(kernel_sub_directory: str) -> Path:
+        """Locate the root of the kernel directory.
 
-        Search for the root of a kernel directory starting at a given directory.
+        The search must begin inside a sub directory of the kernel root.
         The search continues until the kernel root is found or the system root
-        directory is reached. If the system root directory is reached, then
-        'None' is returned. Otherwise, the path of the kernel root directory is
-        returned.
+        directory is reached.
 
         Args:
-            initial_path: Path to begin search. Must be subdirectory of kernel.
+            kernel_sub_directory: Path to begin search.
+
+        Returns:
+            Absolute path of the kernel root directory.
+
+        Raises:
+            FileNotFoundError if the kernel root could not be located.
         """
         def is_kernel_root(path: Path) -> bool:
-            """Check if the current path is the root directory of a kernel."""
             path_dirs = [file.name for file in os.scandir(path)]
             return all(dir in path_dirs for dir in LinuxKernel.required_dirs)
 
-        def walk_to_root(path: Path) -> Path:
-            """Search for the root of the kernel directory."""
-            system_root = Path('/')
+        def is_system_root(path: Path) -> bool:
+            return path == Path('/')
+
+        path = Path(kernel_sub_directory)
+
+        while not is_system_root(path):
             if is_kernel_root(path):
                 return path
-            elif path == system_root:
-                return None
-            else:
-                return walk_to_root(path.parent)
+            path = path.parent
 
-        return walk_to_root(Path(initial_path))
+        raise FileNotFoundError('Kernel root could not be located')
 
-    @staticmethod
-    def arch_clean() -> CompletedProcess:
+    def arch_clean(self) -> None:
         """Remove compiled kernel files in the arch directory.
 
         This form of cleaning is useful for rebuilding the kernel with the same
         Toolchain, since only files that were changed will be recompiled.
         """
-        return make('archclean')
+        with self:
+            make('archclean')
 
-    @staticmethod
-    def clean() -> CompletedProcess:
+    def clean(self) -> None:
         """Remove all compiled kernel files.
 
         This form of cleaning is useful when switching the toolchain to build
         kernel since all files need to be recompiled.
         """
-        return make('clean')
+        with self:
+            make('clean')
 
     def make_defconfig(self) -> None:
         """Make the default configuration file."""
-        make(self.defconfig)
+        with self:
+            make(self.defconfig)
 
-    def build_kbuild_image(self, log_dir: Optional[str]=None) -> Path:
+    def build_kbuild_image(self, log_dir: Optional[str]=None) -> None:
         """Make the kernel kbuild image.
 
-        Keyword Args:
+       Args:
             log_dir: Directory of the build log file.
                 The output of the compiler will be redirected
                 to a file in this directory .
 
-        Precondition:
-            self.arch is set
-
-        Returns:
-            The absolute path of kbuild image on successful build.
-
         Raises:
             CalledProcessError: If The target fails to build.
         """
-        Path(log_dir).mkdir()
-        build_log = Path(log_dir, self.custom_release + '-log.txt')
-        output = make_output('all')
-        build_log.write_file(output)
-        return self.kbuild_image
+        with self:
+            Path(log_dir).mkdir()
+            build_log = Path(log_dir, self.custom_release + '-log.txt')
+            output = make_output('all')
+            build_log.write_file(output)
