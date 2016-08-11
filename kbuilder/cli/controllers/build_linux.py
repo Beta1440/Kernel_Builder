@@ -24,7 +24,12 @@ class KbuilderLinuxBuildController(CementBaseController):
         See `IController._setup() <#cement.core.cache.IController._setup>`_.
         """
         super()._setup(app)
-        self.builder = app.linux_builder
+        self.builder = app.builder
+
+    @expose(help='Build a kbuild image')
+    def default(self):
+        """Build all targets."""
+        self.build_kbuild_image()    
 
     @expose(help='Build a kbuild image',
             aliases=['kernel', 'kbuildimage', 'zImage'],

@@ -1,16 +1,14 @@
 """Kernel Builder android controller."""
 
-from cement.core.controller import expose
-from .build_linux import KbuilderLinuxBuildController
+from cement.core.controller import CementBaseController, expose
 
-
-class KbuilderAndroidBuildController(KbuilderLinuxBuildController):
+class KbuilderAndroidBuildController(CementBaseController):
     """Kernel Builder android controller."""
 
     class Meta:
-        label = 'build'
-        stacked_on = 'base'
-        stacked_type = 'nested'
+        label = 'android_build'
+        stacked_on = 'build'
+        stacked_type = 'embedded'
         description = 'Build the Linux kernel for android devices'
         arguments = [(['-t', '--toolchain'],
                       dict(help='The toolchain to use',
@@ -28,12 +26,7 @@ class KbuilderAndroidBuildController(KbuilderLinuxBuildController):
         See `IController._setup() <#cement.core.cache.IController._setup>`_.
         """
         super()._setup(app)
-        self.builder = app.android_builder
-
-    @expose(hide=True)
-    def default(self):
-        """Build all targets."""
-        self.build_ota_package()
+        self.builder = app.builder
 
     @expose(help='Build an OTA packge', aliases=['otapackage', 'ota'],
             aliases_only=True)
