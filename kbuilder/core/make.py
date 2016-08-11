@@ -60,10 +60,7 @@ def make_output_last_line(*args, **kwargs) -> str:
     Returns:
           Last line of output of make with trailing whitespace trimmed.
     """
-    return last_line(make_output(*args, **kwargs))
-
-    def last_line(output: str) -> str:
-        return output.split('\n')[-1]
+    return make_output(*args, **kwargs).split('\n')[-1]
 
 
 def _format_make_command(recipe: str, *, jobs: int) -> str:
