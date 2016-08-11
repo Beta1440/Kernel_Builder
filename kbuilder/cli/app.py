@@ -1,5 +1,16 @@
+"""Kbuilder CLI app."""
+
 from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
+from kbuilder.cli.interface.database import IDatabase
+from kbuilder.cli.handler.shelve import ShelveHandler
+from kbuilder.cli.interface.builder_linux import ILinuxBuilder
+from kbuilder.cli.handler.builder_linux import LinuxBuilderHandler
+from kbuilder.cli.interface.builder_android import IAndroidBuilder
+from kbuilder.cli.handler.builder_android import AndroidBuilderHandler
+
+from cached_property import cached_property
+
 
 # Application default.  Should update config/kbuilder.conf to reflect any
 # changes, or additions here.
@@ -19,6 +30,13 @@ class KbuilderApp(CementApp):
     class Meta:
         label = 'kbuilder'
         config_defaults = defaults
+        define_handlers = [IDatabase,
+                           ILinuxBuilder,
+                           IAndroidBuilder]
+
+        handlers = [ShelveHandler,
+                    LinuxBuilderHandler,
+                    AndroidBuilderHandler]
 
         # All built-in application bootstrapping (always run)
         bootstrap = 'kbuilder.cli.bootstrap'
@@ -28,3 +46,28 @@ class KbuilderApp(CementApp):
 
         # Internal templates (ship with application code)
         template_module = 'kbuilder.cli.templates'
+
+    @cached_property
+    def db(self):
+        """Database of app."""
+        db = self.handler.resolve('database', 'shelve_handler')
+        db._setup(self)
+        return db
+
+    @cached_property
+    def android_builder(self):
+        """Builder for android targets."""
+        builder = self.handler.resolve('android_builder', 'android_builder_handler')
+        builder._setup(self)
+        return builder
+
+    @cached_property
+    def linux_builder(self):
+        """Builder for linux targets."""
+        builder = self.handler.resolve('linux_builder', 'linux_builder_handler')
+        builder._setup(self)
+        return builder
+
+    # def setup(self):
+    #     super().setup()
+    #     self.android_builder._setup(self)
