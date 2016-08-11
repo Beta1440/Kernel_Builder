@@ -8,6 +8,7 @@ from kbuilder.cli.interface.builder_linux import ILinuxBuilder
 from kbuilder.cli.handler.builder_linux import LinuxBuilderHandler
 from kbuilder.cli.interface.builder_android import IAndroidBuilder
 from kbuilder.cli.handler.builder_android import AndroidBuilderHandler
+from kbuilder.core.kernel.linux import LinuxKernel
 
 from cached_property import cached_property
 
@@ -47,12 +48,28 @@ class KbuilderApp(CementApp):
         # Internal templates (ship with application code)
         template_module = 'kbuilder.cli.templates'
 
+    def __init__(self, label=None, **kw):
+        super().__init__(**kw)
+        self._active_kernel = None
+
     @cached_property
     def db(self):
         """Database of app."""
         db = self.handler.resolve('database', 'shelve_handler')
         db._setup(self)
         return db
+
+    @property
+    def active_kernel(self):
+        """The kernel being acted upon."""
+        return self._active_kernel
+
+    @active_kernel.setter
+    def active_kernel(self, kernel: LinuxKernel):
+        """Set the active kernel to a new kernel."""
+        if not isinstance(kernel, LinuxKernel):
+            raise ValueError("Argument must be an instance of LinuxKernel")
+        self._active_kernel = kernel
 
     @cached_property
     def android_builder(self):

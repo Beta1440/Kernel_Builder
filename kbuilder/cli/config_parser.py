@@ -19,7 +19,7 @@ def parse_kernel_config(app):
     defconfig = app.config.get(kernel_name, 'defconfig')
     arch = Arch[app.config.get(kernel_name, 'arch')]
     kernel = derive_kernel(kernel_root, arch, defconfig)
-    app.extend('active_kernel', kernel)
+    app.active_kernel = kernel
 
 
 def derive_kernel(kernel_root: str, arch: Arch, defconfig: str) -> LinuxKernel:
