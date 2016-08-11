@@ -3,7 +3,7 @@
 from cement.core.exc import CaughtSignal, FrameworkError
 from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
-from kbuilder.cli.config_parser import parse_android_kernel_config
+from kbuilder.cli.config_parser import parse_kernel_config
 from kbuilder.core import exc
 
 
@@ -58,7 +58,7 @@ app = KbuilderApp()
 def main():
     with app:
         try:
-            app.hook.register('pre_run', parse_android_kernel_config)
+            app.hook.register('pre_run', parse_kernel_config)
             app.run()
 
         except exc.KbuilderError as e:
