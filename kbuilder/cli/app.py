@@ -8,6 +8,7 @@ from kbuilder.cli.interface.builder_linux import ILinuxBuilder
 from kbuilder.cli.handler.builder_linux import LinuxBuilderHandler
 from kbuilder.cli.interface.builder_android import IAndroidBuilder
 from kbuilder.cli.handler.builder_android import AndroidBuilderHandler
+from kbuilder.core.kernel.android import AndroidKernel
 from kbuilder.core.kernel.linux import LinuxKernel
 
 from cached_property import cached_property
@@ -70,6 +71,14 @@ class KbuilderApp(CementApp):
         if not isinstance(kernel, LinuxKernel):
             raise ValueError("Argument must be an instance of LinuxKernel")
         self._active_kernel = kernel
+
+    @property
+    def builder(self):
+        """Builder for the current kernel."""
+        if isinstance(self.active_kernel, AndroidKernel):
+            return self.android_builder
+        else:
+            return self.linux_builder
 
     @cached_property
     def android_builder(self):
