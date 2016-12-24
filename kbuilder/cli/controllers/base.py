@@ -1,7 +1,7 @@
 """Kernel Builder base controller."""
 
 from cement.core.controller import CementBaseController, expose
-from kbuilder.kernel.kernel_linux import LinuxKernel
+
 
 VERSION = '0.1.0'
 
