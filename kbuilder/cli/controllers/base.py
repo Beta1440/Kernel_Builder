@@ -21,7 +21,9 @@ class KbuilderBaseController(CementBaseController):
                   action='store')),
             (['-v', '--version'],
              dict(version=BANNER,
-                  action='version'))
+                  action='version')),
+            (['extra_arguments'],
+             dict(action='store', nargs='*'))
             ]
 
     @expose(hide=True)
