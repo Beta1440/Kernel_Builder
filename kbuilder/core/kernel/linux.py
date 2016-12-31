@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 
-from kbuilder.core.make import make, make_output, make_output_last_line
+from kbuilder.core.make import Makefile
 from cached_property import cached_property
 from unipath.path import Path
 from kbuilder.core.arch import Arch
@@ -37,6 +37,7 @@ class LinuxKernel(object):
         self._extra_version = None
         self._defconfig = defconfig
         self._arch = arch
+        self.makefile = Makefile(root)
 
     @property
     def root(self):
@@ -51,13 +52,12 @@ class LinuxKernel(object):
     @cached_property
     def linux_version(self):
         """The Linux version of the kernel."""
-        with self:
-            return make_output_last_line('kernelversion')
+        return self.makefile.make_output_last_line('kernelversion')
 
     @cached_property
     def release_version(self):
         """Linux kernel version with the local version appended."""
-        return make_output_last_line('kernelrelease')
+        return self.makefile.make_output_last_line('kernelrelease')
 
     @cached_property
     def local_version(self):
@@ -156,7 +156,7 @@ class LinuxKernel(object):
         Toolchain, since only files that were changed will be recompiled.
         """
         with self:
-            make('archclean')
+            self.makefile.make('archclean')
 
     def clean(self) -> None:
         """Remove all compiled kernel files.
@@ -165,12 +165,12 @@ class LinuxKernel(object):
         kernel since all files need to be recompiled.
         """
         with self:
-            make('clean')
+            self.makefile.make('clean')
 
     def make_defconfig(self) -> None:
         """Make the default configuration file."""
         with self:
-            make(self.defconfig)
+            self.makefile.make(self.defconfig)
 
     def build_kbuild_image(self, log_dir: Optional[str]=None) -> None:
         """Make the kernel kbuild image.
@@ -186,5 +186,5 @@ class LinuxKernel(object):
         with self:
             Path(log_dir).mkdir()
             build_log = Path(log_dir, self.custom_release + '-log.txt')
-            output = make_output('all')
+            output = self.makefile.make_output('all')
             build_log.write_file(output)
