@@ -1,5 +1,7 @@
 """Android build handler."""
 
+import subprocess
+
 from kbuilder.cli.handler.builder_linux import LinuxBuilderHandler
 from kbuilder.cli.interface.builder_android import IAndroidBuilder
 
@@ -35,14 +37,18 @@ class AndroidBuilderHandler(LinuxBuilderHandler):
         """Build a kbuild image with the default toolchain."""
         self.toolchain.set_as_active()
         self.kernel.extra_version = self.toolchain.name
-
         info = 'Compiling {0} with {1}'.format(self.kernel.release_version,
                                                self.toolchain)
         self.log.info(info)
-
         self.kernel.arch_clean()
-        self.kernel.build_kbuild_image(self.build_log_dir)
-        self.log.info('{0.kbuild_image} created'.format(self.kernel))
+
+        try:
+            self.kernel.build_kbuild_image(self.build_log_dir)
+            self.log.info('{0.kbuild_image} created'.format(self.kernel))
+
+        except subprocess.CalledProcessError:
+            self.log.info('Failed to compile {0.release_version}'.format(
+                    self.kernel))
 
     def build_boot_image(self):
         pass
