@@ -69,7 +69,7 @@ class KbuilderApp(CementApp):
     def active_kernel(self, kernel: LinuxKernel):
         """Set the active kernel to a new kernel."""
         if not isinstance(kernel, LinuxKernel):
-            raise ValueError("Argument must be an instance of LinuxKernel")
+            raise ValueError("Argument must be an instance of LinuxKernel, not {}".format(kernel.__class__))
         self._active_kernel = kernel
 
     @property
