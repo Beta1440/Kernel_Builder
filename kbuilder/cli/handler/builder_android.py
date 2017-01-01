@@ -26,15 +26,18 @@ class AndroidBuilderHandler(LinuxBuilderHandler):
         self.toolchain = self.app.db.retrieve('default_toolchain')
 
     def build_ota_package(self):
-        self.build_kbuild_image()
-        kernel = self.kernel
-        ota = kernel.make_ota_package(kbuild_image_dir='boot',
-                                      source_dir=self.ota_source_dir,
-                                      output_dir=self.export_path)
-        self.app.log.info('created ' + ota)
+        if self.build_kbuild_image():
+            ota = self.kernel.make_ota_package(kbuild_image_dir='boot',
+                                               source_dir=self.ota_source_dir,
+                                               output_dir=self.export_path)
+            self.app.log.info('created ' + ota)
 
-    def build_kbuild_image(self) -> None:
-        """Build a kbuild image with the default toolchain."""
+    def build_kbuild_image(self) -> Path:
+        """Build a kbuild image with the default toolchain.
+
+        Returns:
+            The Path to the kbuild image if successful, None otherwise
+        """
         self.toolchain.set_as_active()
         self.kernel.extra_version = self.toolchain.name
         info = 'Compiling {0} with {1}'.format(self.kernel.release_version,
@@ -45,11 +48,12 @@ class AndroidBuilderHandler(LinuxBuilderHandler):
         try:
             self.kernel.build_kbuild_image(self.build_log_dir)
             self.log.info('{0.kbuild_image} created'.format(self.kernel))
+            return self.kernel.kbuild_image
 
         except subprocess.CalledProcessError:
             self.log.info('Failed to compile {0.release_version}'.format(
                     self.kernel))
+            return None
 
     def build_boot_image(self):
         pass
-
