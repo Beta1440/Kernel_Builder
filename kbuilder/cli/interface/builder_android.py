@@ -1,20 +1,21 @@
 """Provides an interface for Building android targets."""
 
 from cement.core.interface import Attribute, validate
-from .builder_linux import linux_builder_validator, ILinuxBuilder
+from .builder_linux import LinuxBuilder
+
 
 def android_builder_validator(klass, obj):
-    """Verify that a handler satisfies the IAndroidBuilder interface."""
+    """Verify that a handler satisfies the AndroidBuilder interface."""
     members = [
         'toolchain',
         '_setup',
         'build_boot_image',
         'build_ota_package'
-        ]
-    validate(IAndroidBuilder, obj, members)
+    ]
+    validate(AndroidBuilder, obj, members)
 
 
-class IAndroidBuilder(ILinuxBuilder):
+class AndroidBuilder(LinuxBuilder):
     """Interface for Building android targets."""
 
     class IMeta:

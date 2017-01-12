@@ -2,18 +2,18 @@ from cement.core.interface import Interface, Attribute, validate
 
 
 def linux_builder_validator(klass, obj):
-    """Verify that a handler satisfies the ILinuxBuilder interface."""
+    """Verify that a handler satisfies the LinuxBuilder interface."""
     members = [
         'kernel',
         'products',
         '_setup',
         'build_kbuild_image',
         'build_defconfig',
-        ]
-    validate(ILinuxBuilder, obj, members)
+    ]
+    validate(LinuxBuilder, obj, members)
 
 
-class ILinuxBuilder(Interface):
+class LinuxBuilder(Interface):
     """Interface for Building linux targets."""
 
     class IMeta:

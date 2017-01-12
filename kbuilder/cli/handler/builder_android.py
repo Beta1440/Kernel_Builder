@@ -2,16 +2,16 @@
 
 import subprocess
 
-from kbuilder.cli.handler.builder_linux import LinuxBuilderHandler
-from kbuilder.cli.interface.builder_android import IAndroidBuilder
+from kbuilder.cli.handler.builder_linux import LinuxBuildHandler
+from kbuilder.cli.interface.builder_android import AndroidBuilder
 
 from unipath.path import Path
 
 
-class AndroidBuilderHandler(LinuxBuilderHandler):
+class AndroidBuildHandler(LinuxBuildHandler):
     class Meta:
-        interface = IAndroidBuilder
-        label = 'android_builder_handler'
+        interface = AndroidBuilder
+        label = 'android_build_handler'
         description = 'Handler for building android targets'
 
     def __init__(self, **kw_args):

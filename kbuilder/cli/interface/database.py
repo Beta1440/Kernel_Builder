@@ -1,11 +1,12 @@
 from cement.core.interface import Interface, validate
 
+
 def database_validator(klass, obj):
     """Verify that a handler satisfies the IDatabase interface."""
     members = [
         'store',
         'retrieve',
-        ]
+    ]
     validate(IDatabase, obj, members)
 
 

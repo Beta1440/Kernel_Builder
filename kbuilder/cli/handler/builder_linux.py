@@ -1,14 +1,15 @@
 """Linux Build Handler."""
 
 from cement.core.handler import CementBaseHandler
-from kbuilder.cli.interface.builder_linux import ILinuxBuilder
+from kbuilder.cli.interface.builder_linux import LinuxBuilder
 
 from unipath.path import Path
 
-class LinuxBuilderHandler(CementBaseHandler):
+
+class LinuxBuildHandler(CementBaseHandler):
     class Meta:
-        interface = ILinuxBuilder
-        label = 'linux_builder_handler'
+        interface = LinuxBuilder
+        label = 'linux_build_handler'
         description = 'Handler for building linux targets'
 
     def __init__(self, **kw_args):
