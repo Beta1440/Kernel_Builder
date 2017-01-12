@@ -1,3 +1,5 @@
+"""Stores interfaces for Linux."""
+
 from cement.core.interface import Interface, Attribute, validate
 
 

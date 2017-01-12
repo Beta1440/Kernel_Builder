@@ -4,10 +4,10 @@ from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
 from kbuilder.cli.interface.database import IDatabase
 from kbuilder.cli.handler.shelve import ShelveHandler
-from kbuilder.cli.interface.builder_linux import LinuxBuilder
-from kbuilder.cli.handler.builder_linux import LinuxBuildHandler
-from kbuilder.cli.interface.builder_android import AndroidBuilder
-from kbuilder.cli.handler.builder_android import AndroidBuildHandler
+from kbuilder.cli.interface.linux import LinuxBuilder
+from kbuilder.cli.handler.linux import LinuxBuildHandler
+from kbuilder.cli.interface.android import AndroidBuilder
+from kbuilder.cli.handler.android import AndroidBuildHandler
 from kbuilder.core.kernel.android import AndroidKernel
 from kbuilder.core.kernel.linux import LinuxKernel
 

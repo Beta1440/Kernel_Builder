@@ -2,7 +2,6 @@
 
 from cement.core.controller import CementBaseController, expose
 
-
 VERSION = '0.1.0'
 
 BANNER = """
@@ -24,7 +23,7 @@ class KbuilderBaseController(CementBaseController):
                   action='version')),
             (['extra_arguments'],
              dict(action='store', nargs='*'))
-            ]
+        ]
 
     @expose(hide=True)
     def default(self):

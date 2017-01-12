@@ -1,4 +1,4 @@
-"""Kernel Builder build controller."""
+"""Provides controllers for Linux."""
 
 from cement.core.controller import CementBaseController, expose
 
@@ -19,7 +19,7 @@ class KbuilderLinuxBuildController(CementBaseController):
         self.builder = None
 
     def _setup(self, app):
-        """ Initalize instance variables of controller.
+        """Initialize instance variables of controller.
 
         See `IController._setup() <#cement.core.cache.IController._setup>`_.
         """
@@ -29,7 +29,7 @@ class KbuilderLinuxBuildController(CementBaseController):
     @expose(help='Build a kbuild image')
     def default(self):
         """Build all targets."""
-        self.build_kbuild_image()    
+        self.build_kbuild_image()
 
     @expose(help='Build a kbuild image',
             aliases=['kernel', 'kbuildimage', 'zImage'],
@@ -42,5 +42,3 @@ class KbuilderLinuxBuildController(CementBaseController):
     def defconfig(self):
         """Cross compile a kbuild image."""
         self.builder.build_defconfig()
-
-

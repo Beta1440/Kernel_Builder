@@ -1,7 +1,7 @@
-"""Provides an interface for Building android targets."""
+"""Provides interfaces for Android."""
 
 from cement.core.interface import Attribute, validate
-from .builder_linux import LinuxBuilder
+from .linux import LinuxBuilder
 
 
 def android_builder_validator(klass, obj):

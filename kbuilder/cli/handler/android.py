@@ -1,9 +1,9 @@
-"""Android build handler."""
+"""Provides handlers for Android."""
 
 import subprocess
 
-from kbuilder.cli.handler.builder_linux import LinuxBuildHandler
-from kbuilder.cli.interface.builder_android import AndroidBuilder
+from kbuilder.cli.handler.linux import LinuxBuildHandler
+from kbuilder.cli.interface.android import AndroidBuilder
 
 from unipath.path import Path
 

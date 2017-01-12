@@ -1,6 +1,7 @@
-"""Kernel Builder android controller."""
+"""Provides controllers for Android."""
 
 from cement.core.controller import CementBaseController, expose
+
 
 class KbuilderAndroidBuildController(CementBaseController):
     """Kernel Builder android controller."""
@@ -14,7 +15,7 @@ class KbuilderAndroidBuildController(CementBaseController):
                       dict(help='The toolchain to use',
                            dest='toolchain',
                            action='store'))
-            ]
+                     ]
 
     def __init__(self, *args, **kw):
         """Init the controller."""

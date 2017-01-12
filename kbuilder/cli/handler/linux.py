@@ -1,7 +1,7 @@
-"""Linux Build Handler."""
+"""Provides handlers for Linux."""
 
 from cement.core.handler import CementBaseHandler
-from kbuilder.cli.interface.builder_linux import LinuxBuilder
+from kbuilder.cli.interface.linux import LinuxBuilder
 
 from unipath.path import Path
 
