@@ -2,7 +2,6 @@ import os
 from typing import Iterable, List, Optional
 
 from kbuilder.core.arch import Arch
-from kbuilder.core.messages import highlight
 from unipath.path import Path
 
 
@@ -65,6 +64,7 @@ class Toolchain(object):
 
     def find_compiler_prefix(self) -> str:
         """Return the prefix of all binaries of this."""
+
         def find_binaries() -> Iterable:
             """Return an Iterable of binaries in the toolchain's bin folder."""
             try:
@@ -111,7 +111,7 @@ class Toolchain(object):
         os.putenv('SUBARCH', self.target_arch.name)
 
 
-def scandir(toolchain_dir: str, target_arch: Optional[Arch]=None) -> List:
+def scandir(toolchain_dir: str, target_arch: Optional[Arch] = None) -> List:
     """Return a list of toolchains located in a directory.
 
     A toolchain is considered valid if it has a gcc executable in its
@@ -126,8 +126,10 @@ def scandir(toolchain_dir: str, target_arch: Optional[Arch]=None) -> List:
         otherwise only toolchains with the matching architecture will be
         returned (default None).
     """
+
     def valid_arch():
         return not target_arch or toolchain.target_arch == target_arch
+
     toolchains = []
     entries = sorted(os.scandir(toolchain_dir), key=lambda x: x.name)
 
@@ -155,7 +157,7 @@ def prompt(toolchains: List) -> Iterable:
         return toolchains
 
     for index, toolchain in enumerate(toolchains, 1):
-        print('{}) {}'.format(index, highlight(toolchain)))
+        print('{}) {}'.format(index, toolchain))
 
     numbers = input('Enter numbers separated by spaces: ')
     chosen_numbers = [int(x) for x in numbers.split()]
@@ -168,7 +170,7 @@ def prompt_one(toolchains: List) -> Toolchain:
 
     Each toolchain will be printed with its position in the list.
     The positions begin at 1 and are printed next to the toolchain.
-    Then the client will be prompted to enter in the corresponsing position.
+    Then the client will be prompted to enter in the corresponding position.
     of the desired toolchain. An Iterable containing toolchains with the
     matching positions from the input will be returned.
 
@@ -176,14 +178,14 @@ def prompt_one(toolchains: List) -> Toolchain:
     toolchains -- the list of toolchains to select from.
     """
     for index, toolchain in enumerate(toolchains, 1):
-        print('{}) {}'.format(index, highlight(toolchain)))
+        print('{}) {}'.format(index, toolchain))
 
     number = input('Enter a single number: ')
     return toolchains[int(number) - 1]
 
 
 def prompt_from_scandir(toolchain_dir: str, *,
-                        target_arch: Optional[Arch]=None) -> Iterable:
+                        target_arch: Optional[Arch] = None) -> Iterable:
     """Select a toolchain from a directory of toolchains.
 
     Positional arguments:
@@ -196,5 +198,3 @@ def prompt_from_scandir(toolchain_dir: str, *,
         An iterator of the selected toolchains.
     """
     return prompt(scandir(toolchain_dir, target_arch))
-
-

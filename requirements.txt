@@ -1,5 +1,4 @@
 typing
-termcolor
 arrow
 cement>=2.6.0
 unipath>=1.1
