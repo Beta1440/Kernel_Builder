@@ -2,6 +2,7 @@
 
 from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
+from cement.ext.ext_colorlog import ColorLogHandler
 from kbuilder.cli.interface.database import IDatabase
 from kbuilder.cli.handler.shelve import ShelveHandler
 from kbuilder.cli.interface.linux import LinuxBuilder
@@ -13,6 +14,13 @@ from kbuilder.core.kernel.linux import LinuxKernel
 
 from cached_property import cached_property
 
+COLORS = {
+    'DEBUG':    'cyan',
+    'INFO':     'green',
+    'WARNING':  'yellow',
+    'ERROR':    'red',
+    'CRITICAL': 'red,bg_white',
+}
 
 # Application default.  Should update config/kbuilder.conf to reflect any
 # changes, or additions here.
@@ -49,6 +57,8 @@ class KbuilderApp(CementApp):
         # Internal templates (ship with application code)
         template_module = 'kbuilder.cli.templates'
 
+        log_handler = ColorLogHandler(colors=COLORS)
+
     def __init__(self, label=None, **kw):
         super().__init__(**kw)
         self._active_kernel = None
@@ -69,7 +79,8 @@ class KbuilderApp(CementApp):
     def active_kernel(self, kernel: LinuxKernel):
         """Set the active kernel to a new kernel."""
         if not isinstance(kernel, LinuxKernel):
-            raise ValueError("Argument must be an instance of LinuxKernel, not {}".format(kernel.__class__))
+            raise ValueError("Argument must be an instance of LinuxKernel, not {}".format(
+                    kernel.__class__))
         self._active_kernel = kernel
 
     @property
@@ -93,7 +104,3 @@ class KbuilderApp(CementApp):
         builder = self.handler.resolve('linux_builder', 'linux_build_handler')
         builder._setup(self)
         return builder
-
-    # def setup(self):
-    #     super().setup()
-    #     self.android_builder._setup(self)
