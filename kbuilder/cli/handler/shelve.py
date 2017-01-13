@@ -2,18 +2,18 @@
 import shelve
 
 from cement.core.handler import CementBaseHandler
-from kbuilder.cli.interface.database import IDatabase
+from kbuilder.cli.interface.database import Database
 from unipath.path import Path
 
 
 class ShelveHandler(CementBaseHandler):
     class Meta:
-        interface = IDatabase
+        interface = Database
         label = 'shelve_handler'
-        description = 'This handler implements DatabaseInterface'
+        description = 'Store and retrieve objects'
         config_defaults = dict(
-            foo='bar'
-            )
+                foo='bar'
+        )
 
     my_var = 'This is my var'
 
@@ -26,30 +26,29 @@ class ShelveHandler(CementBaseHandler):
         self.app = app
         self.local_root = app.active_kernel.root
 
-    def store(self, item: object, key: str) -> None:
+    def __setitem__(self, key: str, value: object) -> object:
         """Store an item in a data base.
 
         Args:
+            key: the key to use to retrieve the item
             item: The item to store.
 
-        Returns:
-            The object at the corresponding key
+            Returns: n/a
         """
         with shelve.open(self._local_entry_path(key)) as db:
-            db[key] = item
+            db[key] = value
 
-    def retrieve(self, key: str) -> object:
-        """Retrieve an item from shelve.
+    def __getitem__(self, key) -> object:
+        """Store an item in a data base.
 
         Args:
-            key: The key item to retrieve.
+            key: The key to use in getting the item.
 
-        Returns:
-            The object at the corresponding key.
+            Returns:
+                The object at the corresponding key
         """
         with shelve.open(self._local_entry_path(key)) as db:
-            item = db[key]
-        return item
+            return db[key]
 
     def _local_entry_path(self, key: str) -> Path:
         return self.local_root.child('.kbuilder', '{}.db'.format(key))

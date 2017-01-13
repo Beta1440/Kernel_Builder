@@ -3,7 +3,7 @@
 from cement.core.foundation import CementApp
 from cement.utils.misc import init_defaults
 from cement.ext.ext_colorlog import ColorLogHandler
-from kbuilder.cli.interface.database import IDatabase
+from kbuilder.cli.interface.database import Database
 from kbuilder.cli.handler.shelve import ShelveHandler
 from kbuilder.cli.interface.linux import LinuxBuilder
 from kbuilder.cli.handler.linux import LinuxBuildHandler
@@ -40,7 +40,7 @@ class KbuilderApp(CementApp):
     class Meta:
         label = 'kbuilder'
         config_defaults = defaults
-        define_handlers = [IDatabase,
+        define_handlers = [Database,
                            LinuxBuilder,
                            AndroidBuilder]
 

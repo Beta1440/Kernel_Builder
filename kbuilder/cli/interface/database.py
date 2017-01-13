@@ -2,15 +2,15 @@ from cement.core.interface import Interface, validate
 
 
 def database_validator(klass, obj):
-    """Verify that a handler satisfies the IDatabase interface."""
+    """Verify that a handler satisfies the Database interface."""
     members = [
-        'store',
-        'retrieve',
+        '__setitem__',
+        '__getitem__',
     ]
-    validate(IDatabase, obj, members)
+    validate(Database, obj, members)
 
 
-class IDatabase(Interface):
+class Database(Interface):
     """Database interface."""
 
     class IMeta:
@@ -32,17 +32,18 @@ class IDatabase(Interface):
         """
         pass
 
-    def store(self, item: object, key: str) -> None:
+    def __setitem__(self, key: str, value: object) -> object:
         """Store an item in a data base.
 
         Args:
+            key: the key to use to retrieve the item
             item: The item to store.
 
         Returns: n/a
         """
         pass
 
-    def retrieve(self, key: str) -> object:
+    def __getitem__(self, item) -> object:
         """Store an item in a data base.
 
         Args:

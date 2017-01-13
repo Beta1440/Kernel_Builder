@@ -16,7 +16,7 @@ class KbuilderGccController(CementBaseController):
         arguments = [
             (['extra_arguments'],
              dict(action='store', nargs='*'))
-            ]
+        ]
 
     @expose(hide=True)
     def default(self):
@@ -39,11 +39,11 @@ class KbuilderGccController(CementBaseController):
         except IndexError:
             toolchain = gcc.prompt_one(toolchains)
 
-        self.app.db.store(toolchain, 'default_toolchain')
+        self.app.db['default_toolchain'] = toolchain
 
     @expose(help='Show the default toolchain',
             aliases=['show', 'view'],
             aliases_only=True)
     def show_default_toolchain(self):
         """Display the default toolchain."""
-        print(self.app.db.retrieve('default_toolchain'))
+        print(self.app.db['default_toolchain'])

@@ -24,7 +24,7 @@ class AndroidBuildHandler(LinuxBuildHandler):
         name = self.kernel.name
         self.ota_source_dir = Path(app.config.get(name, 'ota_dir')).expand_user()
         try:
-            self.toolchain = self.app.db.retrieve('default_toolchain')
+            self.toolchain = self.app.db['default_toolchain']
         except KeyError:
             app.log.warning("Android toolchain not set")
 
@@ -54,7 +54,7 @@ class AndroidBuildHandler(LinuxBuildHandler):
             return self.kernel.kbuild_image
 
         except subprocess.CalledProcessError:
-            self.log.info('Failed to compile {0.release_version}'.format(
+            self.log.error('Failed to compile {0.release_version}'.format(
                     self.kernel))
             return None
 
