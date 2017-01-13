@@ -5,6 +5,8 @@ from cement.utils.misc import init_defaults
 from cement.ext.ext_colorlog import ColorLogHandler
 from kbuilder.cli.interface.database import Database
 from kbuilder.cli.handler.shelve import ShelveHandler
+from kbuilder.cli.interface.toolchain import ToolchainManager
+from kbuilder.cli.handler.gcc import GccHandler
 from kbuilder.cli.interface.linux import LinuxBuilder
 from kbuilder.cli.handler.linux import LinuxBuildHandler
 from kbuilder.cli.interface.android import AndroidBuilder
@@ -41,10 +43,12 @@ class KbuilderApp(CementApp):
         label = 'kbuilder'
         config_defaults = defaults
         define_handlers = [Database,
+                           ToolchainManager,
                            LinuxBuilder,
                            AndroidBuilder]
 
         handlers = [ShelveHandler,
+                    GccHandler,
                     LinuxBuildHandler,
                     AndroidBuildHandler]
 
@@ -82,6 +86,12 @@ class KbuilderApp(CementApp):
             raise ValueError("Argument must be an instance of LinuxKernel, not {}".format(
                     kernel.__class__))
         self._active_kernel = kernel
+
+    @cached_property
+    def toolchain_manager(self):
+        manager = self.handler.resolve('toolchain', 'gcc_handler')
+        manager._setup(self)
+        return manager
 
     @property
     def builder(self):

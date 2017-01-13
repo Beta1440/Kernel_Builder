@@ -2,10 +2,6 @@
 
 from cement.core.controller import CementBaseController, expose
 
-from kbuilder.core import gcc
-from kbuilder.core.gcc import Toolchain
-from unipath.path import Path
-
 
 class KbuilderGccController(CementBaseController):
     class Meta:
@@ -28,22 +24,18 @@ class KbuilderGccController(CementBaseController):
             aliases_only=True)
     def set_default_toolchain(self):
         """Set the default toolchain."""
-        kernel = self.app.active_kernel
-        toolchain_dir = Path(self.app.config.get(kernel.name, 'toolchain_dir'))
-        toolchains = gcc.scandir(toolchain_dir.expand_user(), kernel.arch)
-
-        try:
-            toolchain_name = self.app.pargs.extra_arguments[0]
-            toolchain = Toolchain.find(toolchains, toolchain_name)
-
-        except IndexError:
-            toolchain = gcc.prompt_one(toolchains)
-
-        self.app.db['default_toolchain'] = toolchain
+        self.app.toolchain_manager.set_toolchain()
 
     @expose(help='Show the default toolchain',
             aliases=['show', 'view'],
             aliases_only=True)
     def show_default_toolchain(self):
         """Display the default toolchain."""
-        print(self.app.db['default_toolchain'])
+        self.app.toolchain_manager.show_toolchain()
+
+    @expose(help='Lists all available local toolchains',
+            aliases=['list'],
+            aliases_only=True)
+    def list_toolchains(self):
+        """Lists all available toolchains."""
+        self.app.toolchain_manager.list_toolchains()
