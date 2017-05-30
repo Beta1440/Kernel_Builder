@@ -17,23 +17,27 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
     def __init__(self, **kw_args):
         super().__init__(**kw_args)
         self.ota_source_dir = None
-        self.toolchain = None
 
     def _setup(self, app):
         super()._setup(app)
         name = self.kernel.name
+        self.db = app.db
+        self.log = app.log
         self.ota_source_dir = Path(app.config.get(name, 'ota_dir')).expand_user()
+
+    @property
+    def toolchain(self):
         try:
-            self.toolchain = self.app.db['default_toolchain']
+            return self.db['default_toolchain']
         except KeyError:
-            app.log.warning("Android toolchain not set")
+            self.log.warning("Android toolchain not set")
 
     def build_ota_package(self):
         if self.build_kbuild_image():
             ota = self.kernel.make_ota_package(kbuild_image_dir='boot',
-                                               source_dir=self.ota_source_dir,
-                                               output_dir=self.export_path)
-            self.app.log.info('created ' + ota)
+                                                source_dir=self.ota_source_dir,
+                                                output_dir=self.export_path)
+            self.log.info('created ' + ota)
 
     def build_kbuild_image(self) -> Path:
         """Build a kbuild image with the default toolchain.
