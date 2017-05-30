@@ -2,8 +2,10 @@
 
 import abc
 
+from cement.core.handler import CementBaseHandler
 
-class ToolchainManager(object):
+
+class ToolchainManager(CementBaseHandler):
     """Interface for managing toolchains."""
 
     class IMeta(abc.ABCMeta):
