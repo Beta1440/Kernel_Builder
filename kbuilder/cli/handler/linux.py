@@ -16,6 +16,7 @@ class LinuxBuildHandler(LinuxBuilder):
         super().__init__(**kw_args)
         self._kernel = None
         self.base_export_dir = None
+        self._db = None
         self.export_path = None
         self.build_log_dir = None
         self._products = []
@@ -30,6 +31,7 @@ class LinuxBuildHandler(LinuxBuilder):
         self.export_path.mkdir(parents=True)
         self.build_log_dir = Path(app.config.get(self._kernel.name,
                                                  'log_dir')).expand_user()
+        self._db = app.db
         self.log = app.log
 
     @property
@@ -39,6 +41,13 @@ class LinuxBuildHandler(LinuxBuilder):
     @property
     def products(self):
         return self._products
+
+    @property
+    def toolchain(self):
+        try:
+            return self._db['default_toolchain']
+        except KeyError:
+            self.log.warning("Toolchain not set")
 
     def build_kbuild_image(self) -> None:
         """Build a kbuild image."""

@@ -21,16 +21,7 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
     def _setup(self, app):
         super()._setup(app)
         name = self.kernel.name
-        self.db = app.db
-        self.log = app.log
         self.ota_source_dir = Path(app.config.get(name, 'ota_dir')).expand_user()
-
-    @property
-    def toolchain(self):
-        try:
-            return self.db['default_toolchain']
-        except KeyError:
-            self.log.warning("Android toolchain not set")
 
     def build_ota_package(self):
         if self.build_kbuild_image():
