@@ -172,6 +172,11 @@ class LinuxKernel(object):
         with self:
             self.makefile.make(self.defconfig)
 
+    def prepare(self) -> None:
+        "Prepare the build environment."
+        with self:
+            self.makefile.make('prepare')
+
     def build_kbuild_image(self, log_dir: Optional[str]=None) -> None:
         """Make the kernel kbuild image.
 

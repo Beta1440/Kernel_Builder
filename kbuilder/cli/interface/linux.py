@@ -38,6 +38,11 @@ class LinuxBuilder(CementBaseHandler):
         pass
 
     @abc.abstractmethod
+    def init(self) -> None:
+        """Initialize the build enviornment."""
+        pass
+
+    @abc.abstractmethod
     def build_kbuild_image(self):
         """Build a compressed kernel image."""
         pass

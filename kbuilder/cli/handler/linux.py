@@ -60,3 +60,7 @@ class LinuxBuildHandler(LinuxBuilder):
         """Build a defconfig."""
         self.log.info('making defconfig: ' + self.kernel.defconfig)
         self.kernel.make_defconfig()
+
+    def init(self) -> None:
+        "Initialize the build environment."
+        self.kernel.prepare()
