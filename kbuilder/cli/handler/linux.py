@@ -14,23 +14,31 @@ class LinuxBuildHandler(CementBaseHandler):
 
     def __init__(self, **kw_args):
         super().__init__(**kw_args)
-        self.kernel = None
+        self._kernel = None
         self.base_export_dir = None
         self.export_path = None
         self.build_log_dir = None
-        self.products = []
+        self._products = []
         self.log = None
 
     def _setup(self, app):
         super()._setup(app)
-        self.kernel = app.active_kernel
-        name = self.kernel.name
+        self._kernel = app.active_kernel
+        name = self._kernel.name
         self.base_export_dir = Path(app.config.get(name, 'export_dir')).expand_user()
-        self.export_path = self.base_export_dir.child(self.kernel.version_numbers)
+        self.export_path = self.base_export_dir.child(self._kernel.version_numbers)
         self.export_path.mkdir(parents=True)
-        self.build_log_dir = Path(app.config.get(self.kernel.name,
+        self.build_log_dir = Path(app.config.get(self._kernel.name,
                                                  'log_dir')).expand_user()
         self.log = app.log
+
+    @property
+    def kernel(self):
+        return self._kernel
+
+    @property
+    def products(self):
+        return self._products
 
     def build_kbuild_image(self) -> None:
         """Build a kbuild image."""
