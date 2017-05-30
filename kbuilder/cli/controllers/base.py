@@ -43,6 +43,12 @@ class KbuilderBaseController(CementBaseController):
         self.app.log.info('Cleaning build files')
         self.app.active_kernel.clean()
 
+    @expose(help='Initialize the build environment')
+    def init(self):
+        """Clean build files."""
+        self.app.log.info('Initializing the build environment')
+        self.app.toolchain_manager.set_toolchain()
+
     @expose(help='Print the kernel Linux version',
             aliases=['linuxversion', 'version'],
             aliases_only=True)
