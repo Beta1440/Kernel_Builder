@@ -6,7 +6,7 @@ from kbuilder.cli.interface.linux import LinuxBuilder
 from unipath.path import Path
 
 
-class LinuxBuildHandler(CementBaseHandler):
+class LinuxBuildHandler(LinuxBuilder):
     class Meta:
         interface = LinuxBuilder
         label = 'linux_build_handler'

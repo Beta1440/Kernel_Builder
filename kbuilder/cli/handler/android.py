@@ -8,7 +8,7 @@ from kbuilder.cli.interface.android import AndroidBuilder
 from unipath.path import Path
 
 
-class AndroidBuildHandler(LinuxBuildHandler):
+class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
     class Meta:
         interface = AndroidBuilder
         label = 'android_build_handler'

@@ -1,29 +1,22 @@
 """Provides interfaces for Android."""
 
-from cement.core.interface import Attribute, validate
+import abc
+
 from .linux import LinuxBuilder
-
-
-def android_builder_validator(klass, obj):
-    """Verify that a handler satisfies the AndroidBuilder interface."""
-    members = [
-        'toolchain',
-        '_setup',
-        'build_boot_image',
-        'build_ota_package'
-    ]
-    validate(AndroidBuilder, obj, members)
 
 
 class AndroidBuilder(LinuxBuilder):
     """Interface for Building android targets."""
 
-    class IMeta:
+    class IMeta(abc.ABCMeta):
         label = 'android_builder'
-        validator = android_builder_validator
 
-    toolchain = Attribute('The cross compiler to use in building the kernel')
+    @abc.abstractproperty
+    def toolchain(self):
+        """The cross compiler to use in building the kernel."""
+        pass
 
+    @abc.abstractmethod
     def _setup(self, app):
         """ Set up the app and toolchain.
 
@@ -40,10 +33,12 @@ class AndroidBuilder(LinuxBuilder):
         """
         pass
 
+    @abc.abstractmethod
     def build_boot_img(self):
         """Build a boot.img."""
         pass
 
+    @abc.abstractmethod
     def build_ota_package(self):
         """Build an OTA package."""
         pass

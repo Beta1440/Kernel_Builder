@@ -1,31 +1,27 @@
 """Stores interfaces for Linux."""
 
-from cement.core.interface import Interface, Attribute, validate
+from cement.core.handler import CementBaseHandler
+
+import abc
 
 
-def linux_builder_validator(klass, obj):
-    """Verify that a handler satisfies the LinuxBuilder interface."""
-    members = [
-        'kernel',
-        'products',
-        '_setup',
-        'build_kbuild_image',
-        'build_defconfig',
-    ]
-    validate(LinuxBuilder, obj, members)
-
-
-class LinuxBuilder(Interface):
+class LinuxBuilder(CementBaseHandler):
     """Interface for Building linux targets."""
 
-    class IMeta:
+    class IMeta(abc.ABCMeta):
         label = 'linux_builder'
-        validator = linux_builder_validator
 
-    kernel = Attribute('Kernel to invoke commands')
+    @abc.abstractproperty
+    def kernel(self):
+        """Kernel to invoke commands."""
+        pass
 
-    products = Attribute('The completed build targets')
+    @abc.abstractproperty
+    def products(self):
+        """The completed build targets."""
+        pass
 
+    @abc.abstractmethod
     def _setup(self, app):
         """
         The setup function is called during application initialization and
@@ -41,10 +37,12 @@ class LinuxBuilder(Interface):
         """
         pass
 
+    @abc.abstractmethod
     def build_kbuild_image(self):
         """Build a compressed kernel image."""
         pass
 
+    @abc.abstractmethod
     def build_defconfig(self):
-        """Bulid the default configuration file."""
+        """Build the default configuration file."""
         pass
