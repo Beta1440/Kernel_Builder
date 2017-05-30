@@ -75,7 +75,12 @@ class Toolchain(object):
         def is_gcc_binary(binary_name: str) -> bool:
             return binary_name.endswith('gcc')
 
-        for entry in find_binaries():
+        binaries = find_binaries()
+
+        if not binaries:
+            return ""
+
+        for entry in binaries:
             if is_gcc_binary(entry.name):
                 compiler_prefix = entry.path[:-3]
                 return compiler_prefix
