@@ -63,4 +63,4 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
             return None
 
     def build_boot_image(self):
-        pass
+        raise NotImplementedError
