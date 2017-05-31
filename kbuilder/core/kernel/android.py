@@ -58,4 +58,4 @@ class AndroidKernel(LinuxKernel):
         if kbuild_image_dir:
             shutil.copy(self.kbuild_image, Path(source_dir, kbuild_image_dir))
         archive_path = Path(output_dir, self.custom_release)
-        return shutil.make_archive(archive_path, 'zip', source_dir)
+        return shutil.make_archive(archive_path.lower(), 'zip', source_dir)
