@@ -45,7 +45,7 @@ class KbuilderBaseController(ArgparseController):
 
     @expose(help='Initialize the build environment')
     def init(self):
-        """Clean build files."""
+        """Initialize the build environment files."""
         self.app.log.info('Initializing the build environment')
         self.app.toolchain_manager.set_toolchain()
         self.app.builder.init()
