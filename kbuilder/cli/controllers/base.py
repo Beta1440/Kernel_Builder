@@ -1,6 +1,6 @@
 """Kernel Builder base controller."""
 
-from cement.core.controller import CementBaseController, expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
 VERSION = '0.1.0'
 
@@ -10,7 +10,7 @@ Copyright (c) 2016 Dela Anthonio
 """.format(VERSION)
 
 
-class KbuilderBaseController(CementBaseController):
+class KbuilderBaseController(ArgparseController):
     class Meta:
         label = 'base'
         description = 'Automate compilling the Linux kernel '
@@ -24,15 +24,15 @@ class KbuilderBaseController(CementBaseController):
             (['extra_arguments'],
              dict(action='store', nargs='*'))
         ]
+        parser_options = {}
 
     @expose(hide=True)
     def default(self):
         """Build all targets """
         pass
 
-    @expose(help='Remove build files in the arch directory',
-            aliases=['archclean'], aliases_only=True)
-    def arch_clean(self):
+    @expose(help='Remove build files in the arch directory',)
+    def archclean(self):
         """Print the kernel linux version."""
         self.app.log.info('Cleaning arch specific files')
         self.app.active_kernel.arch_clean()
@@ -50,24 +50,18 @@ class KbuilderBaseController(CementBaseController):
         self.app.toolchain_manager.set_toolchain()
         self.app.builder.init()
 
-    @expose(help='Print the kernel Linux version',
-            aliases=['linuxversion', 'version'],
-            aliases_only=True)
-    def linux_version(self):
+    @expose(help='Print the kernel Linux version',)
+    def linuxversion(self):
         """Print the kernel linux version."""
         print(self.app.active_kernel.linux_version)
 
-    @expose(help='Print the kernel release version',
-            aliases=['releaseversion', 'release'],
-            aliases_only=True)
-    def release_version(self):
+    @expose(help='Print the kernel release version',)
+    def releaseversion(self):
         """Print the kernel release version."""
         print(self.app.active_kernel.release_version)
 
-    @expose(help='Print the kernel local version',
-            aliases=['localversion', 'local'],
-            aliases_only=True)
-    def local_version(self):
+    @expose(help='Print the kernel local version')
+    def localversion(self):
         """Print the kernel local version."""
         print(self.app.active_kernel.local_version)
 

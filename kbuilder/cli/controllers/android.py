@@ -1,9 +1,9 @@
 """Provides controllers for Android."""
 
-from cement.core.controller import CementBaseController, expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
 
-class KbuilderAndroidBuildController(CementBaseController):
+class KbuilderAndroidBuildController(ArgparseController):
     """Kernel Builder android controller."""
 
     class Meta:
@@ -15,7 +15,7 @@ class KbuilderAndroidBuildController(CementBaseController):
                       dict(help='The toolchain to use',
                            dest='toolchain',
                            action='store'))
-                     ]
+                    ]
 
     def __init__(self, *args, **kw):
         """Init the controller."""
@@ -29,8 +29,7 @@ class KbuilderAndroidBuildController(CementBaseController):
         super()._setup(app)
         self.builder = app.builder
 
-    @expose(help='Build an OTA packge', aliases=['otapackage', 'ota'],
-            aliases_only=True)
-    def build_ota_package(self):
+    @expose(help='Build an OTA packge', aliases=['ota'],)
+    def otapackage(self):
         """Build an OTA packge."""
         self.builder.build_ota_package()

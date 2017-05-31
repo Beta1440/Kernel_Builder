@@ -1,9 +1,9 @@
 """Provides controllers for Linux."""
 
-from cement.core.controller import CementBaseController, expose
+from cement.ext.ext_argparse import ArgparseController, expose
 
 
-class KbuilderLinuxBuildController(CementBaseController):
+class KbuilderLinuxBuildController(ArgparseController):
     """Kernel Builder Linux build controller."""
 
     class Meta:
@@ -29,16 +29,15 @@ class KbuilderLinuxBuildController(CementBaseController):
     @expose(help='Build a kbuild image')
     def default(self):
         """Build all targets."""
-        self.build_kbuild_image()
+        self.kernel()
 
     @expose(help='Build a kbuild image',
-            aliases=['kernel', 'kbuildimage', 'zImage'],
-            aliases_only=True)
-    def build_kbuild_image(self):
-        """Build a kbuild image."""
+            aliases=['kbuildimage', 'zimage'],)
+    def kernel(self):
+        """Build a kernel image."""
         self.builder.build_kbuild_image()
 
-    @expose(help='Default configuration file')
+    @expose(help='Build a default configuration file')
     def defconfig(self):
-        """Cross compile a kbuild image."""
+        """Build a default configuration file."""
         self.builder.build_defconfig()
