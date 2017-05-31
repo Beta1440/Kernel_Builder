@@ -38,7 +38,7 @@ defaults['kbuilder']['plugin_dir'] = '/var/lib/kbuilder/plugins'
 defaults['kbuilder']['template_dir'] = '/var/lib/kbuilder/templates'
 
 
-class KbuilderApp(CementApp):
+class App(CementApp):
     class Meta:
         label = 'kbuilder'
         config_defaults = defaults

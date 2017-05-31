@@ -1,17 +1,17 @@
 """Kernel Builder bootstrapping."""
 
 # All built-in application controllers should be imported, and registered
-# in this file in the same way as KbuilderBaseController.
+# in this file in the same way as BaseController.
 
-from kbuilder.cli.controller.base import KbuilderBaseController
-from kbuilder.cli.controller.linux import KbuilderLinuxBuildController
-from kbuilder.cli.controller.android import KbuilderAndroidBuildController
-from kbuilder.cli.controller.gcc import KbuilderGccController
+from kbuilder.cli.controller.base import BaseController
+from kbuilder.cli.controller.linux import LinuxBuildController
+from kbuilder.cli.controller.android import AndroidBuildController
+from kbuilder.cli.controller.gcc import GccController
 
 
 def load(app):
-    app.handler.register(KbuilderBaseController)
-    app.handler.register(KbuilderLinuxBuildController)
-    app.handler.register(KbuilderAndroidBuildController)
-    app.handler.register(KbuilderGccController)
+    app.handler.register(BaseController)
+    app.handler.register(LinuxBuildController)
+    app.handler.register(AndroidBuildController)
+    app.handler.register(GccController)
 

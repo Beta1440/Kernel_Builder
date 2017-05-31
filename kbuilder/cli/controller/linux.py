@@ -3,7 +3,7 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 
-class KbuilderLinuxBuildController(ArgparseController):
+class LinuxBuildController(ArgparseController):
     """Kernel Builder Linux build controller."""
 
     class Meta:

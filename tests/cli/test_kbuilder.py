@@ -2,7 +2,7 @@
 
 from kbuilder.utils import test
 
-class CliTestCase(test.KbuilderTestCase):
+class CliTestCase(test.TestCase):
     def test_kbuilder_cli(self):
         self.app.setup()
         self.app.run()

@@ -10,7 +10,7 @@ Copyright (c) 2016 Dela Anthonio
 """.format(VERSION)
 
 
-class KbuilderBaseController(ArgparseController):
+class BaseController(ArgparseController):
     class Meta:
         label = 'base'
         description = 'Automate compilling the Linux kernel '

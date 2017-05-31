@@ -1,4 +1,4 @@
-class KbuilderTestApp(KbuilderApp):
+class TestApp(App):
 
     """A test app that is better suited for testing."""
     class Meta:

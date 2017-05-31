@@ -3,7 +3,7 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 
-class KbuilderAndroidBuildController(ArgparseController):
+class AndroidBuildController(ArgparseController):
     """Kernel Builder android controller."""
 
     class Meta:

@@ -3,7 +3,7 @@
 from cement.ext.ext_argparse import ArgparseController, expose
 
 
-class KbuilderGccController(ArgparseController):
+class GccController(ArgparseController):
     class Meta:
         label = 'gcc'
         description = 'Configure local gcc'
