@@ -1,8 +1,8 @@
 """Stores interfaces for Linux."""
 
-from cement.core.handler import CementBaseHandler
-
 import abc
+
+from cement.core.handler import CementBaseHandler
 
 
 class LinuxBuilder(CementBaseHandler):

@@ -1,7 +1,8 @@
 """Example Plugin for Kernel Builder."""
 
-from cement.core.controller import CementBaseController, expose
 from cement.core import handler, hook
+from cement.core.controller import CementBaseController, expose
+
 
 def example_plugin_hook(app):
     # do something with the ``app`` object here.

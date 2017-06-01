@@ -1,10 +1,11 @@
 import os
 from typing import Optional
 
-from kbuilder.core.make import Makefile
 from cached_property import cached_property
 from unipath.path import Path
+
 from kbuilder.core.arch import Arch
+from kbuilder.core.make import Makefile
 
 
 class LinuxKernel(object):

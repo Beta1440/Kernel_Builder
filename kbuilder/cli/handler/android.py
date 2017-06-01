@@ -2,10 +2,10 @@
 
 import subprocess
 
+from unipath.path import Path
+
 from kbuilder.cli.handler.linux import LinuxBuildHandler
 from kbuilder.cli.interface.android import AndroidBuilder
-
-from unipath.path import Path
 
 
 class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):

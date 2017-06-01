@@ -1,20 +1,20 @@
 """Kbuilder CLI app."""
 
+from cached_property import cached_property
 from cement.core.foundation import CementApp
-from cement.utils.misc import init_defaults
 from cement.ext.ext_colorlog import ColorLogHandler
-from kbuilder.cli.interface.database import Database
-from kbuilder.cli.handler.shelve import ShelveHandler
-from kbuilder.cli.interface.toolchain import ToolchainManager
-from kbuilder.cli.handler.gcc import GccHandler
-from kbuilder.cli.interface.linux import LinuxBuilder
-from kbuilder.cli.handler.linux import LinuxBuildHandler
-from kbuilder.cli.interface.android import AndroidBuilder
+from cement.utils.misc import init_defaults
+
 from kbuilder.cli.handler.android import AndroidBuildHandler
+from kbuilder.cli.handler.gcc import GccHandler
+from kbuilder.cli.handler.linux import LinuxBuildHandler
+from kbuilder.cli.handler.shelve import ShelveHandler
+from kbuilder.cli.interface.android import AndroidBuilder
+from kbuilder.cli.interface.database import Database
+from kbuilder.cli.interface.linux import LinuxBuilder
+from kbuilder.cli.interface.toolchain import ToolchainManager
 from kbuilder.core.kernel.android import AndroidKernel
 from kbuilder.core.kernel.linux import LinuxKernel
-
-from cached_property import cached_property
 
 COLORS = {
     'DEBUG':    'cyan',

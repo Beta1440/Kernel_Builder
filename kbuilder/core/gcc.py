@@ -1,8 +1,9 @@
 import os
 from typing import Iterable, List, Optional
 
-from kbuilder.core.arch import Arch
 from unipath.path import Path
+
+from kbuilder.core.arch import Arch
 
 
 class Toolchain(object):

@@ -5,8 +5,9 @@ import shutil
 from subprocess import check_call
 from typing import Optional
 
-from kbuilder.core.kernel.linux import LinuxKernel
 from unipath import Path
+
+from kbuilder.core.kernel.linux import LinuxKernel
 
 
 class AndroidKernel(LinuxKernel):

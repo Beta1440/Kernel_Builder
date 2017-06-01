@@ -1,7 +1,9 @@
 """Testing utilities for Kernel Builder."""
 
-from kbuilder.cli.main import TestApp
 from cement.utils.test import *
+
+from kbuilder.cli.main import TestApp
+
 
 class TestCase(CementTestCase):
     app_class = TestApp
@@ -13,4 +15,3 @@ class TestCase(CementTestCase):
     def tearDown(self):
         """Override teardown actions (for every test)."""
         super(TestCase, self).tearDown()
-

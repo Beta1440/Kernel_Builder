@@ -2,8 +2,9 @@
 import shelve
 
 from cement.core.handler import CementBaseHandler
-from kbuilder.cli.interface.database import Database
 from unipath.path import Path
+
+from kbuilder.cli.interface.database import Database
 
 
 class ShelveHandler(CementBaseHandler):

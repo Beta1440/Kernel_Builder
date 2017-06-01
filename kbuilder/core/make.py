@@ -9,10 +9,10 @@ Example:
 
         make('all', jobs=8)
 """
-from unipath.path import Path
-
 import os
-from subprocess import check_call, check_output, CompletedProcess
+from subprocess import CompletedProcess, check_call, check_output
+
+from unipath.path import Path
 
 
 class Makefile(object):

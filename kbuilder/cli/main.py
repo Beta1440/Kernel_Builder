@@ -1,10 +1,10 @@
 """Kernel Builder main application entry point."""
 
 from cement.core.exc import CaughtSignal, FrameworkError
-from kbuilder.cli.config_parser import parse_kernel_config
-from kbuilder.cli.app import App
-from kbuilder.core import exc
 
+from kbuilder.cli.app import App
+from kbuilder.cli.config_parser import parse_kernel_config
+from kbuilder.core import exc
 
 # Define the applicaiton object outside of main, as some libraries might wish
 # to import it as a global (rather than passing it into another class/func)

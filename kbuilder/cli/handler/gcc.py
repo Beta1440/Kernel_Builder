@@ -1,7 +1,7 @@
 """Provides handlers for Gcc toolchains."""
 
-from cement.utils.shell import Prompt
 from cement.core.handler import CementBaseHandler
+from cement.utils.shell import Prompt
 from unipath.path import Path
 
 from kbuilder.cli.interface.toolchain import ToolchainManager
