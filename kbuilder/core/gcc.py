@@ -68,7 +68,7 @@ class Toolchain(object):
         def find_binaries() -> Iterable:
             """Return an Iterable of binaries in the toolchain's bin folder."""
             try:
-                return os.scandir(self.root.child('bin'))
+                return os.scandir(self.root / 'bin')
             except:
                 pass
 
