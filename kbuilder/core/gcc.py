@@ -69,11 +69,8 @@ class Compiler(object):
             """Return an Iterable of binaries in the compiler's bin folder."""
             try:
                 return os.scandir(self.root / 'bin')
-            except:
+            except NotADirectoryError:
                 pass
-
-        def is_gcc_binary(binary_name: str) -> bool:
-            return binary_name.endswith('gcc')
 
         binaries = find_binaries()
 
@@ -81,7 +78,7 @@ class Compiler(object):
             return ""
 
         for entry in binaries:
-            if is_gcc_binary(entry.name):
+            if entry.name.endswith('gcc'):
                 compiler_prefix = entry.path[:-3]
                 return compiler_prefix
 
@@ -132,74 +129,11 @@ def scandir(compiler_dir: str, target_arch: Optional[Arch] = None) -> List:
         returned (default None).
     """
 
-    def valid_arch():
-        return not target_arch or compiler.target_arch == target_arch
-
     compilers = []
     entries = sorted(os.scandir(compiler_dir), key=lambda x: x.name)
 
     for entry in entries:
         compiler = Compiler(entry.path)
-        if compiler and valid_arch():
+        if compiler and (not target_arch or compiler.target_arch == target_arch):
             compilers.append(compiler)
     return compilers
-
-
-def prompt(compilers: List) -> Iterable:
-    """Return an Iterator of compilers from a list of compilers.
-
-    Each compiler will be printed with its position in the list.
-    The positions begin at 1 and are printed next to the compiler.
-    Then the client will be prompted to enter in a series of numbers.
-    An Iterable containing compilers with the matching positions from the
-    input will be returned. If only one compiler is in the list,
-    then it will be automatically selected.
-
-    Positional arguments:
-    compilers -- the list of compilers to select from
-    """
-    if len(compilers) <= 1:
-        return compilers
-
-    for index, compiler in enumerate(compilers, 1):
-        print('{}) {}'.format(index, compiler))
-
-    numbers = input('Enter numbers separated by spaces: ')
-    chosen_numbers = [int(x) for x in numbers.split()]
-    for number in chosen_numbers:
-        yield compilers[number - 1]
-
-
-def prompt_one(compilers: List) -> Compiler:
-    """Select a compiler from a list of compilers.
-
-    Each compiler will be printed with its position in the list.
-    The positions begin at 1 and are printed next to the compiler.
-    Then the client will be prompted to enter in the corresponding position.
-    of the desired compiler. An Iterable containing compilers with the
-    matching positions from the input will be returned.
-
-    Positional arguments:
-    compilers -- the list of compilers to select from.
-    """
-    for index, compiler in enumerate(compilers, 1):
-        print('{}) {}'.format(index, compiler))
-
-    number = input('Enter a single number: ')
-    return compilers[int(number) - 1]
-
-
-def prompt_from_scandir(compiler_dir: str, *,
-                        target_arch: Optional[Arch] = None) -> Iterable:
-    """Select a compiler from a directory of compilers.
-
-    Positional arguments:
-        compiler_dir -- directory to search for compiler
-
-    Keyword arguements:
-        target_arch -- architecture of compilers to search for (Default None).
-
-    Returns:
-        An iterator of the selected compilers.
-    """
-    return prompt(scandir(compiler_dir, target_arch))
