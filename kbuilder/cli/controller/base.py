@@ -47,7 +47,7 @@ class BaseController(ArgparseController):
     def init(self):
         """Initialize the build environment files."""
         self.app.log.info('Initializing the build environment')
-        self.app.toolchain_manager.set_toolchain()
+        self.app.compiler_manager.set_compiler()
         self.app.builder.init()
 
     @expose(help='Print the kernel Linux version',)

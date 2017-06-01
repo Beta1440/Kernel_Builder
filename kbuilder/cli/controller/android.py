@@ -11,9 +11,9 @@ class AndroidBuildController(ArgparseController):
         stacked_on = 'build'
         stacked_type = 'embedded'
         description = 'Build the Linux kernel for android devices'
-        arguments = [(['-t', '--toolchain'],
-                      dict(help='The toolchain to use',
-                           dest='toolchain',
+        arguments = [(['-t', '--compiler'],
+                      dict(help='The compiler to use',
+                           dest='compiler',
                            action='store'))
                     ]
 

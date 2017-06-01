@@ -12,13 +12,13 @@ class AndroidBuilder(LinuxBuilder):
         label = 'android_builder'
 
     @abc.abstractproperty
-    def toolchain(self):
+    def compiler(self):
         """The cross compiler to use in building the kernel."""
         pass
 
     @abc.abstractmethod
     def _setup(self, app):
-        """ Set up the app and toolchain.
+        """ Set up the app and compiler.
 
         The setup function is called during application initialization and
         must 'setup' the handler object making it ready for the framework

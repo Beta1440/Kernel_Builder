@@ -42,11 +42,11 @@ class LinuxBuildHandler(LinuxBuilder):
         return self._products
 
     @property
-    def toolchain(self):
+    def compiler(self):
         try:
-            return self._db['default_toolchain']
+            return self._db['default_compiler']
         except KeyError:
-            self.log.warning("Toolchain not set")
+            self.log.warning("Compiler not set")
 
     def build_kbuild_image(self) -> None:
         """Build a kbuild image."""

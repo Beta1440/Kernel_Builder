@@ -17,19 +17,19 @@ class GccController(ArgparseController):
     @expose(hide=True)
     def default(self):
         """Build all targets."""
-        self.show_default_toolchain()
+        self.show_default_compiler()
 
-    @expose(help='Set default toolchain',)
+    @expose(help='Set default compiler',)
     def set(self):
-        """Set the default toolchain."""
-        self.app.toolchain_manager.set_toolchain()
+        """Set the default compiler."""
+        self.app.compiler_manager.set_compiler()
 
-    @expose(help='Show the default toolchain',)
+    @expose(help='Show the default compiler',)
     def show(self):
-        """Show the default toolchain."""
-        self.app.toolchain_manager.show_toolchain()
+        """Show the default compiler."""
+        self.app.compiler_manager.show_compiler()
 
-    @expose(help='List all available toolchains',)
+    @expose(help='List all available compilers',)
     def list(self):
-        """List all available toolchains."""
-        self.app.toolchain_manager.list_toolchains()
+        """List all available compilers."""
+        self.app.compiler_manager.list_compilers()

@@ -6,7 +6,7 @@ Kernel Builder is a command line application which automates compiling the Linux
 * Build an OTA package
 * Build a boot image
 * Export build targets to desired directory
-* Dynamic detection of toolchains
+* Dynamic detection of compilers
 
 ## Project status
 Kernel Builder is currently under active development

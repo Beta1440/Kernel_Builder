@@ -1,19 +1,19 @@
-"""Provides interfaces for Toolchains."""
+"""Provides interfaces for Compilers."""
 
 import abc
 
 from cement.core.handler import CementBaseHandler
 
 
-class ToolchainManager(CementBaseHandler):
-    """Interface for managing toolchains."""
+class CompilerManager(CementBaseHandler):
+    """Interface for managing compilers."""
 
     class IMeta(abc.ABCMeta):
-        label = 'toolchain'
+        label = 'compiler'
 
     @abc.abstractproperty
-    def toolchain(self):
-        """Current toolchain being used."""
+    def compiler(self):
+        """Current compiler being used."""
         pass
 
     @abc.abstractmethod
@@ -32,16 +32,16 @@ class ToolchainManager(CementBaseHandler):
         pass
 
     @abc.abstractmethod
-    def show_toolchain(self):
-        """Prints the current toolchain(s) being used."""
+    def show_compiler(self):
+        """Prints the current compiler(s) being used."""
         pass
 
     @abc.abstractmethod
-    def set_toolchain(self):
-        """Prompts the user as to which toolchain(s) to use."""
+    def set_compiler(self):
+        """Prompts the user as to which compiler(s) to use."""
         pass
 
     @abc.abstractmethod
-    def list_toolchains(self):
-        """List all detected toolchains."""
+    def list_compilers(self):
+        """List all detected compilers."""
         pass

@@ -5,16 +5,16 @@ from typing import Iterable, List, Optional
 from kbuilder.core.arch import Arch
 
 
-class Toolchain(object):
-    """Store relevant info of a toolchain."""
+class Compiler(object):
+    """Store relevant info of a compiler."""
 
     compiler_prefixes = {'aarch64': Arch.arm64, 'arm-eabi': Arch.arm}
 
     def __init__(self, root: str) -> None:
-        """Initialize a new Toolchain.
+        """Initialize a new Compiler.
 
         Keyword arguments:
-        root -- the root directory of the toolchain
+        root -- the root directory of the compiler
         """
         self.root = Path(root)
         self._name = self.root.name
@@ -22,18 +22,18 @@ class Toolchain(object):
         self._target_arch = self._find_target_arch()
 
     def __str__(self) -> str:
-        """Return the name of the toolchain's root directory."""
+        """Return the name of the compiler's root directory."""
         return self.name
 
     def __nonzero__(self) -> bool:
-        """Return whether the toolchain is valid.
+        """Return whether the compiler is valid.
 
-        A toolchain needs a 'bin' directory to be valid.
+        A compiler needs a 'bin' directory to be valid.
         """
         return self.root.isdir() and Path(self.root, 'bin').isdir()
 
     def __enter__(self):
-        """Set this self as the toolchain to compile targets."""
+        """Set this self as the compiler to compile targets."""
         self.set_as_active()
         return self
 
@@ -66,7 +66,7 @@ class Toolchain(object):
         """Return the prefix of all binaries of this."""
 
         def find_binaries() -> Iterable:
-            """Return an Iterable of binaries in the toolchain's bin folder."""
+            """Return an Iterable of binaries in the compiler's bin folder."""
             try:
                 return os.scandir(self.root / 'bin')
             except:
@@ -86,120 +86,120 @@ class Toolchain(object):
                 return compiler_prefix
 
     @staticmethod
-    def find(toolchains: Iterable, target_name: str) -> List:
-        """Search for a toolchain with a given root directory.
+    def find(compilers: Iterable, target_name: str) -> List:
+        """Search for a compiler with a given root directory.
 
         Args:
-            toolchains: Iterable of toolchains to search thourgh.
-            target_arch: Target architecture of toolchains to search for.
-            target_name: Name of the toolchain root directory.
+            compilers: Iterable of compilers to search thourgh.
+            target_arch: Target architecture of compilers to search for.
+            target_name: Name of the compiler root directory.
 
         Returns:
-            The first toolchain the given name.
-                return None if no toolchain could be located.
+            The first compiler the given name.
+                return None if no compiler could be located.
         """
-        for toolchain in toolchains:
-            if toolchain.name == target_name:
-                return toolchain
+        for compiler in compilers:
+            if compiler.name == target_name:
+                return compiler
 
     def _find_target_arch(self) -> Arch:
-        """Determine the target architecture of the toolchain."""
+        """Determine the target architecture of the compiler."""
         prefix = self.compiler_prefix.name
-        for arch_prefix in iter(Toolchain.compiler_prefixes):
+        for arch_prefix in iter(Compiler.compiler_prefixes):
             if prefix.startswith(arch_prefix):
-                target_arch = Toolchain.compiler_prefixes[arch_prefix]
+                target_arch = Compiler.compiler_prefixes[arch_prefix]
                 return target_arch
 
     def set_as_active(self):
-        """Set this self as the active toolchain to compile with."""
+        """Set this self as the active compiler to compile with."""
         os.putenv('CROSS_COMPILE', self.compiler_prefix)
         os.putenv('SUBARCH', self.target_arch.name)
 
 
-def scandir(toolchain_dir: str, target_arch: Optional[Arch] = None) -> List:
-    """Return a list of toolchains located in a directory.
+def scandir(compiler_dir: str, target_arch: Optional[Arch] = None) -> List:
+    """Return a list of compilers located in a directory.
 
-    A toolchain is considered valid if it has a gcc executable in its
+    A compiler is considered valid if it has a gcc executable in its
      'bin' directory.
 
     Positional arguments:
-    toolchain_dir -- the directory to look for toolchains.
+    compiler_dir -- the directory to look for compilers.
 
     Keyword arguments:
-    target_arch -- the target architecture of toolchains to search for.
-        If empty, then toolchains of any architecture may be returned
-        otherwise only toolchains with the matching architecture will be
+    target_arch -- the target architecture of compilers to search for.
+        If empty, then compilers of any architecture may be returned
+        otherwise only compilers with the matching architecture will be
         returned (default None).
     """
 
     def valid_arch():
-        return not target_arch or toolchain.target_arch == target_arch
+        return not target_arch or compiler.target_arch == target_arch
 
-    toolchains = []
-    entries = sorted(os.scandir(toolchain_dir), key=lambda x: x.name)
+    compilers = []
+    entries = sorted(os.scandir(compiler_dir), key=lambda x: x.name)
 
     for entry in entries:
-        toolchain = Toolchain(entry.path)
-        if toolchain and valid_arch():
-            toolchains.append(toolchain)
-    return toolchains
+        compiler = Compiler(entry.path)
+        if compiler and valid_arch():
+            compilers.append(compiler)
+    return compilers
 
 
-def prompt(toolchains: List) -> Iterable:
-    """Return an Iterator of toolchains from a list of toolchains.
+def prompt(compilers: List) -> Iterable:
+    """Return an Iterator of compilers from a list of compilers.
 
-    Each toolchain will be printed with its position in the list.
-    The positions begin at 1 and are printed next to the toolchain.
+    Each compiler will be printed with its position in the list.
+    The positions begin at 1 and are printed next to the compiler.
     Then the client will be prompted to enter in a series of numbers.
-    An Iterable containing toolchains with the matching positions from the
-    input will be returned. If only one toolchain is in the list,
+    An Iterable containing compilers with the matching positions from the
+    input will be returned. If only one compiler is in the list,
     then it will be automatically selected.
 
     Positional arguments:
-    toolchains -- the list of toolchains to select from
+    compilers -- the list of compilers to select from
     """
-    if len(toolchains) <= 1:
-        return toolchains
+    if len(compilers) <= 1:
+        return compilers
 
-    for index, toolchain in enumerate(toolchains, 1):
-        print('{}) {}'.format(index, toolchain))
+    for index, compiler in enumerate(compilers, 1):
+        print('{}) {}'.format(index, compiler))
 
     numbers = input('Enter numbers separated by spaces: ')
     chosen_numbers = [int(x) for x in numbers.split()]
     for number in chosen_numbers:
-        yield toolchains[number - 1]
+        yield compilers[number - 1]
 
 
-def prompt_one(toolchains: List) -> Toolchain:
-    """Select a toolchain from a list of toolchains.
+def prompt_one(compilers: List) -> Compiler:
+    """Select a compiler from a list of compilers.
 
-    Each toolchain will be printed with its position in the list.
-    The positions begin at 1 and are printed next to the toolchain.
+    Each compiler will be printed with its position in the list.
+    The positions begin at 1 and are printed next to the compiler.
     Then the client will be prompted to enter in the corresponding position.
-    of the desired toolchain. An Iterable containing toolchains with the
+    of the desired compiler. An Iterable containing compilers with the
     matching positions from the input will be returned.
 
     Positional arguments:
-    toolchains -- the list of toolchains to select from.
+    compilers -- the list of compilers to select from.
     """
-    for index, toolchain in enumerate(toolchains, 1):
-        print('{}) {}'.format(index, toolchain))
+    for index, compiler in enumerate(compilers, 1):
+        print('{}) {}'.format(index, compiler))
 
     number = input('Enter a single number: ')
-    return toolchains[int(number) - 1]
+    return compilers[int(number) - 1]
 
 
-def prompt_from_scandir(toolchain_dir: str, *,
+def prompt_from_scandir(compiler_dir: str, *,
                         target_arch: Optional[Arch] = None) -> Iterable:
-    """Select a toolchain from a directory of toolchains.
+    """Select a compiler from a directory of compilers.
 
     Positional arguments:
-        toolchain_dir -- directory to search for toolchain
+        compiler_dir -- directory to search for compiler
 
     Keyword arguements:
-        target_arch -- architecture of toolchains to search for (Default None).
+        target_arch -- architecture of compilers to search for (Default None).
 
     Returns:
-        An iterator of the selected toolchains.
+        An iterator of the selected compilers.
     """
-    return prompt(scandir(toolchain_dir, target_arch))
+    return prompt(scandir(compiler_dir, target_arch))

@@ -30,15 +30,15 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
             self.log.info('created ' + ota)
 
     def build_kbuild_image(self) -> Path:
-        """Build a kbuild image with the default toolchain.
+        """Build a kbuild image with the default compiler.
 
         Returns:
             The Path to the kbuild image if successful, None otherwise
         """
-        self.toolchain.set_as_active()
-        self.kernel.extra_version = self.toolchain.name
+        self.compiler.set_as_active()
+        self.kernel.extra_version = self.compiler.name
         info = 'Compiling {0} with {1}'.format(self.kernel.release_version,
-                                               self.toolchain)
+                                               self.compiler)
         self.log.info(info)
         self.kernel.arch_clean()
 
@@ -57,5 +57,5 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
 
     def init(self) -> None:
         "Initialize the build environment."
-        self.toolchain.set_as_active()
+        self.compiler.set_as_active()
         self.kernel.prepare()

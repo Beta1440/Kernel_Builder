@@ -154,7 +154,7 @@ class LinuxKernel(object):
         """Remove compiled kernel files in the arch directory.
 
         This form of cleaning is useful for rebuilding the kernel with the same
-        Toolchain, since only files that were changed will be recompiled.
+        Compiler, since only files that were changed will be recompiled.
         """
         with self:
             self.makefile.make('archclean')
@@ -162,7 +162,7 @@ class LinuxKernel(object):
     def clean(self) -> None:
         """Remove all compiled kernel files.
 
-        This form of cleaning is useful when switching the toolchain to build
+        This form of cleaning is useful when switching the compiler to build the
         kernel since all files need to be recompiled.
         """
         with self:

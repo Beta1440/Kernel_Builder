@@ -12,7 +12,7 @@ from kbuilder.cli.handler.shelve import ShelveHandler
 from kbuilder.cli.interface.android import AndroidBuilder
 from kbuilder.cli.interface.database import Database
 from kbuilder.cli.interface.linux import LinuxBuilder
-from kbuilder.cli.interface.toolchain import ToolchainManager
+from kbuilder.cli.interface.compiler import CompilerManager
 from kbuilder.core.kernel.android import AndroidKernel
 from kbuilder.core.kernel.linux import LinuxKernel
 
@@ -43,7 +43,7 @@ class App(CementApp):
         label = 'kbuilder'
         config_defaults = defaults
         define_handlers = [Database,
-                           ToolchainManager,
+                           CompilerManager,
                            LinuxBuilder,
                            AndroidBuilder]
 
@@ -88,8 +88,8 @@ class App(CementApp):
         self._active_kernel = kernel
 
     @cached_property
-    def toolchain_manager(self):
-        manager = self.handler.resolve('toolchain', 'gcc_handler')
+    def compiler_manager(self):
+        manager = self.handler.resolve('compiler', 'gcc_handler')
         manager._setup(self)
         return manager
 
