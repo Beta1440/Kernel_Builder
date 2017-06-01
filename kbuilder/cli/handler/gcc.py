@@ -1,8 +1,9 @@
 """Provides handlers for Gcc toolchains."""
 
+from pathlib import Path
+
 from cement.core.handler import CementBaseHandler
 from cement.utils.shell import Prompt
-from unipath.path import Path
 
 from kbuilder.cli.interface.toolchain import ToolchainManager
 from kbuilder.core import gcc
@@ -24,7 +25,7 @@ class GccHandler(ToolchainManager, CementBaseHandler):
         self.app = app
         kernel = self.app.active_kernel
         self.toolchain_dir = Path(self.app.config.get(kernel.name, 'toolchain_dir'))
-        self.toolchains = gcc.scandir(self.toolchain_dir.expand_user(), kernel.arch)
+        self.toolchains = gcc.scandir(self.toolchain_dir.expanduser(), kernel.arch)
         self.log = app.log
 
     @property

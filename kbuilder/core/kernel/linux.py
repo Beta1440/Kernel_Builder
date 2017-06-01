@@ -1,8 +1,8 @@
 import os
+from pathlib import Path
 from typing import Optional
 
 from cached_property import cached_property
-from unipath.path import Path
 
 from kbuilder.core.arch import Arch
 from kbuilder.core.make import Makefile
@@ -104,17 +104,17 @@ class LinuxKernel(object):
     def kbuild_image(self):
         """The absolute path to the compressed kernel image."""
         kbuild_image = LinuxKernel.kbuild_image_name[self.arch]
-        return self.root.child('arch', self.arch.name, 'boot', kbuild_image)
+        return self.root / 'arch' / self.arch.name / 'boot' / kbuild_image
 
     def __enter__(self):
         """Change the current directory the kernel root."""
-        self._prev_dir = Path(os.getcwd())
-        self.root.chdir()
+        self._prev_dir = Path.cwd()
+        os.chdir(self.root)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Revert the current directory to the original directory."""
-        self._prev_dir.chdir()
+        os.chdir(self._prev_dir)
         return False
 
     @staticmethod
@@ -190,7 +190,7 @@ class LinuxKernel(object):
             CalledProcessError: If The target fails to build.
         """
         with self:
-            Path(log_dir).mkdir()
+            Path(log_dir).mkdir(exist_ok=True)
             build_log = Path(log_dir, self.custom_release + '-log.txt')
             output = self.makefile.make_output('all')
-            build_log.write_file(output)
+            build_log.write_text(output)

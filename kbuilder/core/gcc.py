@@ -1,7 +1,6 @@
 import os
+from pathlib import Path
 from typing import Iterable, List, Optional
-
-from unipath.path import Path
 
 from kbuilder.core.arch import Arch
 

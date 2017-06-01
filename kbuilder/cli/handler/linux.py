@@ -1,6 +1,6 @@
 """Provides handlers for Linux."""
 
-from unipath.path import Path
+from pathlib import Path
 
 from kbuilder.cli.interface.linux import LinuxBuilder
 
@@ -25,11 +25,11 @@ class LinuxBuildHandler(LinuxBuilder):
         super()._setup(app)
         self._kernel = app.active_kernel
         name = self._kernel.name
-        self.base_export_dir = Path(app.config.get(name, 'export_dir')).expand_user()
-        self.export_path = self.base_export_dir.child(self._kernel.version_numbers)
-        self.export_path.mkdir(parents=True)
+        self.base_export_dir = Path(app.config.get(name, 'export_dir')).expanduser()
+        self.export_path = self.base_export_dir / self._kernel.version_numbers
+        self.export_path.mkdir(parents=True, exist_ok=True)
         self.build_log_dir = Path(app.config.get(self._kernel.name,
-                                                 'log_dir')).expand_user()
+                                                 'log_dir')).expanduser()
         self._db = app.db
         self.log = app.log
 

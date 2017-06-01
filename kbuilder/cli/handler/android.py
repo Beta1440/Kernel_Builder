@@ -1,8 +1,7 @@
 """Provides handlers for Android."""
 
 import subprocess
-
-from unipath.path import Path
+from pathlib import Path
 
 from kbuilder.cli.handler.linux import LinuxBuildHandler
 from kbuilder.cli.interface.android import AndroidBuilder
@@ -21,7 +20,7 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
     def _setup(self, app):
         super()._setup(app)
         name = self.kernel.name
-        self.ota_source_dir = Path(app.config.get(name, 'ota_dir')).expand_user()
+        self.ota_source_dir = Path(app.config.get(name, 'ota_dir')).expanduser()
 
     def build_ota_package(self):
         if self.build_kbuild_image():

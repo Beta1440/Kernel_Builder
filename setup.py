@@ -38,8 +38,6 @@ setup(name='kbuilder',
           'cached-property>=1.3.0',
           'cement==2.10.2',
           'colorlog>=2.10.0',
-          'typing>=3.5.1.0',
-          'unipath==1.1',
       ],
       setup_requires=[],
       entry_points="""

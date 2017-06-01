@@ -1,8 +1,8 @@
 """A database handler for shelve."""
 import shelve
+from pathlib import Path
 
 from cement.core.handler import CementBaseHandler
-from unipath.path import Path
 
 from kbuilder.cli.interface.database import Database
 
@@ -36,7 +36,7 @@ class ShelveHandler(CementBaseHandler):
 
             Returns: n/a
         """
-        with shelve.open(self._local_entry_path(key)) as db:
+        with shelve.open(self._local_entry_path(key).as_posix()) as db:
             db[key] = value
 
     def __getitem__(self, key) -> object:
@@ -48,8 +48,8 @@ class ShelveHandler(CementBaseHandler):
             Returns:
                 The object at the corresponding key
         """
-        with shelve.open(self._local_entry_path(key)) as db:
+        with shelve.open(self._local_entry_path(key).as_posix()) as db:
             return db[key]
 
     def _local_entry_path(self, key: str) -> Path:
-        return self.local_root.child('.kbuilder', '{}.db'.format(key))
+        return self.local_root / '.kbuilder' / '{}.db'.format(key)

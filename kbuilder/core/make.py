@@ -10,9 +10,8 @@ Example:
         make('all', jobs=8)
 """
 import os
+from pathlib import Path
 from subprocess import CompletedProcess, check_call, check_output
-
-from unipath.path import Path
 
 
 class Makefile(object):
@@ -27,13 +26,13 @@ class Makefile(object):
 
     def __enter__(self):
         """Change the current directory the kernel root."""
-        self._prev_path = Path(os.getcwd())
+        self._prev_path = Path.cwd()
         self.path.chdir()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Revert the current directory to the original directory."""
-        self._prev_path.chdir()
+        os.chdir(self._prev_path.as_posix())
         return False
 
     def __bool__(self):
