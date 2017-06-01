@@ -55,3 +55,8 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
 
     def build_boot_image(self):
         raise NotImplementedError
+
+    def init(self) -> None:
+        "Initialize the build environment."
+        self.toolchain.set_as_active()
+        self.kernel.prepare()
