@@ -19,8 +19,7 @@ class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
 
     def _setup(self, app):
         super()._setup(app)
-        name = self.kernel.name
-        self.ota_source_dir = Path(app.config.get(name, 'ota_dir')).expanduser()
+        self.ota_source_dir = Path(app.config.get('android', 'ota_dir')).expanduser()
 
     def build_ota_package(self):
         if self.build_kbuild_image():

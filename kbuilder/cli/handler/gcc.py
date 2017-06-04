@@ -24,7 +24,7 @@ class GccHandler(CompilerManager, CementBaseHandler):
         super()._setup(app)
         self.app = app
         kernel = self.app.active_kernel
-        self.compiler_dir = Path(self.app.config.get(kernel.name, 'compiler_dir'))
+        self.compiler_dir = Path(self.app.config.get('general', 'compiler_dir'))
         self.compilers = gcc.scandir(self.compiler_dir.expanduser(), kernel.arch)
         self.log = app.log
 

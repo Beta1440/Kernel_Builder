@@ -23,11 +23,9 @@ class LinuxBuildHandler(LinuxBuilder):
     def _setup(self, app):
         super()._setup(app)
         self._kernel = app.active_kernel
-        name = self._kernel.name
-        self.export_path = Path(app.config.get(name, 'export_dir')).expanduser()
+        self.export_path = Path(app.config.get('output', 'export_dir')).expanduser()
         self.export_path.mkdir(parents=True, exist_ok=True)
-        self.build_log_dir = Path(app.config.get(self._kernel.name,
-                                                 'log_dir')).expanduser()
+        self.build_log_dir = Path(app.config.get('general', 'log_dir')).expanduser()
         self._db = app.db
         self.log = app.log
 
