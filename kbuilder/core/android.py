@@ -7,7 +7,7 @@ from typing import Optional
 
 from unipath import Path
 
-from kbuilder.core.kernel.linux import LinuxKernel
+from kbuilder.core.linux import LinuxKernel
 
 
 class AndroidKernel(LinuxKernel):
