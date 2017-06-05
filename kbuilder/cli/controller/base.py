@@ -11,6 +11,7 @@ Copyright (c) 2016 Dela Anthonio
 
 
 class BaseController(ArgparseController):
+    """Provides options for core functionality."""
     class Meta:
         label = 'base'
         description = 'Automate compilling the Linux kernel '

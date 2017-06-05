@@ -1,11 +1,10 @@
-"""Provides controllers for Android."""
+"""Controllers for Android."""
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
 
 class AndroidBuildController(ArgparseController):
-    """Kernel Builder android controller."""
-
+    """Provides options for building Android kernels."""
     class Meta:
         label = 'android_build'
         stacked_on = 'build'

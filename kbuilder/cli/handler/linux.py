@@ -1,4 +1,4 @@
-"""Provides handlers for Linux."""
+"""Handlers for Linux."""
 
 from pathlib import Path
 
@@ -6,10 +6,12 @@ from kbuilder.cli.interface.linux import LinuxBuilder
 
 
 class LinuxBuildHandler(LinuxBuilder):
+    """Handler for building Linux targets."""
     class Meta:
+        """Cement handler meta information."""
         interface = LinuxBuilder
         label = 'linux_build_handler'
-        description = 'Handler for building linux targets'
+        description = 'Handler for building Linux targets'
 
     def __init__(self, **kw_args):
         super().__init__(**kw_args)

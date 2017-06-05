@@ -1,4 +1,4 @@
-"""Provides interfaces for Compilers."""
+"""Interfaces for compilers."""
 
 import abc
 

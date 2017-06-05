@@ -1,9 +1,10 @@
-"""GNU C compiler controller"""
+"""Compiler controllers."""
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
 
 class GccController(ArgparseController):
+    """Provides options for managing compilers."""
     class Meta:
         label = 'gcc'
         description = 'Configure local gcc'

@@ -1,4 +1,4 @@
-"""Provides interfaces for Android."""
+"""Interfaces for Android."""
 
 import abc
 

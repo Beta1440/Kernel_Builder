@@ -1,4 +1,4 @@
-"""Provides handlers for Android."""
+"""Handlers for Android."""
 
 import subprocess
 from pathlib import Path
@@ -8,7 +8,9 @@ from kbuilder.cli.interface.android import AndroidBuilder
 
 
 class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
+    """Handler for building Android targets."""
     class Meta:
+        """Cement handler meta information."""
         interface = AndroidBuilder
         label = 'android_build_handler'
         description = 'Handler for building android targets'

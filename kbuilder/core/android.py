@@ -1,4 +1,4 @@
-"""Provide a kernel interface for android kernels."""
+"""Core Android abstractions."""
 
 import os
 import shutil

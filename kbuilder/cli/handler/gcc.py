@@ -1,4 +1,4 @@
-"""Provides handlers for Gcc compilers."""
+"""Handlers for compilers."""
 
 from pathlib import Path
 
@@ -10,7 +10,9 @@ from kbuilder.core import gcc
 
 
 class GccHandler(CompilerManager, CementBaseHandler):
+    """Handler for gcc compilers"""
     class Meta:
+        """Cement handler meta information."""
         interface = CompilerManager
         label = 'gcc_handler'
         description = 'Handler for managing gcc compilers'

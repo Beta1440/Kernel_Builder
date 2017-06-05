@@ -1,11 +1,10 @@
-"""Provides controllers for Linux."""
+"""Controllers for Linux."""
 
 from cement.ext.ext_argparse import ArgparseController, expose
 
 
 class LinuxBuildController(ArgparseController):
-    """Kernel Builder Linux build controller."""
-
+    """Provides options for building Linux kernels."""
     class Meta:
         label = 'build'
         stacked_on = 'base'

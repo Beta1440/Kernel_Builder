@@ -1,4 +1,4 @@
-"""A database handler for shelve."""
+"""Handlers for persistent storage."""
 import shelve
 from pathlib import Path
 
@@ -8,7 +8,9 @@ from kbuilder.cli.interface.database import Database
 
 
 class ShelveHandler(CementBaseHandler):
+    """Handler for working with shelve."""
     class Meta:
+        """Cement handler meta information."""
         interface = Database
         label = 'shelve_handler'
         description = 'Store and retrieve objects'

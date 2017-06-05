@@ -1,3 +1,5 @@
+"""Interfaces for modules which provide persistent storage."""
+
 from cement.core.interface import Interface, validate
 
 
