@@ -13,8 +13,8 @@ from kbuilder.cli.interface.android import AndroidBuilder
 from kbuilder.cli.interface.database import Database
 from kbuilder.cli.interface.linux import LinuxBuilder
 from kbuilder.cli.interface.compiler import CompilerManager
-from kbuilder.core.kernel.android import AndroidKernel
-from kbuilder.core.kernel.linux import LinuxKernel
+from kbuilder.core.android import AndroidKernel
+from kbuilder.core.linux import LinuxKernel
 
 COLORS = {
     'DEBUG':    'cyan',
