@@ -2,14 +2,14 @@
 
 from pathlib import Path
 
-from kbuilder.cli.interface.linux import LinuxBuilder
+from kbuilder.cli.interface.linux import ILinuxBuild
 
 
-class LinuxBuildHandler(LinuxBuilder):
+class LinuxBuildHandler(ILinuxBuild):
     """Handler for building Linux targets."""
     class Meta:
         """Cement handler meta information."""
-        interface = LinuxBuilder
+        interface = ILinuxBuild
         label = 'linux_build_handler'
         description = 'Handler for building Linux targets'
 

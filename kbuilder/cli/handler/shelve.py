@@ -4,14 +4,14 @@ from pathlib import Path
 
 from cement.core.handler import CementBaseHandler
 
-from kbuilder.cli.interface.database import Database
+from kbuilder.cli.interface.database import IDatabase
 
 
 class ShelveHandler(CementBaseHandler):
     """Handler for working with shelve."""
     class Meta:
         """Cement handler meta information."""
-        interface = Database
+        interface = IDatabase
         label = 'shelve_handler'
         description = 'Store and retrieve objects'
         config_defaults = dict(

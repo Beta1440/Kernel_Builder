@@ -5,7 +5,7 @@ import abc
 from cement.core.handler import CementBaseHandler
 
 
-class CompilerManager(CementBaseHandler):
+class ICompiler(CementBaseHandler):
     """Interface for managing compilers."""
 
     class IMeta(abc.ABCMeta):

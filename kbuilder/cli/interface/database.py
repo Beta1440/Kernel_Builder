@@ -9,10 +9,10 @@ def database_validator(klass, obj):
         '__setitem__',
         '__getitem__',
     ]
-    validate(Database, obj, members)
+    validate(IDatabase, obj, members)
 
 
-class Database(Interface):
+class IDatabase(Interface):
     """Database interface."""
 
     class IMeta:

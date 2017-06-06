@@ -5,11 +5,11 @@ import abc
 from cement.core.handler import CementBaseHandler
 
 
-class LinuxBuilder(CementBaseHandler):
+class ILinuxBuild(CementBaseHandler):
     """Interface for Building linux targets."""
 
     class IMeta(abc.ABCMeta):
-        label = 'linux_builder'
+        label = 'linux_build'
 
     @abc.abstractproperty
     def kernel(self):

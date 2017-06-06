@@ -9,10 +9,10 @@ from kbuilder.cli.handler.android import AndroidBuildHandler
 from kbuilder.cli.handler.gcc import GccHandler
 from kbuilder.cli.handler.linux import LinuxBuildHandler
 from kbuilder.cli.handler.shelve import ShelveHandler
-from kbuilder.cli.interface.android import AndroidBuilder
-from kbuilder.cli.interface.database import Database
-from kbuilder.cli.interface.linux import LinuxBuilder
-from kbuilder.cli.interface.compiler import CompilerManager
+from kbuilder.cli.interface.android import IAndroidBuild
+from kbuilder.cli.interface.database import IDatabase
+from kbuilder.cli.interface.linux import ILinuxBuild
+from kbuilder.cli.interface.compiler import ICompiler
 from kbuilder.core.android import AndroidKernel
 from kbuilder.core.linux import LinuxKernel
 
@@ -42,10 +42,10 @@ class App(CementApp):
     class Meta:
         label = 'kbuilder'
         config_defaults = defaults
-        define_handlers = [Database,
-                           CompilerManager,
-                           LinuxBuilder,
-                           AndroidBuilder]
+        define_handlers = [IDatabase,
+                           ICompiler,
+                           ILinuxBuild,
+                           IAndroidBuild]
 
         handlers = [ShelveHandler,
                     GccHandler,
@@ -104,13 +104,13 @@ class App(CementApp):
     @cached_property
     def android_builder(self):
         """Builder for android targets."""
-        builder = self.handler.resolve('android_builder', 'android_build_handler')
+        builder = self.handler.resolve('android_build', 'android_build_handler')
         builder._setup(self)
         return builder
 
     @cached_property
     def linux_builder(self):
         """Builder for linux targets."""
-        builder = self.handler.resolve('linux_builder', 'linux_build_handler')
+        builder = self.handler.resolve('linux_build', 'linux_build_handler')
         builder._setup(self)
         return builder

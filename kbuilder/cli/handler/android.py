@@ -4,14 +4,14 @@ import subprocess
 from pathlib import Path
 
 from kbuilder.cli.handler.linux import LinuxBuildHandler
-from kbuilder.cli.interface.android import AndroidBuilder
+from kbuilder.cli.interface.android import IAndroidBuild
 
 
-class AndroidBuildHandler(LinuxBuildHandler, AndroidBuilder):
+class AndroidBuildHandler(LinuxBuildHandler, IAndroidBuild):
     """Handler for building Android targets."""
     class Meta:
         """Cement handler meta information."""
-        interface = AndroidBuilder
+        interface = IAndroidBuild
         label = 'android_build_handler'
         description = 'Handler for building android targets'
 

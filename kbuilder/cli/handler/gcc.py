@@ -5,15 +5,15 @@ from pathlib import Path
 from cement.core.handler import CementBaseHandler
 from cement.utils.shell import Prompt
 
-from kbuilder.cli.interface.compiler import CompilerManager
+from kbuilder.cli.interface.compiler import ICompiler
 from kbuilder.core import gcc
 
 
-class GccHandler(CompilerManager, CementBaseHandler):
+class GccHandler(ICompiler, CementBaseHandler):
     """Handler for gcc compilers"""
     class Meta:
         """Cement handler meta information."""
-        interface = CompilerManager
+        interface = ICompiler
         label = 'gcc_handler'
         description = 'Handler for managing gcc compilers'
 

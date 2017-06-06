@@ -2,14 +2,14 @@
 
 import abc
 
-from .linux import LinuxBuilder
+from .linux import ILinuxBuild
 
 
-class AndroidBuilder(LinuxBuilder):
+class IAndroidBuild(ILinuxBuild):
     """Interface for Building android targets."""
 
     class IMeta(abc.ABCMeta):
-        label = 'android_builder'
+        label = 'android_build'
 
     @abc.abstractproperty
     def compiler(self):
